@@ -175,29 +175,29 @@
     container.appendChild(p);
   }
 
-  function renderCommuneResult(container, entity) {
-    container.replaceChildren();
+  function renderCommuneResult(container, commune) {
+    const card = document.createElement("article");
+    card.className = "commune-result-card";
     const title = document.createElement("h3");
-    title.textContent = entity.official_name + " — " + entity.department_name;
-    container.appendChild(title);
-
-    const code = document.createElement("p");
-    code.className = "commune-meta";
-    code.textContent = "Code INSEE : " + entity.entity_id + " · Code postal : " + (entity.postal_codes || []).join(", ");
-    container.appendChild(code);
-
+    title.textContent = commune.nom;
+    const meta = document.createElement("p");
+    meta.className = "commune-meta";
+    meta.textContent = "Code INSEE : " + commune.code +
+      " · Département : " + (commune.codeDepartement || "non précisé") +
+      ((commune.codesPostaux && commune.codesPostaux.length) ? " · Code postal : " + commune.codesPostaux.join(", ") : "");
     const status = document.createElement("span");
     status.className = "result-status";
-    status.textContent = "Identité géographique référencée";
-    container.appendChild(status);
-
+    status.textContent = "Commune trouvée dans le référentiel national";
     const explanation = document.createElement("p");
-    explanation.textContent = "Les données financières de cette commune ne sont pas encore intégrées et validées dans l’observatoire. Aucun montant local n’est donc affiché. La prochaine étape est de récupérer les comptes officiels, contrôler les exercices disponibles et documenter les périmètres.";
-    container.appendChild(explanation);
-
-    addResultLink(container, "Consulter les comptes des communes — OFGL", "https://data.ofgl.fr/explore/dataset/ofgl-base-communes/");
-    addResultLink(container, "Consulter les comptes individuels des communes — DGFiP", "https://www.data.gouv.fr/datasets/comptes-individuels-des-communes-fichier-global-2025");
-    container.hidden = false;
+    explanation.textContent = "Le site a identifié la commune. Ses comptes ne sont pas encore tous intégrés et vérifiés directement dans l’observatoire : aucun montant n’est inventé ou présenté comme validé.";
+    const link = document.createElement("a");
+    link.className = "button button-primary";
+    link.href = "https://data.ofgl.fr/explore/dataset/ofgl-base-communes/?q=" + encodeURIComponent(commune.nom);
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = "Consulter les comptes officiels de cette commune ↗";
+    card.append(title, meta, status, explanation, link);
+    container.appendChild(card);
   }
 
   async function initMunicipalitySearch() {
@@ -206,39 +206,60 @@
     const result = document.getElementById("commune-result");
     if (!form || !input || !result) return;
 
-    let entities = [];
-    try {
-      const response = await fetch("data/entities.json", { cache: "no-store" });
-      if (!response.ok) throw new Error("HTTP " + response.status);
-      const data = await response.json();
-      entities = Array.isArray(data.entities) ? data.entities : [];
-    } catch (error) {
-      result.textContent = "Le catalogue territorial est momentanément indisponible. Consulte les sources officielles en attendant.";
-      result.hidden = false;
-      return;
-    }
-
-    form.addEventListener("submit", (event) => {
+    form.addEventListener("submit", async (event) => {
       event.preventDefault();
-      const query = normalizeSearch(input.value);
+      const query = input.value.trim();
       if (!query) return;
-      const matches = entities.filter((entity) => {
-        const values = [entity.official_name, entity.entity_id, ...(entity.postal_codes || [])];
-        return values.some((value) => normalizeSearch(String(value)).includes(query));
-      });
       result.replaceChildren();
-      if (matches.length) {
-        matches.slice(0, 5).forEach((entity) => renderCommuneResult(result, entity));
-      } else {
+      result.hidden = false;
+      const loading = document.createElement("p");
+      loading.textContent = "Recherche dans le référentiel national des communes…";
+      result.appendChild(loading);
+      try {
+        const params = new URLSearchParams({
+          fields: "nom,code,codeDepartement,codesPostaux,population",
+          limit: "10"
+        });
+        if (/^\\d{5}$/.test(query)) {
+          params.set("codePostal", query);
+        } else if (/^\\d{4,5}$/.test(query)) {
+          params.set("code", query);
+        } else {
+          params.set("nom", query);
+          params.set("boost", "population");
+        }
+        const response = await fetch("https://geo.api.gouv.fr/communes?" + params.toString(), {
+          headers: { Accept: "application/json" }
+        });
+        if (!response.ok) throw new Error("Référentiel indisponible (" + response.status + ")");
+        const communes = await response.json();
+        result.replaceChildren();
+        if (!Array.isArray(communes) || communes.length === 0) {
+          const title = document.createElement("h3");
+          title.textContent = "Aucune commune trouvée";
+          const explanation = document.createElement("p");
+          explanation.textContent = "Vérifie l’orthographe, le code postal ou le code INSEE. Tu peux aussi lancer la recherche directement dans la base financière officielle.";
+          result.append(title, explanation);
+          addResultLink(result, "Ouvrir la base des comptes communaux — OFGL", "https://data.ofgl.fr/explore/dataset/ofgl-base-communes/");
+          return;
+        }
+        const heading = document.createElement("h3");
+        heading.textContent = communes.length === 1 ? "Commune trouvée" : communes.length + " résultats possibles";
+        result.appendChild(heading);
+        const note = document.createElement("p");
+        note.className = "commune-meta";
+        note.textContent = "L’identité géographique est vérifiée via le service public geo.api.gouv.fr. Les chiffres financiers affichés sur l’OFGL restent soumis à leur propre périmètre, exercice et disponibilité.";
+        result.appendChild(note);
+        communes.forEach((commune) => renderCommuneResult(result, commune));
+      } catch (error) {
+        result.replaceChildren();
         const title = document.createElement("h3");
-        title.textContent = "Commune non présente dans le catalogue actuel";
+        title.textContent = "Recherche momentanément indisponible";
         const explanation = document.createElement("p");
-        explanation.textContent = "Le catalogue de l’observatoire ne contient pour l’instant qu’un nombre limité de communes. Cela ne signifie pas que les données officielles sont indisponibles. Tu peux consulter les bases nationales ci-dessous.";
+        explanation.textContent = "Le référentiel géographique n’a pas répondu. Tu peux quand même rechercher les comptes dans la base officielle de l’OFGL.";
         result.append(title, explanation);
         addResultLink(result, "Rechercher dans les comptes des communes — OFGL", "https://data.ofgl.fr/explore/dataset/ofgl-base-communes/");
-        addResultLink(result, "Rechercher les comptes individuels — DGFiP", "https://www.data.gouv.fr/datasets/comptes-individuels-des-communes-fichier-global-2025");
       }
-      result.hidden = false;
     });
   }
 
