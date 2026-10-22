@@ -2,7 +2,9 @@
 
 - **Date** : 22 octobre 2026 (mise à jour après corrections complémentaires)
 - **Version auditée** : `main`, commit `230d34d`
-- **Branche de correction** : `ccr-8e430522-ifzcgl` (non fusionnée dans `main`)
+- **Branche de correction** : `ccr-8e430522-ifzcgl`, fusionnée dans `main` le 22 octobre 2026
+- **Suivi du 22 octobre 2026** : sur `main` (commit `8bb7c48`), une erreur JavaScript se produisait à chaque chargement (`restoreAnchor is not defined`, fonction supprimée au commit `55f0d5c` mais encore appelée). Elle est corrigée sur la branche `ccr-8e430522-ifzcgl`, avec deux ajustements de tests et l’en-tête mobile ramené sous 120 px : 69 tests navigateur sur 69 et 16 tests unitaires sur 16 réussis.
+- **Fusion avec le site présidentiel** : le plan est consigné dans le dépôt privé du site présidentiel (`docs/fusion/PROMPT_FUSION_FINANCES.md`).
 - **Rapport détaillé** : [`AUDIT-TECHNIQUE.md`](../AUDIT-TECHNIQUE.md). Il contient le tableau des anomalies, la matrice des tests, le contrôle des données, le plan de correction et le prompt pour l’étape suivante.
 
 ## Ce qui n’a pas pu être testé

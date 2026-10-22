@@ -273,7 +273,7 @@ async function overflow(page) {
     status: ov.scrollWidth <= ov.vw ? "VALIDÉ" : "ÉCHOUÉ", proof: `scrollWidth=${ov.scrollWidth}/${ov.vw} ; ${text.match(/Code postal[^·]*/)?.[0] || ""}`
   }));
   await communeCase("COM-OFGL-LINK", "Lien OFGL de la fiche filtré par code INSEE (et non par nom)", "Fameck", { geo: "fameck", ofgl: "fields_euros_par_habitant" }, async ({ page }) => {
-    const href = await page.$eval("#commune-result a.button", (a) => a.href).catch(() => "");
+    const href = await page.$$eval("#commune-result a.button", (as) => (as.find((a) => /OFGL/.test(a.textContent)) || {}).href || "").catch(() => "");
     return { status: /57206/.test(href) ? "VALIDÉ" : "ÉCHOUÉ", proof: "href=" + href };
   });
 

@@ -729,6 +729,14 @@
 
   function initFameckFinances() { /* L’analyse locale est désormais alimentée par la commune recherchée. */ }
 
+  // Les tableaux chargés après coup déplacent les sections : on revient sur l’ancre demandée.
+  function restoreAnchor(initialScroll) {
+    if (!location.hash || window.scrollY !== initialScroll) return;
+    let target = null;
+    try { target = document.querySelector(location.hash); } catch (error) { return; }
+    if (target) target.scrollIntoView({ block: "start" });
+  }
+
   async function init() {
     initMunicipalitySearch();
     initGlossary();
