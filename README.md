@@ -14,7 +14,7 @@ La publication INSEE du 29 septembre 2026 indique qu’au T2 2026 la dette publi
 
 - Indicateur présenté : dette publique française au sens de Maastricht, par trimestre.
 - Les sources et limites sont documentées dans `data/sources.json` et dans l’interface.
-- La recherche de commune interroge le référentiel national geo.api.gouv.fr (nom, code postal ou code INSEE, Corse comprise) ; chaque commune est identifiée par son code INSEE. Les comptes sont ensuite demandés à l’API OFGL, mais les noms de champs utilisés n’ont pas encore été vérifiés contre le schéma officiel : les montants affichés sont marqués « non rapprochés » (voir `AUDIT-TECHNIQUE.md`).
+- La recherche de commune interroge le référentiel national geo.api.gouv.fr (nom, code postal ou code INSEE, Corse comprise) ; chaque commune est identifiée par son code INSEE. La requête OFGL utilise les champs documentés dans les exemples officiels indexés du jeu « Comptes des communes » : `com_code`, `exer`, `type_de_budget="Budget principal"`, `agregat`, `montant` et `euros_par_habitant`. Le test HTTP réel depuis le site déployé et le rapprochement ligne à ligne des montants restent à faire ; les données locales restent donc marquées « non rapprochées » (voir `AUDIT-TECHNIQUE.md`).
 - Les données financières de Fameck sont affichées comme repères retranscrits d’une source secondaire (FMPC), non encore rapprochés de l’OFGL : aucune valeur locale n’est présentée comme vérifiée.
 - Le rapprochement automatique du fichier XLSX brut de l’INSEE reste à effectuer. Les chiffres affichés doivent donc être considérés comme un prototype tant que ce contrôle n’est pas terminé.
 
