@@ -323,6 +323,25 @@
         metrics.appendChild(card);
       });
       calculations.replaceChildren();
+      const analysis = document.getElementById("fameck-analysis");
+      if (analysis) {
+        const first = data.annual_series.find((item) => item.year === 2019);
+        const last = data.annual_series.find((item) => item.year === 2024);
+        if (first && last) {
+          const change = (current, base) => (current / base - 1) * 100;
+          const savingsChange = change(last.gross_savings, first.gross_savings);
+          const debtChange = change(last.debt, first.debt);
+          analysis.replaceChildren();
+          const title = document.createElement("strong");
+          title.textContent = "Ce que montre la série 2019–2024";
+          const paragraph = document.createElement("p");
+          paragraph.textContent = "L’épargne brute recule de " + ratio.format(Math.abs(savingsChange)) + " % tandis que l’encours de dette augmente de " + ratio.format(debtChange) + " %. Le taux d’épargne brute passe de " + ratio.format(first.savings_rate) + " % à " + ratio.format(last.savings_rate) + " %, et la capacité de désendettement publiée passe de " + ratio.format(first.debt_years) + " à " + ratio.format(last.debt_years) + " ans.";
+          const note = document.createElement("p");
+          note.className = "municipal-analysis-note";
+          note.textContent = "Lecture descriptive des valeurs retranscrites, sans attribution de cause ni jugement sur les choix municipaux. À confirmer après rapprochement avec l’export officiel OFGL.";
+          analysis.append(title, paragraph, note);
+        }
+      }
       if (history) {
         history.replaceChildren();
         data.annual_series.forEach((year) => {
