@@ -173,3 +173,26 @@ tbody tr:hover{background:#eeece3}
   .method-grid{grid-template-columns:1fr}
   .method-grid>div,.method-grid>div+div,.method-grid>div:nth-child(even){padding:1rem 0;border-right:0}
 }
+
+
+/* Lecture chiffrée : composition de la dette publique */
+.composition-section{background:#f0eee6;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink)}
+.composition-lead{display:flex;align-items:center;gap:1.5rem;margin:0 0 2rem;padding:1.3rem 0;border-top:2px solid var(--accent);border-bottom:1px solid var(--line)}
+.composition-number{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:clamp(2.5rem,5vw,4.5rem);font-weight:500;line-height:1;letter-spacing:-.06em;white-space:nowrap}
+.composition-lead strong{font-family:Georgia,"Times New Roman",serif;font-size:1.3rem;font-weight:500}
+.composition-lead p:not(.composition-number){margin:.3rem 0 0;color:var(--muted);font-size:.85rem}
+.composition-table-wrap{overflow-x:auto;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink)}
+.composition-table-wrap table{min-width:640px}
+.composition-table-wrap th{background:transparent}
+.composition-table-wrap td{background:transparent}
+.composition-table-wrap .numeric-cell{text-align:right;font-variant-numeric:tabular-nums}
+.composition-total-row td{border-top:2px solid var(--ink);font-weight:800}
+.composition-notes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:2.1rem;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink)}
+.composition-notes article{padding:1.15rem 1.2rem 1.3rem 0;border-right:1px solid var(--line)}
+.composition-notes article+article{padding-left:1.2rem}
+.composition-notes article:last-child{border-right:0}
+.composition-tag{display:block;margin-bottom:.65rem;color:var(--accent);font-size:.66rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.composition-notes strong{font-family:Georgia,"Times New Roman",serif;font-size:1.4rem;font-weight:500}
+.composition-notes p{margin:.45rem 0 0;color:#555750;font-size:.87rem}
+.composition-source{margin:1.2rem 0 0;color:var(--muted);font-size:.76rem;line-height:1.6}
+@media(max-width:760px){.composition-notes{grid-template-columns:1fr}.composition-notes article,.composition-notes article+article{padding:1rem 0;border-right:0;border-bottom:1px solid var(--line)}.composition-notes article:last-child{border-bottom:0}.composition-lead{align-items:flex-start;flex-direction:column;gap:.6rem}}
