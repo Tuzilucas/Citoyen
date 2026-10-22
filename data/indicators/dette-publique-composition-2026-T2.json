@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0.0",
+  "dataset_id": "dette-publique-composition-2026-T2",
+  "title": "Composition et variation de la dette publique — T2 2026",
+  "entity_id": "FR-S13",
+  "period": "2026-T2",
+  "period_end": "2026-06-30",
+  "unit": "milliards d'euros",
+  "source": {
+    "producer": "INSEE",
+    "publication_title": "À la fin du deuxième trimestre 2026, le ratio de dette publique s’établit à 119,0 % du PIB",
+    "publication_number": "Informations rapides n° 239",
+    "publication_date": "2026-09-29",
+    "url": "https://www.insee.fr/fr/statistiques/9053525",
+    "raw_series_url": "https://www.insee.fr/fr/statistiques/fichier/2830301/econ-gen-dette-trim-adm-pub-2.xlsx",
+    "validation_status": "transcription_de_la_publication_officielle; rapprochement_machine_avec_le_xlsx_non_effectue"
+  },
+  "headline": {
+    "gross_debt": 3595.5,
+    "gross_debt_change_qoq": 59.6,
+    "debt_gdp_percent": 119,
+    "net_debt": 3366.8,
+    "net_debt_change_qoq": 68.2,
+    "net_debt_gdp_percent": 111.4
+  },
+  "subsectors": [
+    {
+      "id": "etat",
+      "label": "État",
+      "debt": 2942.1,
+      "change_qoq": 53
+    },
+    {
+      "id": "odac",
+      "label": "Organismes divers d'administration centrale",
+      "debt": 69.2,
+      "change_qoq": -0.1
+    },
+    {
+      "id": "apul",
+      "label": "Administrations publiques locales",
+      "debt": 274.9,
+      "change_qoq": -1.7
+    },
+    {
+      "id": "asso",
+      "label": "Administrations de sécurité sociale",
+      "debt": 309.4,
+      "change_qoq": 8.4
+    }
+  ],
+  "interpretation": [
+    "La dette brute augmente de 59,6 Md€ sur le trimestre.",
+    "La contribution de l'État à la dette augmente de 53,0 Md€.",
+    "La dette des administrations publiques locales diminue de 1,7 Md€ sur le trimestre.",
+    "La dette nette augmente de 68,2 Md€, davantage que la dette brute, notamment parce que la trésorerie des administrations publiques baisse."
+  ],
+  "caveats": [
+    "La dette de Maastricht est une dette brute consolidée : elle n'est pas le déficit public.",
+    "La variation de la dette ne permet pas à elle seule de déduire le déficit public.",
+    "Les données proviennent de la publication INSEE consultée; le fichier XLSX n'a pas encore fait l'objet d'un rapprochement automatisé indépendant."
+  ]
+}
