@@ -43,7 +43,7 @@ La seule information obtenue sur l’OFGL vient d’une recherche web : titres e
 | Requête OFGL (champs, limite, libellés) | **Faible à moyenne** | Défauts établis par lecture du code ; noms de champs déduits d’indices indirects |
 | Écart entre dépôt et site déployé | **Non évalué** | Site inaccessible |
 
-### Décision à prendre avant fusion
+### Décisions et limites après publication
 
 Le `README.md` indique que « les tests et la documentation de développement ne doivent pas être copiés dans ce dépôt public ». Or la demande d’audit prévoit un rapport à la racine et une suite de tests. Ces fichiers ne contiennent aucun secret et ne sont pas utilisés par les pages. Ils sont donc **conservés sur la branche**, mais leur place définitive (dépôt public ou dépôt privé de développement) est **à arbitrer** avant la fusion.
 
@@ -56,7 +56,7 @@ Légende du **statut de constat** :
 - **Code** : établi par lecture précise du code, sans exécution possible ;
 - **À confirmer** : indice sérieux, preuve insuffisante.
 
-La colonne **Correction** indique si la branche corrige l’anomalie. Une correction n’est dite « testée » que si son test a été exécuté avec succès.
+La colonne **Correction** décrit la correction apportée dans la branche de travail. Les résultats de tests cités dans ce rapport sont ceux consignés lors de l’audit initial ; ils ne remplacent pas une nouvelle exécution sur la version publiée. Une correction n’est dite « testée » que si son test a été exécuté avec succès.
 
 ### P0 — bloquant
 
@@ -127,7 +127,7 @@ La colonne **Correction** indique si la branche corrige l’anomalie. Une correc
 ### Environnement
 
 - **Machine** : Linux, Chromium headless (Playwright 1.56.1), `deviceScaleFactor` 1.
-- **Version testée avant correction** : `main` 230d34d. **Après correction** : branche `ccr-8e430522-ifzcgl`.
+- **Version de référence avant correction** : `main` 230d34d. Les corrections ont ensuite été publiées sur `main` au commit `ed7f5c0`, puis cette note d’audit a été actualisée au commit `b450947`.
 - **Service des pages** : dépôt servi localement (serveur HTTP statique). **Toute requête externe est interceptée.**
   - Pour `geo.api.gouv.fr`, les réponses simulées ne contiennent que des identifiants : nom, code INSEE, département, codes postaux. Aucune population n’est inventée.
   - Pour `data.ofgl.fr`, les réponses sont des **jeux fictifs**, nommés dans le script : `ods_limit_error`, `fields_euros_par_habitant`, `page_100`, `page_50`, `truncated_old_years`, `malformed`.
@@ -238,7 +238,7 @@ La colonne **Correction** indique si la branche corrige l’anomalie. Une correc
 
 Les champs ci-dessous sont **ceux du code**. Aucun n’a pu être confronté au schéma officiel.
 
-| Élément affiché | Champ utilisé par le code | Formule | Périmètre | Unité, arrondi | Exercices testés | Rapprochement OFGL | Conditions de masquage (branche) |
+| Élément affiché | Champ utilisé par le code | Formule | Périmètre | Unité, arrondi | Exercices testés | Rapprochement OFGL | Conditions de masquage (version publiée) |
 |---|---|---|---|---|---|---|---|
 | Identifiant de la commune | `com_code` (filtre) | — | — | — | — | **Non vérifié** (API-01) | Code INSEE validé avant la requête |
 | Exercice | `exer` | max(exer) **si la réponse est complète** | — | année | — | **Non vérifié** | Masqué si la réponse est incomplète ou sans exercice |
