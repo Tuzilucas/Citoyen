@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-labelledby="title desc">
+<title id="title">Information citoyenne</title><desc id="desc">Profil stylisé en bleu, blanc et rouge avec croix de Lorraine dorée et graphique en colonnes.</desc>
+<defs><clipPath id="round"><circle cx="120" cy="120" r="111"/></clipPath></defs>
+<g clip-path="url(#round)">
+<rect width="120" height="240" x="0" fill="#0b3970"/><rect width="120" height="240" x="120" fill="#e63946"/>
+<path d="M120 0H145L132 24 145 44 129 63 142 83 128 104 143 125 128 145 140 164 124 185 137 205 120 240H90L104 211 94 193 104 175 88 158 102 140 88 121 102 102 89 83 103 64 91 45 105 25Z" fill="#fff"/>
+<path d="M70 46c-8 5-11 14-10 23l-8 13 12 8-2 12 12 8 1 15-9 14 9 12 20 1 9 14-8 16-14 12-1 25 29-12 11-18-1-22 15-12 3-24-9-14 2-15-12-9-7-19-13-10-17 1-10-7Z" fill="#fff" opacity=".98"/>
+<path d="M145 0H240V240H145L158 220 153 199 164 180 157 160 168 140 158 120 170 101 160 80 171 60 160 40 171 20Z" fill="#e63946" opacity=".92"/>
+<g fill="#092b4d" opacity=".96"><rect x="143" y="160" width="20" height="71" rx="2"/><rect x="168" y="137" width="20" height="94" rx="2"/><rect x="193" y="110" width="20" height="121" rx="2"/></g>
+<g stroke="#e6b64d" stroke-width="7" stroke-linecap="round" fill="none"><path d="M120 72V168"/><path d="M100 91H140"/><path d="M100 108H140"/></g>
+<circle cx="120" cy="120" r="111" fill="none" stroke="#fff" stroke-width="5"/>
+</g></svg>
