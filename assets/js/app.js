@@ -321,18 +321,210 @@
     );
   }
 
+  const MUNICIPAL_DEFINITIONS = [
+    { key: "Recettes de fonctionnement", aliases: ["recettes de fonctionnement"], label: "Recettes de fonctionnement", definition: "Les ressources courantes de la commune sur l’exercice : fiscalité, dotations, participations et produits des services selon les catégories comptables. Ce n’est ni le budget total ni une somme nécessairement disponible librement.", formula: "Somme des recettes classées en fonctionnement dans l’agrégat OFGL." },
+    { key: "Dépenses de fonctionnement", aliases: ["depenses de fonctionnement"], label: "Dépenses de fonctionnement", definition: "Le coût courant des services : personnel, énergie, achats, entretien, prestations et autres charges. La composition exacte dépend de la nomenclature et du périmètre de l’agrégat.", formula: "Somme des dépenses classées en fonctionnement dans l’agrégat OFGL." },
+    { key: "Épargne brute", aliases: ["epargne brute", "capacite d'autofinancement brute"], label: "Épargne brute", definition: "La marge annuelle dégagée par le fonctionnement avant remboursement du capital de la dette et financement des investissements. Elle aide à apprécier la capacité de la commune à financer ses projets sans recourir uniquement à l’emprunt.", formula: "À titre de contrôle : recettes de fonctionnement − dépenses de fonctionnement. La définition comptable exacte de l’agrégat source prévaut." },
+    { key: "Épargne nette", aliases: ["epargne nette"], label: "Épargne nette", definition: "La marge restant après prise en compte du remboursement du capital de la dette selon la définition de la source. Elle est généralement plus proche de la capacité à contribuer aux investissements, mais ne constitue pas à elle seule le financement total disponible.", formula: "Souvent épargne brute − remboursement du capital de la dette ; vérifier la définition OFGL utilisée." },
+    { key: "Encours de dette", aliases: ["encours de dette", "dette"], label: "Encours de dette", definition: "Le capital restant dû à une date donnée, généralement en fin d’exercice. C’est un stock, à distinguer des emprunts nouveaux, des remboursements annuels et des intérêts.", formula: "Montant d’encours déclaré pour l’exercice ; la date de référence doit être confirmée dans la fiche de l’indicateur." },
+    { key: "Annuité de la dette", aliases: ["annuite de la dette"], label: "Annuité de la dette", definition: "Le montant payé au titre de la dette pendant l’année. Selon la source, il peut regrouper remboursement du capital et intérêts ; il ne faut pas le confondre avec l’encours total restant dû.", formula: "Utiliser l’agrégat OFGL correspondant et vérifier les composantes retenues." },
+    { key: "Dépenses d’équipement", aliases: ["depenses d'equipement"], label: "Dépenses d’équipement", definition: "Les dépenses qui servent à acquérir, construire ou améliorer durablement des équipements : bâtiments, écoles, voirie, matériels ou rénovations. Elles forment une partie des dépenses d’investissement.", formula: "Montant de l’agrégat d’équipement publié par la source." },
+    { key: "Dépenses d’investissement", aliases: ["depenses d'investissement"], label: "Dépenses d’investissement", definition: "Les dépenses relevant de l’investissement selon le périmètre comptable retenu. Elles peuvent comprendre des opérations autres que les seuls équipements ; comparer uniquement des séries définies de la même façon.", formula: "Montant de l’agrégat d’investissement publié par la source." },
+    { key: "Recettes d’investissement", aliases: ["recettes d'investissement"], label: "Recettes d’investissement", definition: "Les ressources affectées au financement de l’investissement. Selon l’agrégat, elles peuvent inclure subventions, fonds, cessions et emprunts : une recette d’emprunt finance une dépense mais augmente la dette.", formula: "Montant de l’agrégat de recettes d’investissement publié par la source." },
+    { key: "Frais de personnel", aliases: ["frais de personnel", "charges de personnel"], label: "Frais de personnel", definition: "Les dépenses liées aux agents et à la rémunération du personnel selon le classement comptable. Le ratio par rapport aux dépenses de fonctionnement est informatif, mais il ne mesure pas à lui seul l’efficacité des services.", formula: "Frais de personnel ÷ dépenses de fonctionnement × 100, si les deux agrégats sont disponibles et comparables." }
+  ];
+
+  function municipalNumber(value) {
+    const n = Number(value);
+    return Number.isFinite(n) ? n : null;
+  }
+
+  function municipalRow(rows, definition, year) {
+    const f = lib.OFGL.fields;
+    return rows.find((row) => {
+      if (year !== undefined && Number(row[f.year]) !== Number(year)) return false;
+      const label = lib.normalizeText(row[f.aggregate] || "");
+      return definition.aliases.some((alias) => label === lib.normalizeText(alias));
+    }) || null;
+  }
+
+  function municipalValue(rows, definition, year) {
+    const row = municipalRow(rows, definition, year);
+    return row ? lib.pickAmount(row) : null;
+  }
+
+  function appendMunicipalMetric(container, definition, value, perCapita, year) {
+    const card = document.createElement("article");
+    card.className = "municipal-metric";
+    const label = paragraph(definition.label, "municipal-metric-label");
+    const amount = paragraph(value === null ? "Non disponible" : formatFinancialAmount(value), "municipal-metric-value");
+    const context = paragraph(perCapita === null ? "Montant par habitant non disponible" : formatFinancialAmount(perCapita) + " par habitant · " + year, "municipal-metric-context");
+    const meaning = paragraph(definition.definition, "municipal-metric-definition");
+    const formula = paragraph("Lecture / calcul : " + definition.formula, "municipal-metric-definition");
+    card.append(label, amount, context, meaning, formula);
+    container.appendChild(card);
+  }
+
+  function renderSelectedTerritory(commune, data) {
+    const title = document.getElementById("municipal-title");
+    const status = document.getElementById("municipal-status");
+    const intro = document.getElementById("municipal-intro");
+    const metrics = document.getElementById("fameck-metrics");
+    const calculations = document.getElementById("fameck-calculs");
+    const analysis = document.getElementById("fameck-analysis");
+    const historyWrap = document.getElementById("municipal-history-wrap");
+    const history = document.getElementById("fameck-history-body");
+    if (!metrics || !analysis) return;
+
+    const summary = lib.summarizeOfglRecords(data.rows, data.total, commune.code);
+    const f = lib.OFGL.fields;
+    if (title) title.textContent = "Les finances de " + commune.nom + " (" + commune.code + ")";
+    if (status) status.textContent = !summary.complete ? "Données incomplètes" : "Données OFGL · à interpréter avec prudence";
+    if (intro) intro.textContent = "Commune : " + commune.nom + " · code INSEE " + commune.code + " · département " + (commune.codeDepartement || "non précisé") + ". Périmètre demandé : budget principal. La série ci-dessous provient de l’API OFGL et doit être lue avec ses définitions comptables ; une donnée absente n’équivaut jamais à zéro. Les résultats sont descriptifs : ils ne prouvent pas, à eux seuls, la qualité ou la mauvaise gestion d’une municipalité.";
+    metrics.replaceChildren();
+    calculations.replaceChildren();
+    analysis.replaceChildren();
+    if (history) history.replaceChildren();
+
+    if (!summary.complete || summary.latestYear === null) {
+      if (status) status.textContent = "Impossible de valider la série";
+      metrics.appendChild(paragraph("Aucun montant de synthèse n’est affiché : la réponse de l’OFGL est incomplète ou l’exercice ne peut pas être identifié de façon fiable. " + summary.received + " ligne(s) reçue(s), " + (summary.totalCount === null ? "total non communiqué" : summary.totalCount + " ligne(s) annoncée(s)") + ".", "commune-method-note"));
+      analysis.append(paragraph("Pourquoi aucun chiffre n’est présenté : choisir le dernier exercice à partir d’un extrait tronqué pourrait mélanger des années ou masquer des agrégats. Réessayez plus tard ou ouvrez la fiche OFGL de cette commune."));
+      if (historyWrap) historyWrap.hidden = true;
+      return;
+    }
+
+    const latestYear = summary.latestYear;
+    const available = MUNICIPAL_DEFINITIONS.filter((d) => municipalRow(summary.latestRecords, d, latestYear));
+    const shown = available.length ? available : [];
+    shown.forEach((d) => {
+      const row = municipalRow(summary.latestRecords, d, latestYear);
+      appendMunicipalMetric(metrics, d, lib.pickAmount(row), lib.pickPerCapita(row), latestYear);
+    });
+    if (!shown.length) metrics.appendChild(paragraph("L’API a renvoyé des lignes, mais aucun des agrégats de référence n’a été reconnu avec les libellés attendus. Aucun montant n’est interprété automatiquement. Consultez la source officielle et les libellés bruts.", "commune-method-note"));
+
+    const revenue = municipalValue(data.rows, MUNICIPAL_DEFINITIONS[0], latestYear);
+    const expense = municipalValue(data.rows, MUNICIPAL_DEFINITIONS[1], latestYear);
+    const savings = municipalValue(data.rows, MUNICIPAL_DEFINITIONS[2], latestYear);
+    const netSavings = municipalValue(data.rows, MUNICIPAL_DEFINITIONS[3], latestYear);
+    const debt = municipalValue(data.rows, MUNICIPAL_DEFINITIONS[4], latestYear);
+    const annuity = municipalValue(data.rows, MUNICIPAL_DEFINITIONS[5], latestYear);
+    const equipment = municipalValue(data.rows, MUNICIPAL_DEFINITIONS[6], latestYear);
+    const investment = municipalValue(data.rows, MUNICIPAL_DEFINITIONS[7], latestYear);
+    const investmentRevenue = municipalValue(data.rows, MUNICIPAL_DEFINITIONS[8], latestYear);
+    const staff = municipalValue(data.rows, MUNICIPAL_DEFINITIONS[9], latestYear);
+    const ratio = new Intl.NumberFormat("fr-FR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const addCalculation = (label, value, explanation) => {
+      const article = document.createElement("article");
+      article.className = "municipal-calculation";
+      const h = document.createElement("strong");
+      h.textContent = label;
+      const v = document.createElement("span");
+      v.textContent = value === null || !Number.isFinite(value) ? "Non calculable" : ratio.format(value) + (label.includes("durée") ? " ans" : " %");
+      const p = paragraph(explanation);
+      article.append(h, v, p);
+      calculations.appendChild(article);
+    };
+    const savingsRate = revenue !== null && revenue > 0 && savings !== null ? savings / revenue * 100 : null;
+    const staffRate = expense !== null && expense > 0 && staff !== null ? staff / expense * 100 : null;
+    const debtYears = savings !== null && savings > 0 && debt !== null ? debt / savings : null;
+    addCalculation("Taux d’épargne brute", savingsRate, "Épargne brute ÷ recettes de fonctionnement × 100. Il indique la part des recettes courantes qui reste sous forme d’épargne brute. Ce ratio ne dit pas si les services sont suffisants ni si les investissements sont pertinents.");
+    addCalculation("Dépenses de personnel / fonctionnement", staffRate, "Frais de personnel ÷ dépenses de fonctionnement × 100. Le ratio n’est affiché que si les deux agrégats sont présents et positifs ; il ne mesure pas à lui seul la productivité ni la qualité du service public.");
+    addCalculation("Capacité de désendettement théorique", debtYears, "Encours de dette ÷ épargne brute. Le résultat est exprimé en années théoriques, sous l’hypothèse irréaliste que toute l’épargne brute sert à rembourser la dette. Si l’épargne brute est nulle ou négative, ce ratio n’est pas interprétable normalement.");
+    if (revenue !== null && expense !== null) {
+      const balance = revenue - expense;
+      const article = document.createElement("article");
+      article.className = "municipal-calculation";
+      const h = document.createElement("strong"); h.textContent = "Écart recettes − dépenses de fonctionnement";
+      const v = document.createElement("span"); v.textContent = formatFinancialAmount(balance);
+      const p = paragraph("Calcul arithmétique effectué à partir des deux agrégats OFGL. Cet écart peut différer de l’épargne brute officielle si les agrégats ont des retraitements ou périmètres distincts : il faut vérifier la définition comptable avant de les assimiler.");
+      article.append(h, v, p); calculations.appendChild(article);
+    }
+
+    const makeP = (txt, cls) => paragraph(txt, cls);
+    const firstYear = summary.years.length ? Math.min(...summary.years) : latestYear;
+    const yearList = summary.years.slice().sort((a,b) => a-b);
+    const firstRevenue = municipalValue(data.rows, MUNICIPAL_DEFINITIONS[0], firstYear);
+    const firstExpense = municipalValue(data.rows, MUNICIPAL_DEFINITIONS[1], firstYear);
+    const firstSavings = municipalValue(data.rows, MUNICIPAL_DEFINITIONS[2], firstYear);
+    const firstDebt = municipalValue(data.rows, MUNICIPAL_DEFINITIONS[4], firstYear);
+    const changeText = (label, first, last) => {
+      const pct = lib.percentChange(last, first);
+      if (pct === null) return label + " : évolution non calculable (valeur de départ absente, nulle ou négative).";
+      return label + " : " + (pct > 0.05 ? "hausse" : pct < -0.05 ? "baisse" : "stabilité") + " de " + ratio.format(Math.abs(pct)) + " % entre " + firstYear + " et " + latestYear + " en euros courants.";
+    };
+    const lead = document.createElement("strong"); lead.textContent = "Analyse vulgarisée détaillée · exercice " + latestYear;
+    analysis.appendChild(lead);
+    analysis.appendChild(makeP("Lecture générale : cette photographie porte sur le budget principal et le dernier exercice identifiable dans la réponse complète. Les recettes et dépenses décrivent des flux de l’année ; la dette décrit un stock à une date. Il faut donc éviter de comparer directement le total annuel des dépenses à l’encours de dette comme s’il s’agissait de la même chose."));
+    if (revenue !== null) analysis.appendChild(makeP("Recettes de fonctionnement : " + formatFinancialAmount(revenue) + ". Elles financent les services courants et comprennent plusieurs catégories de ressources. Leur hausse peut venir des taux, des bases fiscales, des dotations, des tarifs ou d’autres facteurs ; les seuls agrégats ne permettent pas d’identifier la cause."));
+    if (expense !== null) analysis.appendChild(makeP("Dépenses de fonctionnement : " + formatFinancialAmount(expense) + ". Elles correspondent au coût courant des services. Une hausse ne signifie pas automatiquement une dérive : elle peut aussi refléter l’inflation, l’énergie, les rémunérations, l’évolution des besoins ou du périmètre. Pour conclure, il faudrait décomposer les postes et comparer avec des communes comparables."));
+    if (savings !== null) analysis.appendChild(makeP("Épargne brute : " + formatFinancialAmount(savings) + (savingsRate === null ? "." : ", soit " + ratio.format(savingsRate) + " % des recettes de fonctionnement selon le calcul indicatif ci-dessus.") + " Elle constitue une marge avant remboursement du capital et financement des investissements. Une épargne positive donne une capacité de financement, mais ne signifie pas que l’argent est entièrement libre ou qu’un projet est automatiquement finançable."));
+    if (netSavings !== null) analysis.appendChild(makeP("Épargne nette : " + formatFinancialAmount(netSavings) + ". Elle cherche à mesurer ce qui reste après le remboursement du capital selon la définition de la source. Il faut vérifier les retraitements exacts avant de l’assimiler à une trésorerie disponible."));
+    if (debt !== null) analysis.appendChild(makeP("Encours de dette : " + formatFinancialAmount(debt) + ". C’est le capital restant dû à la date de référence, pas le montant payé dans l’année. Pour l’interpréter, on examine aussi l’épargne brute, les annuités, les taux, les échéances et les investissements financés."));
+    if (debtYears !== null) analysis.appendChild(makeP("Désendettement théorique : " + ratio.format(debtYears) + " ans, calculé par encours de dette ÷ épargne brute. Ce n’est pas une prévision de remboursement : la commune doit aussi continuer à faire fonctionner ses services et investir."));
+    if (annuity !== null) analysis.appendChild(makeP("Annuité de dette : " + formatFinancialAmount(annuity) + ". Vérifiez dans la fiche OFGL si cet agrégat regroupe capital et intérêts ; l’annuité mesure un effort annuel, contrairement à l’encours qui mesure une dette restante."));
+    if (equipment !== null || investment !== null) analysis.appendChild(makeP("Investissement : " + (equipment === null ? "dépenses d’équipement non disponibles" : formatFinancialAmount(equipment) + " de dépenses d’équipement") + (investment === null ? "" : " ; " + formatFinancialAmount(investment) + " de dépenses d’investissement") + ". Les équipements sont généralement une composante de l’investissement, pas nécessairement son total. Pour juger l’effort d’investissement, il faut regarder les recettes dédiées, les subventions, l’emprunt, l’état du patrimoine et les besoins du territoire."));
+    if (investmentRevenue !== null) analysis.appendChild(makeP("Recettes d’investissement : " + formatFinancialAmount(investmentRevenue) + ". Elles peuvent inclure des subventions, des fonds, des cessions ou des emprunts selon l’agrégat. Une recette issue d’un nouvel emprunt améliore le financement immédiat mais accroît la dette : la composition de cette recette est essentielle."));
+    if (staff !== null) analysis.appendChild(makeP("Frais de personnel : " + formatFinancialAmount(staff) + (staffRate === null ? "." : ", soit " + ratio.format(staffRate) + " % des dépenses de fonctionnement.") + " Ce poste doit être mis en regard des compétences exercées, des effectifs, des services rendus et des choix d’organisation ; le ratio seul ne permet pas de qualifier une commune de dépensière ou d’économe."));
+    analysis.appendChild(makeP(changeText("Recettes de fonctionnement", firstRevenue, revenue)));
+    analysis.appendChild(makeP(changeText("Dépenses de fonctionnement", firstExpense, expense)));
+    analysis.appendChild(makeP(changeText("Épargne brute", firstSavings, savings)));
+    analysis.appendChild(makeP(changeText("Encours de dette", firstDebt, debt)));
+    analysis.appendChild(makeP("Limites indispensables : montants nominaux, non corrigés de l’inflation ; comparaison entre première et dernière année seulement ; pas de comparaison par strate démographique dans cette version ; les libellés et périmètres doivent être vérifiés dans la documentation OFGL. Ces chiffres ne démontrent aucune causalité et ne constituent pas un jugement politique.", "municipal-analysis-note"));
+    if (historyWrap) historyWrap.hidden = false;
+    const cap = document.getElementById("municipal-history-caption");
+    if (cap) cap.textContent = commune.nom + " · budget principal · données OFGL à contrôler";
+    const historyIntro = document.getElementById("municipal-history-intro");
+    if (historyIntro) historyIntro.textContent = "Exercices reçus : " + yearList.join(", ") + ". Les montants sont en euros courants. « Non disponible » signifie que l’agrégat n’a pas été trouvé ; il ne signifie pas zéro.";
+    if (history) {
+      yearList.forEach((year) => {
+        const tr = document.createElement("tr");
+        const defs = [MUNICIPAL_DEFINITIONS[0], MUNICIPAL_DEFINITIONS[1], MUNICIPAL_DEFINITIONS[2], MUNICIPAL_DEFINITIONS[4]];
+        const vals = defs.map((d) => municipalValue(data.rows, d, year));
+        const r = vals[0] !== null && vals[0] > 0 && vals[2] !== null ? ratio.format(vals[2] / vals[0] * 100) + " %" : "Non disponible";
+        const d = vals[2] !== null && vals[2] > 0 && vals[3] !== null ? ratio.format(vals[3] / vals[2]) + " ans" : "Non calculable";
+        const cells = [String(year), ...vals.map((v) => v === null ? "Non disponible" : formatFinancialAmount(v)), r, d];
+        cells.forEach((txt, i) => { const td = document.createElement("td"); td.textContent = txt; if (i > 0) td.className = "numeric-cell"; tr.appendChild(td); });
+        if (year === latestYear) tr.className = "current-year-row";
+        history.appendChild(tr);
+      });
+    }
+    const millions = new Intl.NumberFormat("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const set = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
+    set("ribbon-fameck-savings", savings === null ? "—" : millions.format(savings / 1e6) + " M€");
+    set("ribbon-fameck-debt", debt === null ? "—" : millions.format(debt / 1e6) + " M€");
+    set("ribbon-fameck-rate", savingsRate === null ? "—" : ratio.format(savingsRate) + " %");
+    set("ribbon-local-savings-context", "Exercice " + latestYear + " · " + commune.nom);
+    set("ribbon-local-debt-context", "Exercice " + latestYear + " · " + commune.nom);
+    set("ribbon-local-rate-context", "Calcul indicatif · " + commune.nom);
+  }
+
   async function loadCommuneCard(card, commune, signal) {
     const loading = paragraph("Chargement des comptes OFGL pour " + commune.nom + "…", "commune-loading");
     card.appendChild(loading);
+    const selectedStatus = document.getElementById("municipal-status");
+    const selectedTitle = document.getElementById("municipal-title");
+    if (selectedTitle) selectedTitle.textContent = "Chargement de l’analyse de " + commune.nom + "…";
+    if (selectedStatus) selectedStatus.textContent = "Chargement des données";
     try {
       const data = await fetchCommuneFinances(commune, signal);
       if (signal.aborted) return;
       loading.remove();
       renderCommuneFinances(card, commune, data);
+      renderSelectedTerritory(commune, data);
+      const link = document.createElement("a");
+      link.className = "button button-secondary";
+      link.href = "#fameck-finances";
+      link.textContent = "Lire l’analyse détaillée de " + commune.nom;
+      card.appendChild(link);
     } catch (error) {
       if (signal.aborted) return;
       loading.remove();
       renderFinanceError(card, error);
+      if (selectedTitle) selectedTitle.textContent = "Analyse de " + commune.nom;
+      if (selectedStatus) selectedStatus.textContent = "Données indisponibles";
+      const metrics = document.getElementById("fameck-metrics");
+      if (metrics) metrics.replaceChildren(paragraph(serviceErrorText(error, "L’OFGL") + " Aucun montant n’est affiché. Réessayez ou ouvrez la source officielle.", "commune-method-note"));
     }
     card.appendChild(sourceLink(commune));
   }
@@ -535,128 +727,12 @@
     }
   }
 
-  async function initFameckFinances() {
-    const metrics = document.getElementById("fameck-metrics");
-    const calculations = document.getElementById("fameck-calculs");
-    const history = document.getElementById("fameck-history-body");
-    if (!metrics || !calculations) return;
-    const euro = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
-    try {
-      const response = await fetch("data/indicators/fameck-finances-2024.json", { cache: "no-store" });
-      if (!response.ok) throw new Error("HTTP " + response.status);
-      const data = await response.json();
-      metrics.replaceChildren();
-      data.indicators.forEach((item) => {
-        const card = document.createElement("article");
-        card.className = "municipal-metric";
-        const label = document.createElement("p");
-        label.className = "municipal-metric-label";
-        label.textContent = item.label;
-        const amount = document.createElement("p");
-        amount.className = "municipal-metric-value";
-        amount.textContent = euro.format(item.value_eur);
-        const perCapita = document.createElement("p");
-        perCapita.className = "municipal-metric-context";
-        perCapita.textContent = money.format(item.value_per_capita_eur) + " € par habitant";
-        const definition = document.createElement("p");
-        definition.className = "municipal-metric-definition";
-        definition.textContent = item.definition;
-        card.append(label, amount, perCapita, definition);
-        metrics.appendChild(card);
-      });
-      calculations.replaceChildren();
-      const analysis = document.getElementById("fameck-analysis");
-      if (analysis) {
-        const series = data.annual_series.slice().sort((a, b) => a.year - b.year);
-        const first = series[0];
-        const last = series.find((item) => item.year === data.display_year);
-        if (first && last && first !== last) {
-          const pct = (key) => lib.percentChange(last[key], first[key]);
-          const describe = (label, value, plural) => value === null
-            ? label + (plural ? " ne peuvent pas être comparées" : " ne peut pas être comparée") + " (base nulle ou négative)"
-            : label + " " + lib.directionWord(value, plural ? "progressent" : "progresse", plural ? "reculent" : "recule", plural ? "sont stables" : "est stable") + (Math.abs(value) < 0.05 ? "" : " de " + ratio.format(Math.abs(value)) + " %");
-          const revenueChange = pct("revenue");
-          const expenseChange = pct("expense");
-          const savingsChange = pct("gross_savings");
-          const period = first.year + " et " + last.year;
-          analysis.replaceChildren();
-          const title = document.createElement("strong");
-          title.textContent = "Ce que montre la série " + first.year + "–" + last.year;
-          const paragraph = document.createElement("p");
-          let reading = "";
-          if (revenueChange !== null && expenseChange !== null && Math.abs(expenseChange - revenueChange) >= 0.05) {
-            reading = expenseChange > revenueChange
-              ? " En clair : entre ces deux exercices, les dépenses de fonctionnement ont augmenté plus vite que les recettes, ce qui réduit la marge annuelle disponible pour financer les investissements et rembourser le capital de la dette."
-              : " En clair : entre ces deux exercices, les recettes de fonctionnement ont augmenté plus vite que les dépenses, ce qui accroît la marge annuelle disponible.";
-          }
-          paragraph.textContent = "Entre " + period + ", " + describe("les recettes de fonctionnement", revenueChange, true) + ", et " + describe("les dépenses", expenseChange, true) + ". " +
-            describe("L’épargne brute", savingsChange) + ". Le taux d’épargne brute passe de " + ratio.format(first.savings_rate) + " % à " + ratio.format(last.savings_rate) + " %, et la capacité de désendettement publiée passe de " + ratio.format(first.debt_years) + " à " + ratio.format(last.debt_years) + " ans." + reading;
-          const note = document.createElement("p");
-          note.className = "municipal-analysis-note";
-          note.textContent = "Comparaison de deux exercices seulement (" + period + ") : les années intermédiaires figurent dans le tableau et peuvent évoluer différemment. Lecture descriptive des valeurs retranscrites, sans attribution de cause ni jugement politique. Montants nominaux : l’inflation n’est pas corrigée. Ces résultats restent provisoires, car la série secondaire n’a pas encore été rapprochée ligne à ligne de l’export officiel OFGL.";
-          analysis.append(title, paragraph, note);
-        }
-      }
-      if (history) {
-        history.replaceChildren();
-        data.annual_series.forEach((year) => {
-          const tr = document.createElement("tr");
-          const cells = [
-            String(year.year),
-            euro.format(year.revenue),
-            euro.format(year.expense),
-            euro.format(year.gross_savings),
-            euro.format(year.debt),
-            ratio.format(year.savings_rate) + " %",
-            ratio.format(year.debt_years) + " ans"
-          ];
-          cells.forEach((text, index) => {
-            const td = document.createElement("td");
-            td.textContent = text;
-            if (index > 0) td.className = "numeric-cell";
-            tr.appendChild(td);
-          });
-          if (year.year === data.display_year) tr.className = "current-year-row";
-          history.appendChild(tr);
-        });
-      }
-      const ribbonYear = data.annual_series.find((item) => item.year === data.display_year);
-      if (ribbonYear) {
-        const millions = new Intl.NumberFormat("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        const set = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text; };
-        set("ribbon-fameck-savings", millions.format(ribbonYear.gross_savings / 1e6) + " M€");
-        set("ribbon-fameck-debt", millions.format(ribbonYear.debt / 1e6) + " M€");
-        set("ribbon-fameck-rate", millions.format(ribbonYear.gross_savings / ribbonYear.revenue * 100) + " %");
-      }
-      data.calculated_indicators.forEach((item) => {
-        const article = document.createElement("article");
-        article.className = "municipal-calculation";
-        const title = document.createElement("strong");
-        title.textContent = item.label;
-        const value = document.createElement("span");
-        value.textContent = item.value_percent !== undefined ? ratio.format(item.value_percent) + " %" : ratio.format(item.value_years) + " ans";
-        const formula = document.createElement("p");
-        formula.textContent = "Formule : " + item.formula + ". Indicateur indicatif, calculé à partir des valeurs retranscrites.";
-        article.append(title, value, formula);
-        calculations.appendChild(article);
-      });
-    } catch (error) {
-      metrics.textContent = "Les données de Fameck ne peuvent pas être chargées pour le moment. Consultez les sources liées à cette section.";
-    }
-  }
-
-  // Les tableaux chargés après coup déplacent les sections : on revient sur l’ancre demandée.
-  function restoreAnchor(initialScroll) {
-    if (!location.hash || window.scrollY !== initialScroll) return;
-    let target = null;
-    try { target = document.querySelector(location.hash); } catch (error) { return; }
-    if (target) target.scrollIntoView({ block: "start" });
-  }
+  function initFameckFinances() { /* L’analyse locale est désormais alimentée par la commune recherchée. */ }
 
   async function init() {
     initMunicipalitySearch();
     initGlossary();
-    const pending = [initDebtComposition(), initFameckFinances()];
+    const pending = [initDebtComposition()];
     const form = document.getElementById("claim-form");
     if (form) form.addEventListener("submit", handleClaim);
     try {
