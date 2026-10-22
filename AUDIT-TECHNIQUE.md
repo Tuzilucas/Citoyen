@@ -2,10 +2,10 @@
 
 - **Date** : 22 octobre 2026
 - **Objet** : site https://tuzilucas.github.io/Citoyen/ — dépôt `Tuzilucas/Citoyen`
-- **Version publiée** : `main` au commit `ed7f5c0` (publication des corrections le 22 octobre 2026)
-- **Base auditée initialement** : `230d34d` ; les corrections sont maintenant intégrées à `main`.
-- **Validation de la version publiée** : contrôles statiques du JavaScript, cohérence des identifiants de navigation et vérification de la configuration GitHub Actions. Les suites automatisées n’ont pas été relancées après publication ; aucun test d’API réelle ni contrôle visuel du site déployé n’est revendiqué.
-- **Outils** : inspection du code et de l’historique Git ; les tests navigateur précédemment décrits concernent la version et les conditions indiquées dans les sections correspondantes.
+- **Version publiée** : branche `main`, commit `dabca5b1c28fa021fac7e285f13cfe98136d98da` (22 octobre 2026).
+- **Base auditée initialement** : `230d34d` ; les corrections d’interface et de navigation sont intégrées à `main`.
+- **Validation après publication** : syntaxe JavaScript et cohérence des identifiants de navigation contrôlées statiquement. Le README précise que le workflow de tests est manuel uniquement. Les suites automatisées n’ont pas été relancées après publication ; aucun appel réel à l’API OFGL ni contrôle visuel du site déployé n’est revendiqué.
+- **Limite de publication** : le commit est bien présent sur `main`, mais l’accès direct au site déployé n’a pas pu être vérifié depuis cet environnement.
 
 ---
 
@@ -314,7 +314,7 @@ Glossaire : 48 définitions compréhensibles et non contradictoires avec les cal
 | 9 | Vérification d’affirmation : sujet communal, périodes annuelles. | — | CLAIM-01 à 03 | **Fait, testé** |
 | 10 | Métadonnées de partage (ajouter une image PNG 1200×630). | — | SEO-01 | Fait, sauf image |
 | 11 | Décider de l’emplacement des tests et de l’audit (dépôt public ou privé). | — | README-01 | **Décision du propriétaire** |
-| 12 | Réduire la navigation mobile. | 8 | RESP-02 | **Code ajouté** : bouton accessible, ouverture/fermeture, Escape, fermeture après navigation ; tests e2e ajoutés, exécution à confirmer. |
+| 12 | Réduire la navigation mobile. | 8 | RESP-02 | **Code publié sur `main`** : bouton accessible, ouverture/fermeture, Escape, fermeture après navigation ; test e2e ajouté mais non relancé après publication. |
 | 13 | Consolider `app.css` (variables, points de rupture, règles écrasées), avec comparaison de captures. | 8, 12 | CSS-01 | À faire |
 | 14 | Améliorations facultatives : extraction « Md€ », liens officiels du glossaire, cohérence du lien « Présidentielle 2027 », arbitrage sur le logo. | — | CLAIM-04, A11Y-01, NEUT-01 | Facultatif |
 
