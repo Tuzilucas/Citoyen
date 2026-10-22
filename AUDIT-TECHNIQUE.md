@@ -5,13 +5,112 @@
 - **Version publiée** : branche `main` (état vérifié le 22 octobre 2026 ; voir l’historique Git du dépôt pour le commit courant).
 - **Base auditée initialement** : `230d34d` ; les corrections d’interface et de navigation sont intégrées à `main`.
 - **Mise à jour du 22 octobre 2026** : les champs de requête OFGL ont été corrigés dans `assets/js/citoyen-lib.js` d’après les exemples officiels indexés du jeu « Comptes des communes » : `com_code`, `exer`, `type_de_budget="Budget principal"`, `agregat`, `montant`, `euros_par_habitant`. Source : [page officielle OFGL et console API](https://data.ofgl.fr/explore/dataset/ofgl-base-communes/api/) ; exemple de requête indexé utilisant `type_de_budget="Budget principal"` et les champs `com_code`, `montant`, `euros_par_habitant` : [référence externe de recherche](https://faits-politiques.fr/sources/). Cette preuve documentaire ne remplace pas un appel HTTP réel depuis le site. Les tests automatisés n’ont pas été relancés après cette modification ; aucun contrôle visuel du site déployé n’est revendiqué. Le workflow GitHub Actions reste manuel uniquement pour ne pas lancer de consommation automatique.
-- **Limite de publication** : les commits sont bien présents sur `main`. L’accès direct au site GitHub Pages et à l’endpoint API depuis cet environnement n’a pas abouti ; la mise à jour du dépôt est confirmée, le déploiement visuel et l’appel navigateur restent non vérifiés.
+- **Limite de publication** : levée le 22 octobre 2026 au soir : site déployé, API OFGL et fiches DGFiP vérifiés en conditions réelles (section V).
 
 > **Addendum post-correction** — Les tableaux d’anomalies ci-dessous décrivent en partie l’état constaté lors de l’audit initial. Pour l’état actuel du code, la correction des champs OFGL documentée ci-dessus prévaut : `type_de_budget="Budget principal"`, montant `montant`, montant par habitant `euros_par_habitant`. Les tests automatisés n’ont pas été exécutés après cette dernière modification. Ne pas considérer les données comme officiellement rapprochées avant le test réel et la comparaison des montants.
 
 
 
+## V. Vérification en conditions réelles — 22 octobre 2026 (soir)
+
+Cette section prévaut sur toutes les mentions « non testé », « non vérifié » ou « inaccessible » des sections suivantes, qui décrivent l’audit initial. L’accès réseau a été ouvert : `www.insee.fr`, `data.ofgl.fr`, `geo.api.gouv.fr`, `data.economie.gouv.fr` et `tuzilucas.github.io` répondent (HTTP 200). Le proxy de l’environnement coupe une partie des connexions vers `data.ofgl.fr` (poignée TLS interrompue, erreur `curl` 35) ; quand la connexion passe, l’OFGL répond en 1 à 3 s. Les essais ont donc été répétés jusqu’à obtenir une réponse ; aucun échec n’est imputable à l’OFGL.
+
+### V1. Schéma réel de l’API OFGL (jeu `ofgl-base-communes`)
+
+- **Jeu** : « Comptes des communes 2018-2025 », 21 857 255 lignes, modifié le 29/07/2026 (`GET …/catalog/datasets/ofgl-base-communes`).
+- **Champs utilisés par le site, tous présents** : `com_code` (texte, « Code Insee 2025 Commune »), `exer` (**type date**, renvoyé sous la forme `"2025"` : `Number(row.exer)` fonctionne), `type_de_budget` (texte), `agregat` (texte), `montant` (double), `euros_par_habitant` (double). Autres champs utiles : `ptot` (population totale), `ident` (SIRET du budget), `lbudg`, `cbudg`.
+- **Budget principal** : `type_de_budget` ne prend que deux valeurs, `"Budget principal"` (13 529 453 lignes) et `"Budget annexe"` (8 327 802). Le filtre du site `type_de_budget="Budget principal"` est donc exact ; l’ancien `code_type_budget=1` n’existait pas.
+- **Limite** : `limit` ≤ 100 (`limit=101` → HTTP 400 `InvalidRESTParameterError`) ; `offset + limit` ≤ 10 000 (`offset=9950&limit=100` → HTTP 400). Le site pagine par 100 et s’arrête à 20 pages (2 000 lignes) : il reste sous le plafond. Une commune compte environ 47 à 49 agrégats par exercice, soit 388 lignes pour Fameck sur 2018-2025 (4 appels).
+- **CORS** : `access-control-allow-origin: *`, méthodes `POST, GET, OPTIONS`. Quota anonyme annoncé : `x-ratelimit-limit: 1000000` par jour.
+- **Libellés d’agrégats** : les 10 libellés de `PRIORITY_AGGREGATES` existent tels quels dans l’API (« Epargne brute » et « Epargne nette » sans accent, apostrophe droite dans « Dépenses d'équipement ») ; API-06 est levé.
+
+### V2. Appel réel depuis le site déployé
+
+Sur https://tuzilucas.github.io/Citoyen/ (Chromium sans interception), la recherche « 57206 » déclenche 2 appels `geo.api.gouv.fr` (HTTP 200), puis 4 appels OFGL (`offset` 0, 100, 200, 300 ; HTTP 200). La fiche affiche « Données OFGL reçues · exercice 2025 · budget principal · non rapprochées (388 lignes) », recettes de fonctionnement 13 263 360 € (889 €/hab.), bandeau 1,47 M€ / 6,25 M€ / 11,1 %. Les mêmes essais sur la branche servie localement donnent des résultats équivalents pour Lommerange (57411) et Lyon (69123), sans erreur JavaScript. Quand l’OFGL n’est pas joint dans les 10 s, le site affiche correctement « Comptes momentanément indisponibles », distinct d’une absence de données.
+
+### V3. Rapprochement avec les fiches officielles DGFiP (exercice 2025, budget principal)
+
+Référence : jeu DGFiP « Comptes individuels des communes (fichier global) 2025 » (`data.economie.gouv.fr`, modifié le 24/09/2026), qui alimente les fiches officielles des comptes individuels ; montants en milliers d’euros. Petite commune retenue : Lommerange (Moselle, 57411, 384 habitants).
+
+#### Fameck (57206) — OFGL : 49 lignes 2025, budget principal (1 budget) ; population OFGL 14917, DGFiP 14917
+| Agrégat OFGL | OFGL (k€) | DGFiP 2025 (k€) | Écart |
+|---|---:|---:|---:|
+| Recettes de fonctionnement / Total des produits de fonctionnement | 13263.36 | 13263.36 | 0.0 |
+| Dépenses de fonctionnement / Total des charges de fonctionnement | 11789.71 | 12064.49 | -274.78 |
+| Frais de personnel / Charges de personnel | 6630.1 | 6630.1 | 0.0 |
+| Epargne brute / Capacité d'autofinancement (CAF) | 1473.65 | 1473.65 | 0.0 |
+| Epargne nette / CAF nette du remboursement en capital des emprunts | 555.02 | 555.02 | 0.0 |
+| Encours de dette / Encours total de la dette au 31 décembre | 6252.68 | 6252.68 | 0.0 |
+| Annuité de la dette / Annuité de la dette | 1116.18 | 1116.18 | 0.0 |
+| Dépenses d'équipement / Dépenses d'équipement | 2437.5 | 2445.11 | -7.61 |
+
+#### Lyon (69123) — OFGL : 49 lignes 2025, budget principal (1 budget) ; population OFGL 526912, DGFiP 526912
+| Agrégat OFGL | OFGL (k€) | DGFiP 2025 (k€) | Écart |
+|---|---:|---:|---:|
+| Recettes de fonctionnement / Total des produits de fonctionnement | 784956.91 | 791822.54 | -6865.63 |
+| Dépenses de fonctionnement / Total des charges de fonctionnement | 698814.55 | 747211.97 | -48397.42 |
+| Frais de personnel / Charges de personnel | 406895.12 | 406895.12 | 0.0 |
+| Epargne brute / Capacité d'autofinancement (CAF) | 86142.37 | 86164.54 | -22.17 |
+| Epargne nette / CAF nette du remboursement en capital des emprunts | 50777.61 | 50841.59 | -63.98 |
+| Encours de dette / Encours total de la dette au 31 décembre | 383977.25 | 383977.25 | 0.0 |
+| Annuité de la dette / Annuité de la dette | 40646.11 | 40527.55 | 118.56 |
+| Dépenses d'équipement / Dépenses d'équipement | 160804.76 | 177487.23 | -16682.47 |
+
+#### Lommerange (57411) — OFGL : 47 lignes 2025, budget principal (1 budget) ; population OFGL 384, DGFiP 384
+| Agrégat OFGL | OFGL (k€) | DGFiP 2025 (k€) | Écart |
+|---|---:|---:|---:|
+| Recettes de fonctionnement / Total des produits de fonctionnement | 242.85 | 242.85 | 0.0 |
+| Dépenses de fonctionnement / Total des charges de fonctionnement | 188.04 | 188.04 | 0.0 |
+| Frais de personnel / Charges de personnel | 34.83 | 34.83 | 0.0 |
+| Epargne brute / Capacité d'autofinancement (CAF) | 54.81 | 54.81 | 0.0 |
+| Epargne nette / CAF nette du remboursement en capital des emprunts | 42.22 | 42.22 | 0.0 |
+| Encours de dette / Encours total de la dette au 31 décembre | 90.55 | 90.55 | 0.0 |
+| Annuité de la dette / Annuité de la dette | 17.03 | 17.03 | 0.0 |
+| Dépenses d'équipement / Dépenses d'équipement | 116.94 | 116.94 | 0.0 |
+
+**Lecture** :
+- **Lommerange** : les 8 agrégats sont identiques au centime. **Fameck** : 6 sur 8 identiques ; les charges de fonctionnement DGFiP dépassent l’agrégat OFGL de 274,78 k€ et les dépenses d’équipement de 7,61 k€. **Lyon** : frais de personnel et encours de dette identiques ; écarts de 0,03 % (épargne brute) à 9,4 % (dépenses d’équipement).
+- Ces écarts sont des **différences de périmètre**, pas des erreurs de lecture : l’OFGL publie des agrégats en opérations réelles retraités (hors gestion active de la dette, cessions…), la fiche DGFiP les totaux comptables. Le site affiche les agrégats OFGL ; il doit continuer à le dire et ne pas mélanger les deux sources dans un même calcul.
+- La population (`ptot`) est identique dans les deux sources pour les trois communes.
+
+### V4. Série Fameck 2019-2025 (FMPC) rapprochée de l’OFGL
+
+Même budget (principal), même commune, chaque exercice 2019-2025 (FAM-01) :
+
+| Indicateur du site | Agrégat OFGL | Exercices identiques (écart ≤ 1 €) |
+|---|---|---|
+| Population | `ptot` | 7/7 |
+| DGF | Dotation globale de fonctionnement | 7/7 |
+| Impôts locaux | Impôts locaux | 7/7 |
+| Encours de dette | Encours de dette | 6/7 (2019 : +724 799 €) |
+| Remboursement de la dette | Remboursements d'emprunts hors GAD | 6/7 (2019 : +51 030 €) |
+| Fonds de roulement | Fonds de roulement | 6/7 (2019 : −27 661 €) |
+| Recettes de fonctionnement | Recettes de fonctionnement | 0/7 (2020-2025 : +0,01 % à +0,21 % ; 2019 : +1,85 %) |
+| Dépenses de fonctionnement | Dépenses de fonctionnement | 0/7 (+0,02 % à +0,30 %) |
+| Épargne brute | Epargne brute | 0/7 (2020-2025 : écart de 207 € à 16 272 € ; 2019 : +10 %) |
+| Épargne nette | Epargne nette | 0/7 (même écart que l’épargne brute) |
+| Dépenses d’investissement | Dépenses d'investissement hors remb | 0/7 (écarts de 17 % à 39 % : notion différente) |
+
+**Conclusion FAM-01** : la série FMPC n’est **pas** l’export OFGL. Elle concorde pour la population, les dotations, la fiscalité et, depuis 2020, la dette ; elle s’en écarte légèrement pour les recettes, les dépenses et l’épargne, et nettement pour 2019 et pour l’investissement. Elle doit rester présentée comme indicative, ou être remplacée par les agrégats OFGL (procédure : celle du script de rapprochement ci-dessus, par exercice).
+
+### V5. Site déployé comparé au dépôt
+
+- `index.html`, `assets/js/app.js`, `assets/js/citoyen-lib.js`, `assets/css/app.css` et les 5 fichiers de `data/` en ligne sont **identiques à `main`** (`8bb7c48`, déployé le 22/10/2026 à 13:34 GMT).
+- La branche `ccr-8e430522-ifzcgl` diffère de la version en ligne par `app.js` (FX-01) et `app.css` (FX-03) seulement.
+- **Erreur en production confirmée** : à chaque chargement, la console affiche `restoreAnchor is not defined` (FX-01). Elle est corrigée sur la branche (aucune erreur JavaScript constatée), pas encore publiée.
+
+### V6. Ce qui reste à faire
+
+1. Fusionner la branche puis publier, pour supprimer l’erreur `restoreAnchor` en production (décision de l’éditeur).
+2. Texte de la fiche communale : la phrase « Les noms de champs et de libellés n’ont pas encore été validés » n’était plus exacte (V1) ; elle est remplacée sur la branche par une mention du périmètre OFGL/DGFiP (V3). Le statut « non rapprochées » est conservé.
+3. Décider du sort de la série FMPC de Fameck (V4).
+4. Firefox, Safari et lecteur d’écran : toujours non testés.
+
+---
+
 ## État final — 22 octobre 2026
+
+> Note du 22/10 (soir) : pour le réseau, l’API OFGL, les données et le site déployé, la section V ci-dessus remplace les constats de cette note.
 
 Cette note d’état prévaut sur les constats historiques des tableaux ci-dessous, qui décrivent en partie la version auditée initialement et dont certaines lignes de code ne correspondent plus à `main`.
 
@@ -54,9 +153,9 @@ La seule information obtenue sur l’OFGL vient d’une recherche web : titres e
 |---|---|---|
 | Interface, responsive, glossaire, accessibilité de base | **Élevée** | 58 tests navigateur exécutés avant correction (6 largeurs), 63 après, plus des captures |
 | Cohérence interne des données Fameck | **Élevée** | Recalcul indépendant de chaque ligne (test unitaire) |
-| Exactitude des chiffres Fameck par rapport à l’OFGL | **Nulle** | Source officielle inaccessible depuis l’environnement |
-| Requête OFGL (champs, limite, libellés) | **Faible à moyenne** | Défauts établis par lecture du code ; noms de champs déduits d’indices indirects |
-| Écart entre dépôt et site déployé | **Non évalué** | Site inaccessible |
+| Exactitude des chiffres Fameck par rapport à l’OFGL | **Établie** (section V4) | Série FMPC rapprochée exercice par exercice : concordante pour population, DGF, fiscalité, dette ; écarts sur recettes, dépenses, épargne et investissement |
+| Requête OFGL (champs, limite, libellés) | **Élevée** (section V1-V2) | Schéma, budget principal, limites, CORS et libellés vérifiés sur l’API réelle ; appel réel depuis le site déployé |
+| Écart entre dépôt et site déployé | **Évalué** (section V5) | Site identique à `main` ; la branche corrige FX-01 et FX-03 |
 
 ### Décisions et limites après publication
 
@@ -237,12 +336,12 @@ La colonne **Correction** décrit la correction apportée dans la branche de tra
 
 | Test | Statut | Raison | Comment le réaliser |
 |---|---|---|---|
-| Ouverture du site déployé, codes HTTP, console | **NON TESTÉ** | `tuzilucas.github.io` refusé par le proxy (403) | `node tests/e2e/audit.spec.cjs https://tuzilucas.github.io/Citoyen/` depuis un poste connecté. Les interceptions geo/OFGL restent actives : retirer le `route` de `newPage` pour un essai réel. |
-| Écart entre le dépôt et le site déployé | **NON TESTÉ** | Idem | `curl -s https://tuzilucas.github.io/Citoyen/assets/js/app.js \| diff - assets/js/app.js` (idem pour `index.html` et `app.css`) |
+| Ouverture du site déployé, codes HTTP, console | **FAIT le 22/10 (V2, V5)** : HTTP 200, erreur `restoreAnchor is not defined` en production | `tuzilucas.github.io` refusé par le proxy (403) | `node tests/e2e/audit.spec.cjs https://tuzilucas.github.io/Citoyen/` depuis un poste connecté. Les interceptions geo/OFGL restent actives : retirer le `route` de `newPage` pour un essai réel. |
+| Écart entre le dépôt et le site déployé | **FAIT le 22/10 (V5)** : identique à `main` | Idem | `curl -s https://tuzilucas.github.io/Citoyen/assets/js/app.js \| diff - assets/js/app.js` (idem pour `index.html` et `app.css`) |
 | Comportement avec cache puis sans cache | **NON TESTÉ** | Site déployé inaccessible ; en local, le cache n’est pas représentatif | DevTools sur le site réel : rechargement normal puis forcé ; vérifier les en-têtes `cache-control` de GitHub Pages (10 min) et la cohérence HTML/JS après déploiement. |
-| Appels réels geo.api.gouv.fr (Fameck, Lyon, commune rurale, nom accentué ou à trait d’union, 57290, 57206, 2A004) | **NON TESTÉ** | `geo.api.gouv.fr` refusé | `curl "https://geo.api.gouv.fr/communes?nom=Saint-%C3%89tienne&fields=nom,code,codesPostaux&boost=population&limit=10"`, etc. |
-| Schéma, limites, CORS et données de l’API OFGL | **NON TESTÉ** | `data.ofgl.fr` refusé ; la recherche web n’a pas renvoyé le schéma du jeu communal | Procédure en section E, étape 0. |
-| Rapprochement Fameck, Lyon et petite commune avec l’OFGL | **NON TESTÉ** | Idem | Idem. |
+| Appels réels geo.api.gouv.fr (Fameck, Lyon, commune rurale, nom accentué ou à trait d’union, 57290, 57206, 2A004) | **PARTIEL le 22/10** : 57206, 69123, 57411 et nom « Lyon » répondent (HTTP 200) ; noms accentués et 2A004 non testés | `geo.api.gouv.fr` refusé | `curl "https://geo.api.gouv.fr/communes?nom=Saint-%C3%89tienne&fields=nom,code,codesPostaux&boost=population&limit=10"`, etc. |
+| Schéma, limites, CORS et données de l’API OFGL | **FAIT le 22/10 (V1)** | `data.ofgl.fr` refusé ; la recherche web n’a pas renvoyé le schéma du jeu communal | Procédure en section E, étape 0. |
+| Rapprochement Fameck, Lyon et petite commune avec l’OFGL | **FAIT le 22/10 (V3, V4)** | Idem | Idem. |
 | Firefox, Safari, lecteur d’écran | **NON TESTÉ** | Seul Chromium est disponible | Ajouter `firefox` et `webkit` dans le script ; tester avec NVDA ou VoiceOver. |
 
 ---
@@ -251,7 +350,7 @@ La colonne **Correction** décrit la correction apportée dans la branche de tra
 
 ### D1. Recherche communale (API OFGL) — affichage générique
 
-Les champs ci-dessous sont **ceux du code**. Aucun n’a pu être confronté au schéma officiel.
+Les champs ci-dessous sont **ceux du code** lors de l’audit initial. **Mise à jour du 22/10 (soir)** : le code actuel utilise `com_code`, `exer`, `type_de_budget="Budget principal"`, `agregat`, `montant`, `euros_par_habitant`, tous confirmés par le schéma réel (section V1) ; montants rapprochés des fiches DGFiP en section V3.
 
 | Élément affiché | Champ utilisé par le code | Formule | Périmètre | Unité, arrondi | Exercices testés | Rapprochement OFGL | Conditions de masquage (version publiée) |
 |---|---|---|---|---|---|---|---|
@@ -262,7 +361,7 @@ Les champs ci-dessous sont **ceux du code**. Aucun n’a pu être confronté au 
 | Montant | `montant` (sinon `montant_eur`, `valeur`) | aucune | budget principal | €, arrondi à l’euro, euros courants | — | **Non vérifié** | « Non disponible » si absent ; 0 conservé comme 0 |
 | Montant par habitant | `euros_par_habitant` (ajouté), `montant_hab`, `montant_eur_par_habitant` | aucune (valeur publiée) | population retenue par l’OFGL (non affichée) | €/hab., arrondi à l’euro | — | **Non vérifié** (API-05) | Masqué si absent |
 
-**Conclusion D1** : tant que l’étape 0 n’est pas faite, ces montants **ne doivent pas être présentés comme des comptes officiels vérifiés**. La branche les marque « non rapprochées ».
+**Conclusion D1** (mise à jour du 22/10) : la lecture de l’API est exacte (V1, V2) ; les montants affichés sont ceux de l’OFGL, qui diffèrent parfois des totaux de la fiche DGFiP par leur périmètre (V3). Le libellé « non rapprochées » reste prudent et justifié.
 
 ### D2. Fameck — série retranscrite (`fameck-finances-2024.json`)
 
@@ -317,12 +416,12 @@ Glossaire : 48 définitions compréhensibles et non contradictoires avec les cal
 
 | Ordre | Action | Dépend de | Anomalies | État sur la branche |
 |---|---|---|---|---|
-| **0** | **Terminer l’audit réseau** depuis un poste connecté (procédure ci-dessous). | — | API-01, API-05, API-06, FAM-01 | **Bloqué dans cet environnement : site et endpoint inaccessibles ; validation réelle à faire depuis un navigateur connecté.** |
-| 1 | Corriger les noms de champs OFGL dans `OFGL.fields` (`citoyen-lib.js`) et la valeur du budget principal, à partir du schéma réel. | 0 | API-01, API-05 | À faire |
+| **0** | **Terminer l’audit réseau** depuis un poste connecté (procédure ci-dessous). | — | API-01, API-05, API-06, FAM-01 | **Fait le 22/10 (section V)** |
+| 1 | Corriger les noms de champs OFGL dans `OFGL.fields` (`citoyen-lib.js`) et la valeur du budget principal, à partir du schéma réel. | 0 | API-01, API-05 | **Fait, confirmé par le schéma réel (V1)** |
 | 2 | Pagination, limite à 100, contrôle d’exhaustivité, exclusion des lignes étrangères. | — | API-02, API-04 | **Fait, testé** |
 | 3 | Distinguer erreur, délai, format, absence de données et réponse incomplète. | — | API-03 | **Fait, testé** |
-| 4 | Relever les libellés réels des agrégats et mettre à jour `PRIORITY_AGGREGATES`. | 0 | API-06 | Normalisation faite ; libellés à faire |
-| 5 | Rapprocher la série Fameck de l’export OFGL ; documenter l’exercice d’affichage. | 0 | FAM-01, FAM-03 | À faire |
+| 4 | Relever les libellés réels des agrégats et mettre à jour `PRIORITY_AGGREGATES`. | 0 | API-06 | **Fait : les 10 libellés existent dans l’API (V1)** |
+| 5 | Rapprocher la série Fameck de l’export OFGL ; documenter l’exercice d’affichage. | 0 | FAM-01, FAM-03 | **Rapprochement fait (V4)** : écarts documentés ; décision de l’éditeur sur la série à prendre |
 | 6 | Recherche : Corse, double interprétation à 5 chiffres, homonymes, lien par code INSEE, délai et annulation, saisies vides ou partielles. | — | COM-01 à 07 | **Fait, testé** |
 | 7 | Analyse Fameck conditionnelle ; bandeau calculé depuis les JSON ; signes. | — | FAM-02, DATA-01, COMP-01 | **Fait, testé** |
 | 8 | Bandeau de chiffres clés, glossaire, ancre profonde, tableau mobile. | — | UI-01, GLO-01, NAV-01, RESP-01 | **Fait, testé** |

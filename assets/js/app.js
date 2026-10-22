@@ -291,7 +291,7 @@
     }
     card.append(
       statusBadge("Données OFGL reçues · exercice " + summary.latestYear + " · budget principal · non rapprochées", "warning"),
-      paragraph("Montants lus automatiquement dans l’API officielle OFGL pour le dernier exercice présent dans la réponse complète (" + summary.received + " lignes). Les noms de champs et de libellés n’ont pas encore été validés contre la fiche officielle : ces chiffres sont indicatifs. Une ligne absente ne signifie pas un montant nul.")
+      paragraph("Montants lus automatiquement dans l’API officielle OFGL pour le dernier exercice présent dans la réponse complète (" + summary.received + " lignes). Ce sont les agrégats de l’OFGL, en opérations réelles : ils peuvent différer des totaux de la fiche DGFiP de la commune, qui n’ont pas le même périmètre. Une ligne absente ne signifie pas un montant nul.")
     );
     if (summary.foreignCount) card.appendChild(paragraph(summary.foreignCount + " ligne(s) concernant un autre code INSEE ont été écartées.", "commune-method-note"));
     const list = document.createElement("dl");

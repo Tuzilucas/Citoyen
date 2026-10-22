@@ -9,9 +9,8 @@
   "use strict";
 
   // Schéma du jeu OFGL « Comptes des communes » : com_code, exer, type_de_budget,
-  // agregat, montant et euros_par_habitant. Le portail OFGL indexe ces champs dans
-  // ses exemples de requêtes et ses enregistrements. Le test HTTP réel depuis le site
-  // déployé reste à faire ; voir AUDIT-TECHNIQUE.md.
+  // agregat, montant et euros_par_habitant. Vérifié sur l'API réelle le 22/10/2026
+  // (limit ≤ 100, offset + limit ≤ 10 000, CORS ouvert) ; voir AUDIT-TECHNIQUE.md, section V.
   const OFGL = {
     endpoint: "https://data.ofgl.fr/api/explore/v2.1/catalog/datasets/ofgl-base-communes/records",
     datasetPage: "https://data.ofgl.fr/explore/dataset/ofgl-base-communes/",
