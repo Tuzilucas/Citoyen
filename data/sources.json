@@ -166,6 +166,34 @@
       "validation_method": "Recoupement des périodes et montants avec le tableau de la publication INSEE du 29/09/2026 ; recoupement des ratios pour 2025-T2 à 2026-T2. Étapes restantes : récupérer le XLSX, rapprocher toutes les observations et obtenir une validation humaine.",
       "file_sha256": null,
       "notes": "Le statut de récupération décrit séparément la page HTML consultée et le fichier XLSX non récupéré. Le recoupement partiel n'équivaut pas à une validation de publication."
+    },
+    {
+      "source_id": "insee-dette-composition-t2-2026",
+      "exact_name": "Dette trimestrielle de Maastricht des administrations publiques — deuxième trimestre 2026",
+      "producer": "INSEE",
+      "administrative_level": "administrations_publiques",
+      "entity_id": "FR-S13",
+      "category": "dette_publique_nationale",
+      "description": "Dette brute, dette nette et contribution des sous-secteurs à la dette publique au T2 2026.",
+      "official_page_url": "https://www.insee.fr/fr/statistiques/9053525",
+      "download_or_api_url": "https://www.insee.fr/fr/statistiques/fichier/2830301/econ-gen-dette-trim-adm-pub-2.xlsx",
+      "format": "publication officielle et fichier XLSX de série trimestrielle",
+      "license_and_obligations": "Le site renvoie vers la publication et le fichier source INSEE ; le fichier source n'est pas redistribué par le prototype.",
+      "available_vintages": [
+        "2026-T2"
+      ],
+      "publication_date": "2026-09-29",
+      "consultation_date": "2026-10-22",
+      "retrieval_date": null,
+      "official_identifier": "FR-S13",
+      "fameck_present": "non applicable",
+      "detail_level": "dette brute et nette agrégée, contributions par sous-secteur",
+      "retrieval_status": "publication_officielle_consultee; fichier_xlsx_non_rapproche_automatiquement",
+      "validation_status": "transcription_de_publication_officielle; validation_machine_independante_en_attente",
+      "known_limitations": "La dette de Maastricht est une dette brute consolidée ; la variation de dette ne se confond pas avec le déficit public. Les montants par sous-secteur sont publiés arrondis et peuvent ne pas s'additionner exactement au total.",
+      "validation_method": "Transcription de la publication INSEE n° 239 du 29 septembre 2026 ; rapprochement automatisé du XLSX encore à réaliser.",
+      "file_sha256": null,
+      "notes": "T2 2026 : dette brute 3 595,5 Md€ (119,0 % du PIB), dette nette 3 366,8 Md€ (111,4 % du PIB)."
     }
   ]
 }
