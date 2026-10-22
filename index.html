@@ -93,7 +93,7 @@
   <section id="communes" class="section commune-search-section">
       <div class="section-heading">
         <div><p class="eyebrow">Recherche territoriale · première version</p><h2>Rechercher une commune</h2></div>
-        <p class="muted">Le catalogue est encore limité. Cette recherche vérifie l’identité de la commune, pas encore ses comptes financiers.</p>
+        <p class="muted">Cette recherche couvre les communes du référentiel national. Elle identifie la commune puis donne accès à la base financière officielle ; les comptes ne sont pas encore tous présentés directement sur ce site.</p>
       </div>
       <form id="commune-form" class="commune-form">
         <label for="commune-query">Nom, code postal ou code INSEE</label>
@@ -101,7 +101,7 @@
           <input id="commune-query" name="commune" type="search" placeholder="Ex. : Fameck, 57290 ou 57206" autocomplete="off" required>
           <button class="button button-primary" type="submit">Rechercher</button>
         </div>
-        <p class="form-hint">Le catalogue affiché ici est partiel. Une commune absente du catalogue n’est pas une commune sans données.</p>
+        <p class="form-hint">Recherche par nom, code postal ou code INSEE dans le référentiel national. Les comptes financiers officiels sont ensuite accessibles via l’OFGL ; leur intégration complète dans l’observatoire se fera progressivement.</p>
       </form>
       <div id="commune-result" class="commune-result" aria-live="polite" hidden></div>
     </section>
@@ -273,6 +273,17 @@
         <details class="glossary-entry"><summary>Transfert entre administrations</summary><p>Somme versée par une administration à une autre. Pour le total des administrations publiques, certains transferts sont neutralisés afin de ne pas compter deux fois le même argent.</p></details>
         <details class="glossary-entry"><summary>Valeur nominale / euros courants</summary><p>Montant exprimé dans les euros de l’année concernée, sans correction de l’inflation. Pour savoir si une dépense a réellement augmenté en pouvoir d’achat, il faut aussi regarder l’évolution des prix.</p></details>
       </div>
+
+        <details class="glossary-entry"><summary>Dotation globale de fonctionnement (DGF)</summary><p>Somme versée chaque année par l’État aux collectivités selon des règles nationales. Elle contribue au financement de leurs dépenses, mais son montant varie selon la collectivité et les critères appliqués.</p></details>
+        <details class="glossary-entry"><summary>Établissement public de coopération intercommunale (EPCI)</summary><p>Structure qui regroupe plusieurs communes pour gérer certains services ou projets ensemble, par exemple les déchets, les transports ou le développement économique. Toutes les recettes et dépenses intercommunales ne figurent pas dans le budget de chaque commune.</p></details>
+        <details class="glossary-entry"><summary>Excédent</summary><p>Situation où les recettes dépassent les dépenses pour le périmètre et la période considérés. Un excédent de fonctionnement ne signifie pas que toutes les dépenses d’investissement sont financées ni que la collectivité n’a pas de dette.</p></details>
+        <details class="glossary-entry"><summary>Fiscalité directe locale</summary><p>Impôts locaux dont le produit est attribué aux collectivités selon les règles en vigueur. Les contribuables, les taux, les bases et la répartition entre commune, intercommunalité et autres niveaux doivent être distingués.</p></details>
+        <details class="glossary-entry"><summary>Inflation</summary><p>Hausse générale des prix. Si une dépense passe de 100 à 110 euros en quelques années, cela ne signifie pas forcément que la collectivité achète 10 % de choses en plus : une partie de la hausse peut venir des prix.</p></details>
+        <details class="glossary-entry"><summary>Intérêts d’emprunt</summary><p>Coût payé au prêteur pour avoir emprunté de l’argent. Les intérêts sont une dépense ; le remboursement du capital réduit le montant restant dû.</p></details>
+        <details class="glossary-entry"><summary>Mandat de paiement</summary><p>Ordre émis par la collectivité pour qu’une dépense soit payée. Dans les comptes, les notions d’engagement, de mandat et de paiement effectif peuvent correspondre à des étapes différentes.</p></details>
+        <details class="glossary-entry"><summary>Recettes fiscales</summary><p>Recettes provenant des impôts et taxes. Le périmètre peut inclure des impôts différents selon la source : il faut lire le libellé plutôt que supposer qu’il s’agit uniquement des impôts payés directement par les habitants.</p></details>
+        <details class="glossary-entry"><summary>Subvention</summary><p>Somme versée pour soutenir un organisme, un projet ou une dépense. Une subvention reçue est une recette pour son bénéficiaire ; une subvention versée est une dépense pour l’organisme qui la verse.</p></details>
+        <details class="glossary-entry"><summary>Strate démographique</summary><p>Groupe de communes de taille comparable. Les comparaisons « par strate » peuvent être plus pertinentes que comparer directement une petite commune à une grande ville, mais elles doivent aussi tenir compte des caractéristiques locales et des compétences exercées.</p></details>
       <p class="glossary-disclaimer">Une définition simplifiée aide à comprendre, mais ne remplace pas la fiche méthodologique de la source. Deux indicateurs portant des noms proches peuvent avoir des périmètres différents.</p>
     </section>
 
