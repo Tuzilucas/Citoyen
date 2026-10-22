@@ -183,7 +183,7 @@
   async function fetchCommuneFinances(commune) {
     const endpoint = "https://data.ofgl.fr/api/explore/v2.1/catalog/datasets/ofgl-base-communes/records";
     const params = new URLSearchParams({
-      where: 'com_code="' + commune.code + '" AND exer=2024 AND code_type_budget=1',
+      where: 'com_code="' + commune.code + '" AND code_type_budget=1',
       limit: "1000",
       order_by: "exer DESC, agregat"
     });
