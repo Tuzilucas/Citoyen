@@ -197,19 +197,25 @@
     },
     {
       "source_id": "fameck-finances-2024-retranscription",
-      "exact_name": "Budget municipal de Fameck — exercice 2024",
-      "producer": "Journal du Net (CCM Benchmark), données comptables centralisées par la DGFiP selon la méthodologie publiée",
+      "exact_name": "Chiffres clés communaux de Fameck — série 2019-2025",
+      "producer": "FMPC — fiche de chiffres clés communaux; origine des agrégats OFGL/DGFiP à confirmer directement",
       "administrative_level": "commune",
       "entity_id": "57206",
       "category": "comptes_financiers",
-      "description": "Premiers indicateurs du budget principal exécuté de Fameck, retranscrits depuis une page secondaire et destinés à être rapprochés de l'export brut OFGL/DGFiP.",
+      "description": "Série annuelle de recettes réelles, dépenses réelles, épargne brute, dette, investissement et fonds de roulement retranscrite depuis une page secondaire.",
       "official_page_url": "https://data.ofgl.fr/explore/dataset/ofgl-base-communes/",
-      "secondary_source_url": "https://www.journaldunet.com/business/budget-ville/fameck/ville-57206/budget",
+      "secondary_source_url": "https://www.fmpc.fr/finances-locales/index.php?ido=20758",
       "download_or_api_url": null,
       "format": "JSON interne alimenté par retranscription",
       "license_and_obligations": "Vérifier les conditions de réutilisation des données sources avant republication à grande échelle",
       "available_vintages": [
-        "2024"
+        "2019",
+        "2020",
+        "2021",
+        "2022",
+        "2023",
+        "2024",
+        "2025"
       ],
       "publication_date": null,
       "consultation_date": "2026-10-22",
@@ -218,11 +224,11 @@
       "fameck_present": true,
       "detail_level": "agrégats du budget principal exécuté",
       "retrieval_status": "retranscription_secondaire_effectuee",
-      "validation_status": "a_recouper_avec_export_OFGL_ou_DGFiP",
-      "known_limitations": "L'export brut officiel n'a pas encore été téléchargé ni rapproché ligne à ligne. Les indicateurs calculés sont indicatifs.",
-      "validation_method": "Transcription de la page source secondaire; prochaine étape: filtrage OFGL sur le code INSEE 57206 et rapprochement des valeurs 2024.",
+      "validation_status": "a_recouper_avec_export_OFGL",
+      "known_limitations": "L'export brut OFGL n'a pas été téléchargé ni rapproché ligne à ligne. Une autre page secondaire publie certains montants 2024 différents; les périmètres doivent être réconciliés. Le statut 2025 de Fameck reste à vérifier dans la source officielle.",
+      "validation_method": "Retranscription de la série affichée par FMPC; prochaine étape: requête OFGL filtrée sur Fameck (code INSEE 57206), année et agrégat, puis comparaison valeur par valeur.",
       "file_sha256": null,
-      "notes": "Ne pas confondre résultat comptable et capacité d'autofinancement, ni budget principal et comptes consolidés."
+      "notes": "La série du site suit les libellés recettes réelles, dépenses réelles et épargne brute de la source FMPC; elle n'est pas mélangée aux agrégats différents du Journal du Net."
     }
   ]
 }
