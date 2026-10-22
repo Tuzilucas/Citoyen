@@ -27,3 +27,10 @@ Important : les fichiers HTML, CSS et JavaScript exécutés dans le navigateur s
 ## Sources
 
 Les sources officielles et les limites de chaque série sont répertoriées dans `data/sources.json`.
+
+
+## Premier jeu de données local : Fameck 2024
+
+Le site affiche désormais des repères budgétaires du budget principal exécuté de Fameck pour 2024 : produits et charges de fonctionnement, résultat comptable, capacité d'autofinancement, emplois d'investissement, dette et fonds de roulement. Les valeurs ont été retranscrites depuis la page [Journal du Net consacrée au budget de Fameck](https://www.journaldunet.com/business/budget-ville/fameck/ville-57206/budget), dont la méthodologie indique que les comptes sont centralisés par la DGFiP. Le jeu interne est disponible dans [fameck-finances-2024.json](data/indicators/fameck-finances-2024.json).
+
+**Limite explicite :** le fichier brut officiel OFGL/DGFiP n'a pas encore été téléchargé et rapproché ligne à ligne. Les données sont donc marquées « à rapprocher » et les ratios calculés par le prototype restent indicatifs. Le budget principal ne doit pas être confondu avec les comptes consolidés incluant les budgets annexes.
