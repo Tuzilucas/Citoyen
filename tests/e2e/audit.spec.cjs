@@ -376,15 +376,18 @@ async function overflow(page) {
 
   // 6. Fameck : analyse, tableau, période.
   {
-    const { context, page } = await newPage(browser, { width: 375, height: 740 });
+    const { context, page } = await newPage(browser, { width: 375, height: 740 }, { geo: "fameck", ofgl: "fields_euros_par_habitant" });
     await page.goto(BASE, { waitUntil: "networkidle" });
+    await page.fill("#commune-query", "Fameck");
+    await page.click("#commune-form button[type=submit]");
+    await page.waitForTimeout(700);
     const analysis = (await page.textContent("#fameck-analysis")).replace(/\s+/g, " ");
     fs.writeFileSync(path.join(OUT, "fameck-analyse.txt"), analysis);
     const ribbon = await page.$$eval(".headline-metric strong", (s) => s.map((x) => x.textContent));
-    record("DATA-RIBBON-JS", "Bandeau national chargé, valeurs communales vides avant sélection", "375", ribbon[0].replace(/\u202f/g, " ").includes("3 595,5") && ribbon.slice(1).every((v) => v === "—") ? "VALIDÉ" : "ÉCHOUÉ", ribbon.join(" / "));
+    record("DATA-RIBBON-JS", "Bandeau communal mis à jour après la recherche", "375", ribbon[0].replace(/\u202f/g, " ").includes("3 595,5") && ribbon[1] === "—" && ribbon[2].includes("M€") && ribbon[3] === "—" ? "VALIDÉ" : "ÉCHOUÉ", ribbon.join(" / "));
     const ribbonDisplay = await page.$eval(".headline-ribbon", (e) => getComputedStyle(e).display);
     record("RESP-RIBBON", "Bandeau de chiffres clés mis en grille", "375", ribbonDisplay === "grid" ? "VALIDÉ" : "ÉCHOUÉ", "display=" + ribbonDisplay);
-    record("FAM-ANALYSIS", "L’analyse locale attend une commune sélectionnée", "375", /apparaîtront ici après la recherche/.test(analysis) ? "VALIDÉ" : "ÉCHOUÉ", analysis.slice(0, 260));
+    record("TERRITORY-ANALYSIS", "La recherche remplit l’analyse détaillée de la commune", "375", /Recettes de fonctionnement/.test(analysis) && /Limites indispensables/.test(analysis) ? "VALIDÉ" : "ÉCHOUÉ", analysis.slice(0, 260));
     const rows = await page.$$eval("#fameck-history-body tr", (r) => r.length);
     await page.locator("#fameck-finances").screenshot({ path: path.join(OUT, "fameck-375.png") });
     const wrap = await page.$eval(".municipal-history-wrap", (e) => ({ sw: e.scrollWidth, cw: e.clientWidth }));
