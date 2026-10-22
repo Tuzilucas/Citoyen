@@ -2,9 +2,10 @@
 
 - **Date** : 22 octobre 2026
 - **Objet** : site https://tuzilucas.github.io/Citoyen/ — dépôt `Tuzilucas/Citoyen`
-- **Version auditée** : `main` au commit `230d34d` (« Fix literal newline in primary navigation »)
-- **Branche de correction** : `ccr-8e430522-ifzcgl` (non fusionnée dans `main`)
-- **Outils** : Chromium (Playwright 1.56.1) en mode headless, Node 22 (`node:test`), Python 3, inspection du code et de l’historique Git
+- **Version publiée** : `main` au commit `ed7f5c0` (publication des corrections le 22 octobre 2026)
+- **Base auditée initialement** : `230d34d` ; les corrections sont maintenant intégrées à `main`.
+- **Validation de la version publiée** : contrôles statiques du JavaScript, cohérence des identifiants de navigation et vérification de la configuration GitHub Actions. Les suites automatisées n’ont pas été relancées après publication ; aucun test d’API réelle ni contrôle visuel du site déployé n’est revendiqué.
+- **Outils** : inspection du code et de l’historique Git ; les tests navigateur précédemment décrits concernent la version et les conditions indiquées dans les sections correspondantes.
 
 ---
 
