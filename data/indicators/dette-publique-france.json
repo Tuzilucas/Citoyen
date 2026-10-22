@@ -1,0 +1,147 @@
+{
+  "schema_version": "1.0.0",
+  "dataset_id": "dette-maastricht-france-trimestrielle",
+  "title": "Dette publique au sens de Maastricht",
+  "entity": {
+    "entity_id": "FR-S13",
+    "entity_type": "administrations_publiques",
+    "official_name": "Ensemble des administrations publiques — France"
+  },
+  "indicator": {
+    "indicator_code": "DEBT_MAASTRICHT",
+    "official_label": "Dette des administrations publiques au sens de Maastricht",
+    "plain_language_label": "Montant de dette publique à la fin du trimestre",
+    "unit": "milliards d'euros",
+    "secondary_indicator": {
+      "official_label": "Dette en pourcentage du PIB",
+      "unit": "% du PIB"
+    }
+  },
+  "scope": "France entière, ensemble des administrations publiques au sens des comptes nationaux (État, organismes divers d'administration centrale, administrations publiques locales et administrations de sécurité sociale). Dette brute consolidée au sens de Maastricht.",
+  "source": {
+    "source_id": "insee-dette-maastricht-trimestrielle",
+    "producer": "INSEE",
+    "official_page_url": "https://www.insee.fr/fr/statistiques/2830301",
+    "raw_file_url": "https://www.insee.fr/fr/statistiques/fichier/2830301/econ-gen-dette-trim-adm-pub-2.xlsx",
+    "raw_file_format": "XLSX",
+    "page_publication_date": "2026-09-29",
+    "page_label": "Données trimestrielles du T4-1995 au T2-2026",
+    "raw_file_retrieved": false,
+    "raw_file_sha256": null
+  },
+  "extraction": {
+    "method": "Transcription des valeurs visibles dans le tableau HTML de la page officielle INSEE.",
+    "status": "source_table_transcribed_file_not_yet_machine_checked",
+    "note": "Les 12 observations affichées ont été rapprochées de la table HTML officielle INSEE et de la publication INSEE du 29 septembre 2026 sur la dette du T2 2026. Le fichier XLSX brut n'a pas pu être récupéré depuis l'environnement de travail ; aucun rapprochement automatique ni visa humain de publication n'est déclaré. Avant publication définitive, comparer le XLSX et consigner une validation humaine.",
+    "extracted_at": "2026-10-21",
+    "checked_by": "Initialisation du projet",
+    "validated_for_publication": false,
+    "cross_check": {
+      "official_release_page_url": "https://www.insee.fr/fr/statistiques/9053525",
+      "publication_date": "2026-09-29",
+      "consultation_date": "2026-10-21",
+      "result": "periods_and_debt_amounts_match_for_12_observations; gdp_ratio_matches_for_5_recent_observations",
+      "fields_checked": [
+        {
+          "field": "period",
+          "coverage": "12 observations"
+        },
+        {
+          "field": "debt_eur_billion",
+          "coverage": "12 observations"
+        },
+        {
+          "field": "debt_gdp_percent",
+          "coverage": "5 observations, from 2025-T2 through 2026-T2"
+        }
+      ],
+      "raw_xlsx_machine_checked": false,
+      "human_publication_approval_pending": true
+    }
+  },
+  "records": [
+    {
+      "period": "2026-T2",
+      "period_end": "2026-06-30",
+      "debt_eur_billion": 3595.5,
+      "debt_gdp_percent": 119
+    },
+    {
+      "period": "2026-T1",
+      "period_end": "2026-03-31",
+      "debt_eur_billion": 3535.9,
+      "debt_gdp_percent": 117.5
+    },
+    {
+      "period": "2025-T4",
+      "period_end": "2025-12-31",
+      "debt_eur_billion": 3460.1,
+      "debt_gdp_percent": 115.7
+    },
+    {
+      "period": "2025-T3",
+      "period_end": "2025-09-30",
+      "debt_eur_billion": 3484.1,
+      "debt_gdp_percent": 117
+    },
+    {
+      "period": "2025-T2",
+      "period_end": "2025-06-30",
+      "debt_eur_billion": 3417.2,
+      "debt_gdp_percent": 115.2
+    },
+    {
+      "period": "2025-T1",
+      "period_end": "2025-03-31",
+      "debt_eur_billion": 3346.3,
+      "debt_gdp_percent": 113.4
+    },
+    {
+      "period": "2024-T4",
+      "period_end": "2024-12-31",
+      "debt_eur_billion": 3306.1,
+      "debt_gdp_percent": 112.6
+    },
+    {
+      "period": "2024-T3",
+      "period_end": "2024-09-30",
+      "debt_eur_billion": 3303,
+      "debt_gdp_percent": 113.1
+    },
+    {
+      "period": "2024-T2",
+      "period_end": "2024-06-30",
+      "debt_eur_billion": 3232.4,
+      "debt_gdp_percent": 111.6
+    },
+    {
+      "period": "2024-T1",
+      "period_end": "2024-03-31",
+      "debt_eur_billion": 3163,
+      "debt_gdp_percent": 110
+    },
+    {
+      "period": "2023-T4",
+      "period_end": "2023-12-31",
+      "debt_eur_billion": 3103.2,
+      "debt_gdp_percent": 109.5
+    },
+    {
+      "period": "2023-T3",
+      "period_end": "2023-09-30",
+      "debt_eur_billion": 3095.8,
+      "debt_gdp_percent": 110.8
+    }
+  ],
+  "calculation_rules": [
+    "Aucune conversion des valeurs publiées par l'INSEE n'est effectuée pour les champs debt_eur_billion et debt_gdp_percent.",
+    "Les évolutions d'un trimestre à l'autre ne sont calculées qu'entre périodes adjacentes et après validation de la série complète.",
+    "Le ratio en pourcentage du PIB ne doit pas être présenté comme un montant en euros."
+  ],
+  "definitions": {
+    "debt_stock": "Dette mesurée en fin de trimestre, et non somme des dépenses réalisées pendant le trimestre.",
+    "gross": "Les actifs financiers des administrations publiques ne sont pas soustraits.",
+    "consolidated": "Les dettes détenues par une administration publique sur une autre sont exclues du total consolidé.",
+    "limits": "La dette de Maastricht ne couvre pas tous les passifs financiers. Elle exclut notamment les crédits commerciaux et certains autres comptes à payer."
+  }
+}
