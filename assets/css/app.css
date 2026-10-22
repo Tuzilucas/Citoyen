@@ -315,3 +315,31 @@ body{background:var(--paper);color:var(--ink)}
 .finance-result-list{grid-template-columns:minmax(0,1fr) minmax(8rem,auto)}
 .finance-result-list dd{white-space:normal;overflow-wrap:anywhere}
 @media(max-width:560px){.finance-result-list{grid-template-columns:minmax(0,1fr)}.finance-result-list dt{padding:.65rem .1rem .1rem;border-bottom:0}.finance-result-list dd{padding:.15rem .1rem .65rem;text-align:left;border-bottom:1px solid var(--line)}.commune-result-card .button{width:100%}}
+
+
+/* Bandeau de chiffres clés : mise en page rétablie (règles supprimées par erreur le 3dd3e51) */
+.headline-ribbon{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:.9rem clamp(1rem,4vw,4.5rem);color:#fff}
+.headline-metric{display:flex;align-items:center;gap:.9rem;min-width:0;padding:.45rem clamp(.5rem,1.7vw,1.6rem);color:#fff;text-decoration:none;border-right:1px solid #ffffff30}
+.headline-metric:last-child{border-right:0}
+.headline-metric:hover{background:#ffffff0a}
+.headline-metric:hover strong,.headline-metric:focus-visible strong{text-decoration:underline;text-decoration-color:#d9b66e;text-underline-offset:4px}
+.headline-metric:focus-visible{outline:3px solid #d9b66e;outline-offset:-3px}
+.headline-icon{display:grid;place-items:center;flex:none;width:38px;height:38px;border:1px solid #b6cbe0a0;font-size:1.3rem}
+.headline-metric small,.headline-metric strong,.headline-metric em{display:block}
+.headline-metric small{color:#d2dfeb;font-size:.7rem;line-height:1.35}
+.headline-metric strong{margin:.2rem 0;font-family:Georgia,"Times New Roman",serif;font-size:clamp(1.2rem,2vw,1.8rem);font-weight:500;line-height:1.15;letter-spacing:-.035em}
+.headline-metric em{color:#d7e6f1;font-size:.7rem;font-style:normal}
+@media(max-width:1050px){.headline-ribbon{grid-template-columns:repeat(2,minmax(0,1fr))}.headline-metric:nth-child(2){border-right:0}.headline-metric:nth-child(-n+2){border-bottom:1px solid #ffffff30}}
+@media(max-width:680px){.headline-ribbon{grid-template-columns:1fr;padding:.5rem 1rem}.headline-metric{padding:.8rem .3rem;border-right:0;border-bottom:1px solid #ffffff30}.headline-metric:last-child{border-bottom:0}.headline-icon{width:32px;height:32px}}
+
+/* États des résultats communaux : aucun statut ne doit suggérer une validation (le vert de .commune-result .result-status est réservé à une future donnée rapprochée) */
+.result-status-warning,.commune-result .result-status-warning{border-color:#e2cf9f;background:var(--amber-bg,#fff4d9);color:#6b4a14}
+.result-status-error,.commune-result .result-status-error{border-color:#e3b8b8;background:#fbecec;color:#8a2430}
+.commune-result[aria-busy="true"]{opacity:.85}
+.commune-loading{color:var(--muted);font-style:italic}
+.commune-result-card .button-secondary{margin-top:.35rem;white-space:normal}
+
+/* Tableau annuel de Fameck sur mobile : titre et texte ne défilent pas avec le tableau, l’année reste visible */
+.municipal-history-wrap>h3,.municipal-history-wrap>p{position:sticky;left:0;max-width:min(100%,calc(100vw - 2rem))}
+.municipal-history-wrap tbody td:first-child,.municipal-history-wrap thead th:first-child{position:sticky;left:0;z-index:1;background:var(--paper,#f8f7f2);box-shadow:1px 0 0 var(--line)}
+.municipal-history-wrap tr.current-year-row td:first-child{background:inherit}

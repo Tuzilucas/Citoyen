@@ -1,0 +1,13 @@
+{
+  "name": "information-citoyenne",
+  "private": true,
+  "description": "Site statique Information citoyenne — tests uniquement (aucune étape de construction).",
+  "scripts": {
+    "test": "npm run test:unit && npm run test:e2e",
+    "test:unit": "node --test tests/unit/*.test.cjs",
+    "test:e2e": "node tests/e2e/audit.spec.cjs"
+  },
+  "devDependencies": {
+    "playwright": "1.56.1"
+  }
+}

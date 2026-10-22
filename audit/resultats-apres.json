@@ -1,0 +1,443 @@
+[
+  {
+    "id": "NAV-LOAD",
+    "scenario": "Chargement initial HTTP 200",
+    "viewport": "320",
+    "status": "VALIDÉ",
+    "proof": "erreurs JS=0, requêtes en échec=0 , console=aucune"
+  },
+  {
+    "id": "RESP-OVERFLOW",
+    "scenario": "Absence de débordement horizontal",
+    "viewport": "320",
+    "status": "VALIDÉ",
+    "proof": "scrollWidth=320, viewport=320, éléments débordants=aucun"
+  },
+  {
+    "id": "RESP-HEADER",
+    "scenario": "Hauteur de l'en-tête (navigation 10 liens)",
+    "viewport": "320",
+    "status": "VALIDÉ",
+    "proof": "222px (35 % de la hauteur d'écran)"
+  },
+  {
+    "id": "A11Y-TARGET",
+    "scenario": "Hauteur des liens de navigation ≥ 24px (WCAG 2.5.8)",
+    "viewport": "320",
+    "status": "VALIDÉ",
+    "proof": "hauteurs=33,33,33,33,33,33,33,33,33,33px"
+  },
+  {
+    "id": "NAV-LOAD",
+    "scenario": "Chargement initial HTTP 200",
+    "viewport": "375",
+    "status": "VALIDÉ",
+    "proof": "erreurs JS=0, requêtes en échec=0 , console=aucune"
+  },
+  {
+    "id": "RESP-OVERFLOW",
+    "scenario": "Absence de débordement horizontal",
+    "viewport": "375",
+    "status": "VALIDÉ",
+    "proof": "scrollWidth=375, viewport=375, éléments débordants=aucun"
+  },
+  {
+    "id": "RESP-HEADER",
+    "scenario": "Hauteur de l'en-tête (navigation 10 liens)",
+    "viewport": "375",
+    "status": "VALIDÉ",
+    "proof": "220px (30 % de la hauteur d'écran)"
+  },
+  {
+    "id": "A11Y-TARGET",
+    "scenario": "Hauteur des liens de navigation ≥ 24px (WCAG 2.5.8)",
+    "viewport": "375",
+    "status": "VALIDÉ",
+    "proof": "hauteurs=33,33,33,33,33,33,33,33,33,30px"
+  },
+  {
+    "id": "NAV-LOAD",
+    "scenario": "Chargement initial HTTP 200",
+    "viewport": "414",
+    "status": "VALIDÉ",
+    "proof": "erreurs JS=0, requêtes en échec=0 , console=aucune"
+  },
+  {
+    "id": "RESP-OVERFLOW",
+    "scenario": "Absence de débordement horizontal",
+    "viewport": "414",
+    "status": "VALIDÉ",
+    "proof": "scrollWidth=414, viewport=414, éléments débordants=aucun"
+  },
+  {
+    "id": "RESP-HEADER",
+    "scenario": "Hauteur de l'en-tête (navigation 10 liens)",
+    "viewport": "414",
+    "status": "VALIDÉ",
+    "proof": "186px (22 % de la hauteur d'écran)"
+  },
+  {
+    "id": "A11Y-TARGET",
+    "scenario": "Hauteur des liens de navigation ≥ 24px (WCAG 2.5.8)",
+    "viewport": "414",
+    "status": "VALIDÉ",
+    "proof": "hauteurs=33,33,33,33,33,33,33,33,33,33px"
+  },
+  {
+    "id": "NAV-LOAD",
+    "scenario": "Chargement initial HTTP 200",
+    "viewport": "768",
+    "status": "VALIDÉ",
+    "proof": "erreurs JS=0, requêtes en échec=0 , console=aucune"
+  },
+  {
+    "id": "RESP-OVERFLOW",
+    "scenario": "Absence de débordement horizontal",
+    "viewport": "768",
+    "status": "VALIDÉ",
+    "proof": "scrollWidth=768, viewport=768, éléments débordants=aucun"
+  },
+  {
+    "id": "RESP-HEADER",
+    "scenario": "Hauteur de l'en-tête (navigation 10 liens)",
+    "viewport": "768",
+    "status": "VALIDÉ",
+    "proof": "162px (16 % de la hauteur d'écran)"
+  },
+  {
+    "id": "NAV-LOAD",
+    "scenario": "Chargement initial HTTP 200",
+    "viewport": "1280",
+    "status": "VALIDÉ",
+    "proof": "erreurs JS=0, requêtes en échec=0 , console=aucune"
+  },
+  {
+    "id": "RESP-OVERFLOW",
+    "scenario": "Absence de débordement horizontal",
+    "viewport": "1280",
+    "status": "VALIDÉ",
+    "proof": "scrollWidth=1280, viewport=1280, éléments débordants=aucun"
+  },
+  {
+    "id": "RESP-HEADER",
+    "scenario": "Hauteur de l'en-tête (navigation 10 liens)",
+    "viewport": "1280",
+    "status": "VALIDÉ",
+    "proof": "104px (12 % de la hauteur d'écran)"
+  },
+  {
+    "id": "NAV-LOAD",
+    "scenario": "Chargement initial HTTP 200",
+    "viewport": "1440",
+    "status": "VALIDÉ",
+    "proof": "erreurs JS=0, requêtes en échec=0 , console=aucune"
+  },
+  {
+    "id": "RESP-OVERFLOW",
+    "scenario": "Absence de débordement horizontal",
+    "viewport": "1440",
+    "status": "VALIDÉ",
+    "proof": "scrollWidth=1440, viewport=1440, éléments débordants=aucun"
+  },
+  {
+    "id": "RESP-HEADER",
+    "scenario": "Hauteur de l'en-tête (navigation 10 liens)",
+    "viewport": "1440",
+    "status": "VALIDÉ",
+    "proof": "104px (12 % de la hauteur d'écran)"
+  },
+  {
+    "id": "NAV-ANCHORS",
+    "scenario": "Toutes les ancres internes ont une cible",
+    "viewport": "1280",
+    "status": "VALIDÉ",
+    "proof": "11 ancres, cibles manquantes=aucune"
+  },
+  {
+    "id": "NAV-DEEPLINK",
+    "scenario": "Ouverture directe de l'URL #glossaire",
+    "viewport": "1280",
+    "status": "VALIDÉ",
+    "proof": "haut de #glossaire à 16px après chargement des données"
+  },
+  {
+    "id": "NAV-RELOAD",
+    "scenario": "Rechargement sur #glossaire conserve la position",
+    "viewport": "1280",
+    "status": "VALIDÉ",
+    "proof": "haut de #glossaire à 16px du haut de fenêtre"
+  },
+  {
+    "id": "NAV-LOCAL-LINKS",
+    "scenario": "Liens locaux (JSON, accueil) répondent 200",
+    "viewport": "1280",
+    "status": "VALIDÉ",
+    "proof": "4 liens, en échec=aucun"
+  },
+  {
+    "id": "SEC-EXTLINKS",
+    "scenario": "Liens externes target=_blank ont rel=noopener",
+    "viewport": "1280",
+    "status": "VALIDÉ",
+    "proof": "10 liens externes ; sans nouvel onglet : https://tuzilucas.github.io/FRANCE_2027/carte/"
+  },
+  {
+    "id": "A11Y-H1",
+    "scenario": "Un seul h1",
+    "viewport": "1280",
+    "status": "VALIDÉ",
+    "proof": "1 h1 ; plan dans titres.txt"
+  },
+  {
+    "id": "SEO-OG",
+    "scenario": "Métadonnées de partage (Open Graph / canonical)",
+    "viewport": "1280",
+    "status": "VALIDÉ",
+    "proof": "7 balise(s)"
+  },
+  {
+    "id": "A11Y-SKIP",
+    "scenario": "Premier Tab = lien d'évitement visible",
+    "viewport": "1280",
+    "status": "VALIDÉ",
+    "proof": "skip-link Aller au contenu"
+  },
+  {
+    "id": "GLO-COUNT",
+    "scenario": "Compteur initial = nombre total de définitions",
+    "viewport": "1280",
+    "status": "VALIDÉ",
+    "proof": "48 définitions dans la page, 48 dans #glossary-list ; compteur : « 48 définitions affichées dans le glossaire. »"
+  },
+  {
+    "id": "GLO-SEARCH",
+    "scenario": "Recherche « epargne »",
+    "viewport": "1280",
+    "status": "VALIDÉ",
+    "proof": "6 visibles ; compteur : « 6 définitions affichées pour « epargne ». »"
+  },
+  {
+    "id": "GLO-SEARCH",
+    "scenario": "Recherche « ÉPARGNE »",
+    "viewport": "1280",
+    "status": "VALIDÉ",
+    "proof": "6 visibles ; compteur : « 6 définitions affichées pour « ÉPARGNE ». »"
+  },
+  {
+    "id": "GLO-SEARCH",
+    "scenario": "Recherche « dett »",
+    "viewport": "1280",
+    "status": "VALIDÉ",
+    "proof": "12 visibles ; compteur : « 12 définitions affichées pour « dett ». »"
+  },
+  {
+    "id": "GLO-SEARCH",
+    "scenario": "Recherche « zzzz »",
+    "viewport": "1280",
+    "status": "VALIDÉ",
+    "proof": "0 visibles ; compteur : « 0 définition affichée pour « zzzz ». » ; visibles : "
+  },
+  {
+    "id": "GLO-SEARCH",
+    "scenario": "Recherche « DGF »",
+    "viewport": "1280",
+    "status": "VALIDÉ",
+    "proof": "1 visibles ; compteur : « 1 définition affichée pour « DGF ». »"
+  },
+  {
+    "id": "GLO-SEARCH",
+    "scenario": "Recherche «  »",
+    "viewport": "1280",
+    "status": "VALIDÉ",
+    "proof": "48 visibles ; compteur : « 48 définitions affichées dans le glossaire. »"
+  },
+  {
+    "id": "COM-OFGL-REQ",
+    "scenario": "Fameck → requête OFGL émise (paramètres)",
+    "viewport": "390 (simulé)",
+    "status": "À CONFIRMER",
+    "proof": "URL OFGL : https://data.ofgl.fr/api/explore/v2.1/catalog/datasets/ofgl-base-communes/records?where=com_code=\"57206\"+AND+code_type_budget=1&limit=100&offset=0&order_by=exer+DESC,+agregat ; affiché après erreur 400 : « Commune trouvéeL’identité géographique est fournie par le service public geo.api.gouv.fr ; chaque commune est identifiée par son code INSEE. Les chiffres financiers de l’OFGL restent soumis à leur propre périmètre, exercice et disponibilité.FameckCode INSEE :  » | capture=commune-COM-OFGL-REQ.png"
+  },
+  {
+    "id": "COM-ERR-400",
+    "scenario": "Erreur HTTP OFGL distinguée d'une absence de données",
+    "viewport": "390 (simulé)",
+    "status": "VALIDÉ",
+    "proof": "Commune trouvéeL’identité géographique est fournie par le service public geo.api.gouv.fr ; chaque commune est identifiée par son code INSEE. Les chiffres financiers de l’OFGL restent soumis à leur pro | capture=commune-COM-ERR-400.png"
+  },
+  {
+    "id": "COM-PERCAPITA",
+    "scenario": "Champ euros_par_habitant affiché",
+    "viewport": "390 (simulé)",
+    "status": "VALIDÉ",
+    "proof": "Texte : Commune trouvéeL’identité géographique est fournie par le service public geo.api.gouv.fr ; chaque commune est identifiée par son code INSEE. Les chiffres financiers de l’OFGL restent soumis à leur propre périmètre, exercice et disponibilité.FameckCode INSEE : 57206 · Département : 57 · Code postal : | capture=commune-COM-PERCAPITA.png"
+  },
+  {
+    "id": "COM-TRUNC",
+    "scenario": "Réponse tronquée (total_count > lignes reçues) signalée",
+    "viewport": "390 (simulé)",
+    "status": "VALIDÉ",
+    "proof": "Avec total_count=600 et 1 ligne 2019, le site affiche : « vée par nomRéponse incomplète · aucun montant affichéL’OFGL annonce 600 lignes, mais seulement 1 ont pu être récupérées. L’exercice le plus récent ne peut pas être déterminé de façon fiable : les montants ne sont pas affichés.Ouvrir la source officielle OFGL ↗ » | capture=commune-COM-TRUNC.png"
+  },
+  {
+    "id": "COM-MALFORMED",
+    "scenario": "Réponse OFGL mal formée (HTML) → message clair",
+    "viewport": "390 (simulé)",
+    "status": "VALIDÉ",
+    "proof": "Texte : ouvée par nomComptes momentanément indisponiblesLe service de l’OFGL a renvoyé une réponse dans un format inattendu. Il ne s’agit pas d’une absence de données. Réessayez plus tard ou consultez directement la source officielle.Ouvrir la source officielle OFGL ↗ ; erreurs JS=0 | capture=commune-COM-MALFORMED.png"
+  },
+  {
+    "id": "COM-GEO-DOWN",
+    "scenario": "Indisponibilité geo.api.gouv.fr",
+    "viewport": "390 (simulé)",
+    "status": "VALIDÉ",
+    "proof": "Texte : Recherche momentanément indisponibleLe référentiel géographique geo.api.gouv.fr est injoignable (réseau ou blocage du navigateur). Vous pouvez quand même rechercher les comptes dans la base officielle | capture=commune-COM-GEO-DOWN.png"
+  },
+  {
+    "id": "COM-EMPTY-RESULT",
+    "scenario": "Recherche sans résultat",
+    "viewport": "390 (simulé)",
+    "status": "VALIDÉ",
+    "proof": "Texte : Aucune commune trouvéeVérifiez l’orthographe, le code postal ou le code INSEE. Vous pouvez aussi lancer la recherche directement dans la base financière officie | capture=commune-COM-EMPTY-RESULT.png"
+  },
+  {
+    "id": "COM-POSTAL",
+    "scenario": "Code postal 57290 → paramètre codePostal",
+    "viewport": "390 (simulé)",
+    "status": "VALIDÉ",
+    "proof": "URL : https://geo.api.gouv.fr/communes?fields=nom%2Ccode%2CcodeDepartement%2CcodesPostaux&limit=10&codePostal=57290 | capture=commune-COM-POSTAL.png"
+  },
+  {
+    "id": "COM-INSEE",
+    "scenario": "Nombre à 5 chiffres 57206 → interrogé comme code postal ET code INSEE",
+    "viewport": "390 (simulé)",
+    "status": "VALIDÉ",
+    "proof": "URLs : https://geo.api.gouv.fr/communes?fields=nom%2Ccode%2CcodeDepartement%2CcodesPostaux&limit=10&codePostal=57206 ; https://geo.api.gouv.fr/communes?fields=nom%2Ccode%2CcodeDepartement%2CcodesPostaux&limit=10&code=57206 | capture=commune-COM-INSEE.png"
+  },
+  {
+    "id": "COM-CORSE",
+    "scenario": "Code INSEE corse 2A004 traité comme code",
+    "viewport": "390 (simulé)",
+    "status": "VALIDÉ",
+    "proof": "URL : https://geo.api.gouv.fr/communes?fields=nom%2Ccode%2CcodeDepartement%2CcodesPostaux&limit=10&code=2A004 | capture=commune-COM-CORSE.png"
+  },
+  {
+    "id": "COM-LYON",
+    "scenario": "Lyon (9 codes postaux) lisible sur mobile",
+    "viewport": "390 (simulé)",
+    "status": "VALIDÉ",
+    "proof": "scrollWidth=390/390 ;  | capture=commune-COM-LYON.png"
+  },
+  {
+    "id": "COM-OFGL-LINK",
+    "scenario": "Lien OFGL de la fiche filtré par code INSEE (et non par nom)",
+    "viewport": "390 (simulé)",
+    "status": "VALIDÉ",
+    "proof": "href=https://data.ofgl.fr/explore/dataset/ofgl-base-communes/?q=57206 | capture=commune-COM-OFGL-LINK.png"
+  },
+  {
+    "id": "COM-PAGINATION",
+    "scenario": "Pagination OFGL (150 lignes, pages de 100)",
+    "viewport": "390 (simulé)",
+    "status": "VALIDÉ",
+    "proof": "2 appels : limit=100&offset=0 ; limit=100&offset=100 | capture=commune-COM-PAGINATION.png"
+  },
+  {
+    "id": "COM-HOMONYMES",
+    "scenario": "Homonymes : choix explicite par code INSEE avant chargement des comptes",
+    "viewport": "390 (simulé)",
+    "status": "VALIDÉ",
+    "proof": "requêtes OFGL avant choix=0 ; boutons=Afficher les comptes de Saint-Martin-de-Test (01001) / Afficher les comptes de Saint-Martin-de-Test (02002) ; après choix : https://data.ofgl.fr/api/explore/v2.1/catalog/datasets/ofgl-base-communes/records?where=com_code=\"02002\"+AND+code_type_budget=1&limit=100&offset=0&order_by=exer+DESC,+agregat"
+  },
+  {
+    "id": "COM-EMPTY-QUERY",
+    "scenario": "Recherche vide bloquée par le formulaire",
+    "viewport": "390",
+    "status": "VALIDÉ",
+    "proof": "aucune requête émise ; message natif : « Please fill out this field. »"
+  },
+  {
+    "id": "COM-SPACES",
+    "scenario": "Saisie d'espaces seuls : aucune requête, message à l'utilisateur",
+    "viewport": "390",
+    "status": "VALIDÉ",
+    "proof": "requêtes=0, zone masquée=false, message=« Saisissez une communeIndiquez un nom de commune, un code postal ou un code INSEE »"
+  },
+  {
+    "id": "COM-PARTIAL",
+    "scenario": "Code partiel « 5729 » : message explicite, aucune requête",
+    "viewport": "390",
+    "status": "VALIDÉ",
+    "proof": "Code incomplet ou invalideUn code postal ou un code INSEE comporte exactement 5 caractères (par exemple 57290 ou 2A004)."
+  },
+  {
+    "id": "COM-RACE",
+    "scenario": "Deux recherches successives rapides : seul le dernier résultat s'affiche",
+    "viewport": "390 (simulé)",
+    "status": "VALIDÉ",
+    "proof": "titres affichés : Commune trouvée / Lyon"
+  },
+  {
+    "id": "COM-BUSY",
+    "scenario": "Libellé « Recherche… » et aria-busy pendant la recherche, rétablis ensuite",
+    "viewport": "390",
+    "status": "VALIDÉ",
+    "proof": "pendant : libellé occupé=true, aria-busy=true ; après : libellé non rétabli=false"
+  },
+  {
+    "id": "COM-ABORT",
+    "scenario": "Saisie invalide pendant une recherche : recherche annulée, message conservé",
+    "viewport": "390 (simulé)",
+    "status": "VALIDÉ",
+    "proof": "Code incomplet ou invalideUn code postal ou un code INSEE comporte exactement 5 caractères (par exemple 57290 ou 2A004). ; bouton=Rechercher"
+  },
+  {
+    "id": "CLAIM-DEBT",
+    "scenario": "Affirmation dette 3 500 Md€ / T2 2026",
+    "viewport": "1280",
+    "status": "VALIDÉ",
+    "proof": "Référence officielle trouvée : dette publiqueComparaison indicative — transcription à contrôlerPériode : 2026-T2.Valeur publiée par l'INSEE : 3 595,5 milliards €, soit 119,0 % du PIB.Le texte contient 3 500 milliards €. "
+  },
+  {
+    "id": "CLAIM-PERIOD",
+    "scenario": "Dette + « Année 2024 » : explication stock trimestriel",
+    "viewport": "1280",
+    "status": "VALIDÉ",
+    "proof": "La dette se mesure par trimestrePériode à préciserLa dette publique est un stock mesuré à la fin de chaque trimestre, pas un montant annuel. Pour une année, cho"
+  },
+  {
+    "id": "CLAIM-TOPIC",
+    "scenario": "« dette de Fameck » orientée vers les finances communales",
+    "viewport": "1280",
+    "status": "VALIDÉ",
+    "proof": "Sujet identifié : finances communalesPas encore de données validées pour conclureDes repères 2024 de Fameck sont affichés dans le site, mais ils proviennent d'u"
+  },
+  {
+    "id": "DATA-RIBBON-JS",
+    "scenario": "Bandeau rempli depuis les JSON après chargement",
+    "viewport": "375",
+    "status": "VALIDÉ",
+    "proof": "3 595,5 Md€ / 1,34 M€ / 7,17 M€ / 10,09 %"
+  },
+  {
+    "id": "RESP-RIBBON",
+    "scenario": "Bandeau de chiffres clés mis en grille",
+    "viewport": "375",
+    "status": "VALIDÉ",
+    "proof": "display=grid"
+  },
+  {
+    "id": "FAM-ANALYSIS",
+    "scenario": "Analyse 2019–2024 calculée depuis le JSON",
+    "viewport": "375",
+    "status": "VALIDÉ",
+    "proof": "Ce que montre la série 2019–2024Entre 2019 et 2024, les recettes de fonctionnement progressent de 7,9 %, et les dépenses progressent de 16,8 %. L’épargne brute recule de 35,7 %. Le taux d’épargne brute passe de 17,0 % à 10,1 %, et la capacité de désendettement"
+  },
+  {
+    "id": "FAM-TABLE-MOBILE",
+    "scenario": "Tableau 7 colonnes sur mobile",
+    "viewport": "375",
+    "status": "À CONFIRMER",
+    "proof": "7 lignes ; défilement horizontal interne 850px pour 343px visibles (le titre « Évolution annuelle » et le texte défilent avec le tableau)"
+  }
+]

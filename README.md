@@ -14,8 +14,8 @@ La publication INSEE du 29 septembre 2026 indique qu’au T2 2026 la dette publi
 
 - Indicateur présenté : dette publique française au sens de Maastricht, par trimestre.
 - Les sources et limites sont documentées dans `data/sources.json` et dans l’interface.
-- Une première recherche de commune accepte le nom, le code postal et le code INSEE pour les entités présentes dans `data/entities.json` ; le catalogue est encore partiel.
-- Les données financières de Fameck ne sont pas encore intégrées ni validées : aucune valeur locale n’est présentée comme vérifiée.
+- La recherche de commune interroge le référentiel national geo.api.gouv.fr (nom, code postal ou code INSEE, Corse comprise) ; chaque commune est identifiée par son code INSEE. Les comptes sont ensuite demandés à l’API OFGL, mais les noms de champs utilisés n’ont pas encore été vérifiés contre le schéma officiel : les montants affichés sont marqués « non rapprochés » (voir `AUDIT-TECHNIQUE.md`).
+- Les données financières de Fameck sont affichées comme repères retranscrits d’une source secondaire (FMPC), non encore rapprochés de l’OFGL : aucune valeur locale n’est présentée comme vérifiée.
 - Le rapprochement automatique du fichier XLSX brut de l’INSEE reste à effectuer. Les chiffres affichés doivent donc être considérés comme un prototype tant que ce contrôle n’est pas terminé.
 
 ## Publication
@@ -23,6 +23,16 @@ La publication INSEE du 29 septembre 2026 indique qu’au T2 2026 la dette publi
 Le site est statique et peut être publié avec GitHub Pages depuis la branche `main`, dossier `/` (root). Aucun backend ni secret n’est requis pour ce prototype.
 
 Important : les fichiers HTML, CSS et JavaScript exécutés dans le navigateur sont nécessairement consultables par le public. Les secrets, clés privées, outils internes, tests et documentation de développement ne doivent pas être copiés dans ce dépôt public.
+
+## Tests
+
+Aucune étape de construction : le site reste un ensemble de fichiers statiques.
+
+- `npm run test:unit` : fonctions pures de `assets/js/citoyen-lib.js` et cohérence des JSON (Node 22, aucune dépendance).
+- `npm run test:e2e` : recette Playwright (320 à 1440 px). Le dépôt est servi par un serveur Node intégré ; geo.api.gouv.fr et data.ofgl.fr reçoivent des réponses **simulées** : ces tests vérifient le comportement du code, pas l’exactitude des données officielles.
+- Le workflow `.github/workflows/tests.yml` lance les deux suites ; `npm install` est nécessaire pour Playwright.
+
+Audit et plan de correction : `AUDIT-TECHNIQUE.md`.
 
 ## Sources
 
