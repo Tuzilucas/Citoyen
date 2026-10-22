@@ -293,9 +293,56 @@
     }
   }
 
+  async function initFameckFinances() {
+    const metrics = document.getElementById("fameck-metrics");
+    const calculations = document.getElementById("fameck-calculs");
+    if (!metrics || !calculations) return;
+    const euro = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
+    try {
+      const response = await fetch("data/indicators/fameck-finances-2024.json", { cache: "no-store" });
+      if (!response.ok) throw new Error("HTTP " + response.status);
+      const data = await response.json();
+      metrics.replaceChildren();
+      data.indicators.forEach((item) => {
+        const card = document.createElement("article");
+        card.className = "municipal-metric";
+        const label = document.createElement("p");
+        label.className = "municipal-metric-label";
+        label.textContent = item.label;
+        const amount = document.createElement("p");
+        amount.className = "municipal-metric-value";
+        amount.textContent = euro.format(item.value_eur);
+        const perCapita = document.createElement("p");
+        perCapita.className = "municipal-metric-context";
+        perCapita.textContent = money.format(item.value_per_capita_eur) + " € par habitant";
+        const definition = document.createElement("p");
+        definition.className = "municipal-metric-definition";
+        definition.textContent = item.definition;
+        card.append(label, amount, perCapita, definition);
+        metrics.appendChild(card);
+      });
+      calculations.replaceChildren();
+      data.calculated_indicators.forEach((item) => {
+        const article = document.createElement("article");
+        article.className = "municipal-calculation";
+        const title = document.createElement("strong");
+        title.textContent = item.label;
+        const value = document.createElement("span");
+        value.textContent = item.value_percent !== undefined ? ratio.format(item.value_percent) + " %" : ratio.format(item.value_years) + " ans";
+        const formula = document.createElement("p");
+        formula.textContent = "Formule : " + item.formula + ". Indicateur indicatif, calculé à partir des valeurs retranscrites.";
+        article.append(title, value, formula);
+        calculations.appendChild(article);
+      });
+    } catch (error) {
+      metrics.textContent = "Les données de Fameck ne peuvent pas être chargées pour le moment. Consultez les sources liées à cette section.";
+    }
+  }
+
   async function init() {
     initMunicipalitySearch();
     initDebtComposition();
+    initFameckFinances();
     const form = document.getElementById("claim-form");
     if (form) form.addEventListener("submit", handleClaim);
     try {
