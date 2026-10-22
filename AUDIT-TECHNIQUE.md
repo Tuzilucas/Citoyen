@@ -2,7 +2,7 @@
 
 - **Date** : 22 octobre 2026
 - **Objet** : site https://tuzilucas.github.io/Citoyen/ — dépôt `Tuzilucas/Citoyen`
-- **Version publiée** : branche `main`, commit `dabca5b1c28fa021fac7e285f13cfe98136d98da` (22 octobre 2026).
+- **Version publiée** : branche `main` (état vérifié le 22 octobre 2026 ; voir l’historique Git du dépôt pour le commit courant).
 - **Base auditée initialement** : `230d34d` ; les corrections d’interface et de navigation sont intégrées à `main`.
 - **Validation après publication** : syntaxe JavaScript et cohérence des identifiants de navigation contrôlées statiquement. Le README précise que le workflow de tests est manuel uniquement. Les suites automatisées n’ont pas été relancées après publication ; aucun appel réel à l’API OFGL ni contrôle visuel du site déployé n’est revendiqué.
 - **Limite de publication** : le commit est bien présent sur `main`, mais l’accès direct au site déployé n’a pas pu être vérifié depuis cet environnement.
