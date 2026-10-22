@@ -18,6 +18,7 @@
     </a>
     <nav aria-label="Navigation principale">
       <a href="#territoires">Territoires</a>
+      <a href="#communes">Communes</a>
       <a href="#verifier">Vérifier un chiffre</a>
       <a href="#explorer">Explorer les données</a>
       <a href="#methode">Notre méthode</a>
@@ -64,6 +65,22 @@
           <span class="territory-note">Aucune couverture nationale des communes n’est revendiquée à ce stade.</span>
         </article>
       </div>
+    </section>
+
+  <section id="communes" class="section commune-search-section">
+      <div class="section-heading">
+        <div><p class="eyebrow">Recherche territoriale · première version</p><h2>Rechercher une commune</h2></div>
+        <p class="muted">Le catalogue est encore limité. Cette recherche vérifie l’identité de la commune, pas encore ses comptes financiers.</p>
+      </div>
+      <form id="commune-form" class="commune-form">
+        <label for="commune-query">Nom, code postal ou code INSEE</label>
+        <div class="commune-search-row">
+          <input id="commune-query" name="commune" type="search" placeholder="Ex. : Fameck, 57290 ou 57206" autocomplete="off" required>
+          <button class="button button-primary" type="submit">Rechercher</button>
+        </div>
+        <p class="form-hint">Le catalogue affiché ici est partiel. Une commune absente du catalogue n’est pas une commune sans données.</p>
+      </form>
+      <div id="commune-result" class="commune-result" aria-live="polite" hidden></div>
     </section>
 
   <section id="verifier" class="section verification-section">
@@ -167,7 +184,7 @@
   </main>
   <footer class="site-footer">
     <div><strong>Observatoire citoyen des finances publiques</strong><p>Gratuit · Sources officielles · Données brutes et calculs traçables.</p></div>
-    <a href="docs/ROADMAP.md">Feuille de route du projet</a>
+    <a href="avancement.html">Avancement et prochaines étapes</a>
   </footer>
 </body>
 </html>
