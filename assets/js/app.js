@@ -242,8 +242,60 @@
     });
   }
 
+  async function initDebtComposition() {
+    const table = document.getElementById("composition-table-body");
+    if (!table) return;
+    try {
+      const response = await fetch("data/indicators/dette-publique-composition-2026-T2.json", { cache: "no-store" });
+      if (!response.ok) throw new Error("HTTP " + response.status);
+      const data = await response.json();
+      const total = data.headline.gross_debt;
+      const netValue = document.getElementById("net-debt-value");
+      const netContext = document.getElementById("net-debt-context");
+      if (netValue) netValue.textContent = money.format(data.headline.net_debt) + " Md€";
+      if (netContext) netContext.textContent = money.format(data.headline.net_debt_gdp_percent) + " % du PIB · variation trimestrielle : +" + money.format(data.headline.net_debt_change_qoq) + " Md€";
+      table.replaceChildren();
+      data.subsectors.forEach((item) => {
+        const tr = document.createElement("tr");
+        const share = item.debt / total * 100;
+        const variation = (item.change_qoq > 0 ? "+" : "") + money.format(item.change_qoq) + " Md€";
+        const cells = [
+          item.label,
+          money.format(item.debt) + " Md€",
+          variation,
+          ratio.format(share) + " %"
+        ];
+        cells.forEach((text, index) => {
+          const td = document.createElement("td");
+          td.textContent = text;
+          if (index > 0) td.className = "numeric-cell";
+          tr.appendChild(td);
+        });
+        table.appendChild(tr);
+      });
+      const totalRow = document.createElement("tr");
+      totalRow.className = "composition-total-row";
+      ["Total des administrations publiques", money.format(total) + " Md€", "+" + money.format(data.headline.gross_debt_change_qoq) + " Md€", "100,0 %"].forEach((text, index) => {
+        const td = document.createElement("td");
+        td.textContent = text;
+        if (index > 0) td.className = "numeric-cell";
+        totalRow.appendChild(td);
+      });
+      table.appendChild(totalRow);
+    } catch (error) {
+      table.replaceChildren();
+      const row = document.createElement("tr");
+      const cell = document.createElement("td");
+      cell.colSpan = 4;
+      cell.textContent = "Données de composition momentanément indisponibles. Consultez la publication INSEE liée sous le tableau.";
+      row.appendChild(cell);
+      table.appendChild(row);
+    }
+  }
+
   async function init() {
     initMunicipalitySearch();
+    initDebtComposition();
     const form = document.getElementById("claim-form");
     if (form) form.addEventListener("submit", handleClaim);
     try {
