@@ -131,8 +131,8 @@
         title: "Sujet identifié : finances communales",
         links: [{ label: "Ouvrir les comptes des communes — OFGL", href: "https://data.ofgl.fr/explore/dataset/ofgl-base-communes/" }, { label: "Ouvrir les comptes individuels DGFiP 2025", href: "https://www.data.gouv.fr/datasets/comptes-individuels-des-communes-fichier-global-2025" }],
         paragraphs: [
-          "Des repères 2024 de Fameck sont affichés dans le site, mais ils proviennent d'une retranscription secondaire et ne sont pas encore rapprochés ligne à ligne de l'export brut OFGL/DGFiP.",
-          "Une comparaison communale devra distinguer budget principal, budgets annexes et données consolidées, ainsi que prévisions et exécution. Les chiffres de Fameck ne doivent pas être traités comme une série officiellement réconciliée tant que le contrôle brut n'est pas terminé.",
+          "Les comptes communaux sont chargés pour la commune recherchée ; les données restent indicatives tant que leurs agrégats et périmètres ne sont pas rapprochés de la documentation officielle.",
+          "Une comparaison communale devra distinguer budget principal, budgets annexes et données consolidées, ainsi que prévisions et exécution. Les chiffres communaux ne doivent pas être traités comme une série officiellement réconciliée tant que le contrôle brut n'est pas terminé.",
           "Aucun verdict n'est produit sans série vérifiée correspondant exactement à la question."
         ]
       },
