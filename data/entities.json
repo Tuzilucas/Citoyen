@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0.0",
+  "entities": [
+    {
+      "entity_id": "57206",
+      "entity_type": "commune",
+      "official_name": "Fameck",
+      "department_code": "57",
+      "department_name": "Moselle",
+      "region_code": "44",
+      "region_name": "Grand Est",
+      "postal_codes": ["57290"],
+      "parent_epci": {
+        "entity_id": "992367730",
+        "official_name": "Thionville Fensch Agglomération",
+        "verification_source_id": "insee-fameck-geographie"
+      },
+      "verification_status": "verified_from_insee_cog_2026",
+      "verification_date": "2026-10-21",
+      "source_id": "insee-fameck-geographie"
+    }
+  ],
+  "notes": [
+    "Le code INSEE identifie la commune ; le code postal sert uniquement à la recherche.",
+    "Les données financières ne sont pas incluses dans ce fichier."
+  ]
+}
