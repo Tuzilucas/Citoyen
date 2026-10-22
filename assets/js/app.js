@@ -175,7 +175,25 @@
     container.appendChild(p);
   }
 
-  function renderCommuneResult(container, commune) {
+  function formatFinancialAmount(value) {
+    const number = Number(value);
+    return Number.isFinite(number) ? new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 }).format(number) + " €" : "Non renseigné";
+  }
+
+  async function fetchCommuneFinances(commune) {
+    const endpoint = "https://data.ofgl.fr/api/explore/v2.1/catalog/datasets/ofgl-base-communes/records";
+    const params = new URLSearchParams({
+      where: 'com_code="' + commune.code + '" AND exer=2024 AND code_type_budget=1',
+      limit: "100",
+      order_by: "agregat"
+    });
+    const response = await fetch(endpoint + "?" + params.toString(), { headers: { Accept: "application/json" } });
+    if (!response.ok) throw new Error("Données OFGL indisponibles (" + response.status + ")");
+    const payload = await response.json();
+    return Array.isArray(payload.results) ? payload.results : [];
+  }
+
+  function renderCommuneResult(container, commune, records) {
     const card = document.createElement("article");
     card.className = "commune-result-card";
     const title = document.createElement("h3");
@@ -187,16 +205,49 @@
       ((commune.codesPostaux && commune.codesPostaux.length) ? " · Code postal : " + commune.codesPostaux.join(", ") : "");
     const status = document.createElement("span");
     status.className = "result-status";
-    status.textContent = "Commune trouvée dans le référentiel national";
     const explanation = document.createElement("p");
-    explanation.textContent = "Le site a identifié la commune. Ses comptes ne sont pas encore tous intégrés et vérifiés directement dans l’observatoire : aucun montant n’est inventé ou présenté comme validé.";
     const link = document.createElement("a");
     link.className = "button button-primary";
     link.href = "https://data.ofgl.fr/explore/dataset/ofgl-base-communes/?q=" + encodeURIComponent(commune.nom);
     link.target = "_blank";
     link.rel = "noopener noreferrer";
-    link.textContent = "Consulter les comptes officiels de cette commune ↗";
-    card.append(title, meta, status, explanation, link);
+    link.textContent = "Ouvrir la source officielle OFGL ↗";
+    card.append(title, meta);
+    if (records && records.length) {
+      status.classList.add("result-status-verified");
+      status.textContent = "Données OFGL reçues · exercice 2024 · budget principal";
+      explanation.textContent = "Les montants ci-dessous proviennent de l’API officielle de l’Observatoire des finances et de la gestion publique locales. Ils concernent le budget principal et l’exercice 2024 uniquement ; l’absence d’une ligne ne signifie pas que le montant est nul.";
+      card.append(status, explanation);
+      const list = document.createElement("dl");
+      list.className = "finance-result-list";
+      const priority = ["Recettes de fonctionnement", "Dépenses de fonctionnement", "Epargne brute", "Encours de dette", "Dépenses d'investissement", "Recettes d'investissement", "Epargne nette", "Frais de personnel"];
+      const selected = [];
+      priority.forEach((label) => {
+        const found = records.find((row) => String(row.agregat || "").toLocaleLowerCase("fr") === label.toLocaleLowerCase("fr"));
+        if (found) selected.push(found);
+      });
+      (selected.length ? selected : records.slice(0, 8)).forEach((row) => {
+        const dt = document.createElement("dt");
+        dt.textContent = row.agregat || "Agrégat financier";
+        const dd = document.createElement("dd");
+        const amount = row.montant ?? row.montant_eur ?? row.valeur;
+        const perCapita = row.montant_hab ?? row.montant_eur_par_habitant;
+        dd.textContent = amount !== undefined ? formatFinancialAmount(amount) : "Montant non identifié dans la réponse API";
+        if (perCapita !== undefined && perCapita !== null) dd.textContent += " · " + formatFinancialAmount(perCapita) + "/hab.";
+        list.append(dt, dd);
+      });
+      card.appendChild(list);
+      const method = document.createElement("p");
+      method.className = "commune-method-note";
+      method.textContent = "Lecture prudente : chiffres nominaux, sans correction de l’inflation. Les budgets annexes ne sont pas inclus dans cet aperçu.";
+      card.appendChild(method);
+    } else {
+      status.className = "result-status";
+      status.textContent = "Aucune ligne exploitable reçue pour 2024";
+      explanation.textContent = "La commune est bien identifiée, mais l’API n’a pas renvoyé de ligne financière exploitable pour ce filtre. Cela peut venir d’une donnée absente, d’un champ différent ou d’une indisponibilité : aucun zéro n’est affiché. Consulte la source officielle pour vérifier.";
+      card.append(status, explanation);
+    }
+    card.appendChild(link);
     container.appendChild(card);
   }
 
@@ -257,7 +308,21 @@
         note.className = "commune-meta";
         note.textContent = "L’identité géographique est vérifiée via le service public geo.api.gouv.fr. Les chiffres financiers affichés sur l’OFGL restent soumis à leur propre périmètre, exercice et disponibilité.";
         result.appendChild(note);
-        communes.forEach((commune) => renderCommuneResult(result, commune));
+        for (const commune of communes) {
+          const placeholder = document.createElement("article");
+          placeholder.className = "commune-result-card";
+          placeholder.textContent = "Chargement des comptes OFGL pour " + commune.nom + "…";
+          result.appendChild(placeholder);
+          try {
+            const records = await fetchCommuneFinances(commune);
+            const card = document.createElement("div");
+            renderCommuneResult(card, commune, records);
+            placeholder.replaceWith(...card.childNodes);
+          } catch (error) {
+            placeholder.remove();
+            renderCommuneResult(result, commune, []);
+          }
+        }
       } catch (error) {
         result.replaceChildren();
         const title = document.createElement("h3");
