@@ -25,7 +25,7 @@
       <a href="#verifier">Vérifier un chiffre</a>
       <a href="#explorer">Explorer les données</a>
       <a href="#composition-dette">Répartition de la dette</a>
-      <a href="#methode">Notre méthode</a>
+      <a href="#glossaire">Glossaire</a>\n      <a href="#methode">Notre méthode</a>
       <a class="presidentielle-link" href="https://tuzilucas.github.io/FRANCE_2027/carte/">Présidentielle 2027</a>
     </nav>
   </header>
@@ -224,6 +224,58 @@
       <div class="raw-principle"><strong>Notre règle : deux niveaux, toujours.</strong><span>La donnée officielle d’origine, puis les indicateurs calculés par le site. Chaque calcul doit expliquer sa formule et permettre de retrouver ses données d’entrée.</span></div>
     </section>
 
+
+    <section id="glossaire" class="section glossary-section">
+      <div class="section-heading">
+        <div><p class="eyebrow">Comprendre les finances publiques</p><h2>Glossaire en langage simple</h2></div>
+        <p class="muted">Les termes comptables officiels sont conservés. Chaque définition explique ce qu’ils veulent dire concrètement, sans remplacer la définition technique.</p>
+      </div>
+      <label class="glossary-search-label" for="glossary-search">Rechercher un mot ou une notion</label>
+      <input id="glossary-search" class="glossary-search" type="search" placeholder="Ex. : dette, épargne, impôts, investissement…" autocomplete="off">
+      <p id="glossary-count" class="form-hint" aria-live="polite">Toutes les définitions sont affichées.</p>
+      <div id="glossary-list" class="glossary-list">
+        <details class="glossary-entry"><summary>Annuité de la dette</summary><p>Somme à payer sur une année pour rembourser un emprunt : une partie du capital emprunté et les intérêts. Ce n’est pas la même chose que le montant total de la dette restante.</p><p class="glossary-official">À distinguer de : encours de dette, intérêts, remboursement du capital.</p></details>
+        <details class="glossary-entry"><summary>Autofinancement</summary><p>Argent que la collectivité peut consacrer à ses projets grâce aux ressources dégagées par son activité courante, plutôt que par un nouvel emprunt ou une subvention.</p><p class="glossary-official">Le terme est souvent employé au sens large. Vérifier si l’indicateur concerne l’épargne brute ou l’épargne nette.</p></details>
+        <details class="glossary-entry"><summary>Budget annexe</summary><p>Budget séparé du budget principal, utilisé pour suivre une activité particulière, par exemple un service ou un équipement. Il ne faut pas l’additionner sans vérifier les règles de consolidation : certains flux peuvent se compenser.</p></details>
+        <details class="glossary-entry"><summary>Budget principal</summary><p>Le budget central de la commune. Il retrace ses principales recettes et dépenses, mais certaines activités peuvent être suivies dans des budgets annexes.</p></details>
+        <details class="glossary-entry"><summary>Capacité de désendettement</summary><p>Nombre d’années théoriques nécessaires pour rembourser toute la dette si la collectivité y consacrait toute son épargne brute annuelle. C’est un indicateur simplifié, pas une date réelle de remboursement.</p><p class="glossary-formula">Formule courante : encours de dette ÷ épargne brute. Si l’épargne brute est nulle ou négative, cet indicateur n’est pas interprétable normalement.</p></details>
+        <details class="glossary-entry"><summary>Capacité d’autofinancement (CAF)</summary><p>Ressource dégagée par l’activité de l’année qui peut aider à financer les investissements ou à rembourser des emprunts. Selon le contexte, la CAF peut être définie selon des règles comptables précises : vérifier la formule utilisée par la source.</p></details>
+        <details class="glossary-entry"><summary>Charges / dépenses de fonctionnement</summary><p>Ce que la collectivité dépense pour faire fonctionner ses services au quotidien : personnel, énergie, entretien, achats, prestations et autres dépenses courantes. Le contenu exact dépend de l’agrégat comptable choisi.</p></details>
+        <details class="glossary-entry"><summary>Charges financières</summary><p>Principalement les intérêts et frais liés aux emprunts. Le remboursement du capital est généralement présenté séparément.</p></details>
+        <details class="glossary-entry"><summary>Compte administratif / compte financier unique</summary><p>Documents qui rendent compte de ce qui a réellement été encaissé et dépensé. Le nom et le format varient selon l’exercice et le cadre comptable ; ils ne doivent pas être confondus avec le budget prévisionnel.</p></details>
+        <details class="glossary-entry"><summary>Comptes consolidés</summary><p>Vue qui regroupe le budget principal et les budgets annexes en neutralisant certains échanges entre eux. Cela évite, autant que possible, de compter deux fois le même flux.</p></details>
+        <details class="glossary-entry"><summary>Crédits votés</summary><p>Montants autorisés par le budget pour une dépense. Ils indiquent ce qui peut être dépensé, pas nécessairement ce qui a effectivement été payé.</p></details>
+        <details class="glossary-entry"><summary>Déficit public</summary><p>Pour une période donnée, les dépenses publiques dépassent les recettes publiques selon le périmètre et les règles statistiques retenus. Le déficit est un flux annuel ; la dette est un stock accumulé.</p></details>
+        <details class="glossary-entry"><summary>Dépenses d’équipement</summary><p>Dépenses pour créer, acheter ou améliorer durablement des équipements : bâtiments, écoles, routes, matériels ou rénovations. Elles font partie de l’investissement, mais ne représentent pas toujours toutes les dépenses d’investissement.</p></details>
+        <details class="glossary-entry"><summary>Dépenses d’investissement</summary><p>Dépenses liées à des biens ou projets qui servent au-delà de l’année : construction, rénovation importante, achat d’équipement ou certains remboursements et opérations financières selon le total utilisé.</p></details>
+        <details class="glossary-entry"><summary>Dette brute</summary><p>Montant des dettes retenues par la définition statistique, sans déduire les actifs financiers que l’administration possède. C’est la mesure utilisée notamment pour la dette publique au sens de Maastricht.</p></details>
+        <details class="glossary-entry"><summary>Dette nette</summary><p>Dette brute diminuée de certains actifs financiers. Elle donne une autre vue de la situation financière, mais ne signifie pas que tous ces actifs peuvent être utilisés immédiatement pour payer la dette.</p></details>
+        <details class="glossary-entry"><summary>Dette publique au sens de Maastricht</summary><p>Indicateur européen harmonisé de dette brute des administrations publiques, calculé à une date précise et après neutralisation des dettes entre administrations publiques. Il ne correspond pas à toutes les dettes possibles d’un pays ou d’une collectivité.</p></details>
+        <details class="glossary-entry"><summary>Encours de dette</summary><p>Capital qu’il reste à rembourser à une date donnée. C’est une photographie de la dette restante, pas la somme des remboursements effectués pendant l’année.</p></details>
+        <details class="glossary-entry"><summary>Épargne brute</summary><p>Différence entre les recettes et les dépenses de fonctionnement selon le périmètre retenu. Elle indique la marge dégagée avant remboursement du capital des emprunts et avant le financement des investissements.</p><p class="glossary-formula">Lecture simple : recettes courantes − dépenses courantes. Vérifier les libellés et les retraitements de la source.</p></details>
+        <details class="glossary-entry"><summary>Épargne de gestion</summary><p>Épargne issue du fonctionnement avant prise en compte de certains frais financiers, selon la définition de l’agrégat. Comparer uniquement des séries calculées selon la même méthode.</p></details>
+        <details class="glossary-entry"><summary>Épargne nette</summary><p>Épargne brute après retrait du remboursement du capital de la dette. Elle donne une idée de ce qui reste pour contribuer au financement des investissements, avant les autres ressources et dépenses concernées.</p></details>
+        <details class="glossary-entry"><summary>Exercice budgétaire</summary><p>Période comptable de référence, généralement une année civile pour les collectivités françaises. Un chiffre 2024 doit être comparé à un chiffre 2024 de même périmètre, pas à une donnée trimestrielle ou prévisionnelle.</p></details>
+        <details class="glossary-entry"><summary>Fonds de compensation pour la TVA (FCTVA)</summary><p>Mécanisme par lequel certaines collectivités reçoivent une compensation forfaitaire d’une partie de la TVA payée sur des dépenses d’investissement éligibles. Ce n’est pas le remboursement intégral de toute TVA.</p></details>
+        <details class="glossary-entry"><summary>Fonds de roulement</summary><p>Indicateur comptable qui renseigne sur les ressources stables disponibles pour financer le cycle d’activité. Il ne correspond pas automatiquement à l’argent disponible sur le compte bancaire.</p></details>
+        <details class="glossary-entry"><summary>Impôts locaux</summary><p>Recettes fiscales liées à la fiscalité locale, selon le champ exact de la donnée. Le montant encaissé par une commune ne correspond pas forcément à tout ce que paient les habitants : certaines recettes reviennent à d’autres niveaux publics.</p></details>
+        <details class="glossary-entry"><summary>Investissement</summary><p>Dépenses destinées à créer, acquérir ou améliorer des biens durables. Une hausse des investissements n’est pas automatiquement bonne ou mauvaise : il faut examiner le projet, son financement et ses effets.</p></details>
+        <details class="glossary-entry"><summary>Montant par habitant</summary><p>Montant total divisé par la population retenue. Cela facilite certaines comparaisons, mais ne signifie pas que chaque habitant paie ou reçoit exactement cette somme. Il faut vérifier l’année de population et le périmètre.</p></details>
+        <details class="glossary-entry"><summary>Nomenclature comptable (M14, M57…)</summary><p>Règles et catégories qui organisent la comptabilité des collectivités. Une évolution de nomenclature peut changer la présentation des données : une comparaison historique doit vérifier que les chiffres sont comparables.</p></details>
+        <details class="glossary-entry"><summary>Population de référence</summary><p>Nombre d’habitants utilisé pour calculer les indicateurs par habitant. Il peut s’agir d’une population légale publiée pour une année précise, qui n’est pas forcément égale au nombre d’habitants présents au moment du calcul.</p></details>
+        <details class="glossary-entry"><summary>Produit intérieur brut (PIB)</summary><p>Valeur de la richesse produite sur un territoire pendant une période. Le ratio dette/PIB compare un stock de dette à la taille annuelle de l’économie ; ce n’est pas une part de la dette qui serait remboursée en une année.</p></details>
+        <details class="glossary-entry"><summary>Recettes de fonctionnement</summary><p>Ressources courantes servant à financer les services : impôts, dotations, participations, produits de services et autres recettes selon le périmètre. Elles ne sont pas synonymes de toutes les ressources de la collectivité.</p></details>
+        <details class="glossary-entry"><summary>Recettes d’investissement</summary><p>Ressources destinées au financement des investissements : subventions, cessions, fonds dédiés, emprunts et autres recettes selon le total étudié. Un emprunt est une ressource de financement, mais il augmente la dette.</p></details>
+        <details class="glossary-entry"><summary>Remboursement du capital</summary><p>Part du remboursement d’un emprunt qui réduit réellement le montant emprunté restant dû. À distinguer des intérêts, qui rémunèrent le prêteur.</p></details>
+        <details class="glossary-entry"><summary>Solde budgétaire</summary><p>Différence entre recettes et dépenses pour un périmètre donné. Il faut préciser s’il s’agit du fonctionnement, de l’investissement, du budget total, d’une prévision ou de l’exécution réelle.</p></details>
+        <details class="glossary-entry"><summary>Stock et flux</summary><p>Un stock se mesure à une date (par exemple la dette au 31 décembre). Un flux se mesure pendant une période (par exemple les dépenses de l’année). Les mélanger conduit à des comparaisons trompeuses.</p></details>
+        <details class="glossary-entry"><summary>Taux d’épargne brute</summary><p>Part des recettes de fonctionnement qui reste sous forme d’épargne brute. Il aide à comprendre la marge financière courante, mais ne suffit pas à juger la qualité de gestion d’une commune.</p><p class="glossary-formula">Formule courante : épargne brute ÷ recettes de fonctionnement × 100.</p></details>
+        <details class="glossary-entry"><summary>Transfert entre administrations</summary><p>Somme versée par une administration à une autre. Pour le total des administrations publiques, certains transferts sont neutralisés afin de ne pas compter deux fois le même argent.</p></details>
+        <details class="glossary-entry"><summary>Valeur nominale / euros courants</summary><p>Montant exprimé dans les euros de l’année concernée, sans correction de l’inflation. Pour savoir si une dépense a réellement augmenté en pouvoir d’achat, il faut aussi regarder l’évolution des prix.</p></details>
+      </div>
+      <p class="glossary-disclaimer">Une définition simplifiée aide à comprendre, mais ne remplace pas la fiche méthodologique de la source. Deux indicateurs portant des noms proches peuvent avoir des périmètres différents.</p>
+    </section>
+
     <section id="methode" class="section method-section">
       <p class="eyebrow">Une méthode lisible</p><h2>Compréhensible pour tous. Vérifiable par chacun.</h2>
       <div class="method-grid">
@@ -238,7 +290,7 @@
       <p class="eyebrow">État du prototype</p><h2>Ce qui reste à construire</h2>
       <ul>
         <li>Le contrôle automatique d’une affirmation n’est possible que si le jeu de données couvre le même indicateur, la même période et le même périmètre.</li>
-        <li>La recherche nationale multi-sujets n’est pas encore activée ; le moteur de recherche ci-dessus est une première interface guidée.</li>
+        <li>La recherche communale utilise le référentiel géographique national ; l’affichage automatisé des comptes financiers de chaque commune reste en cours d’extension.</li>
         <li>La série de dette est transcrite depuis la page INSEE et doit encore être rapprochée automatiquement du fichier XLSX officiel.</li>
         <li>Les chiffres de Fameck pour 2024 sont intégrés comme premiers repères, mais doivent encore être rapprochés de l’export brut OFGL/DGFiP avant toute comparaison ou verdict.</li>
       </ul>
