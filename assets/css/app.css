@@ -230,3 +230,35 @@ tbody tr:hover{background:#eeece3}
 .municipal-readout strong{font-family:Georgia,"Times New Roman",serif;font-size:1.3rem;font-weight:500}
 .municipal-readout p{max-width:1000px;margin:.55rem 0;color:#444b4f}
 .municipal-readout .municipal-analysis-note{color:var(--muted);font-size:.8rem}
+
+
+/* Identité visuelle Information citoyenne — République et héritage messin */
+:root{--ink:#0b2b4b;--navy:#082746;--blue:#174c7e;--accent:#e63946;--line:#d9e0e5;--surface:#f8f6f0;--gold:#e4b85d}
+.site-header{position:relative;z-index:5;gap:1.5rem;background:linear-gradient(110deg,#041d35,#0b3153);color:#fff;border-bottom:1px solid rgba(255,255,255,.16);padding:.65rem clamp(1rem,4vw,4.5rem);box-shadow:0 6px 24px #071e3320}
+.brand{display:flex;align-items:center;gap:.8rem;color:#fff;text-decoration:none;min-width:max-content}
+.brand-logo{width:52px;height:52px;flex:none;filter:drop-shadow(0 2px 5px #0002)}
+.brand strong{display:block;font-family:Georgia,"Times New Roman",serif;font-size:clamp(1.1rem,1.7vw,1.55rem);font-weight:600;letter-spacing:-.035em;line-height:1.08}
+.brand small{display:block;margin-top:.3rem;font-size:.57rem;letter-spacing:.12em;text-transform:uppercase;color:#d4e2ed}
+.site-header nav{display:flex;align-items:center;justify-content:flex-end;gap:clamp(.65rem,1.35vw,1.5rem);flex-wrap:wrap}
+.site-header nav a{position:relative;color:#edf4fa;text-decoration:none;font-size:.8rem;padding:.6rem 0}
+.site-header nav a:hover,.site-header nav a:focus-visible{color:#fff}
+.site-header nav a:hover:after{content:"";position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--accent)}
+.site-header nav .presidentielle-link{border:1px solid #ffffff65;border-radius:999px;padding:.55rem .9rem}
+.hero-redesigned{position:relative;isolation:isolate;overflow:hidden;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(280px,.8fr);align-items:center;gap:clamp(1.5rem,4vw,4.5rem);min-height:390px;padding:clamp(2rem,5vw,5rem) clamp(1.25rem,5vw,5rem);background:linear-gradient(90deg,#fffdf8 0%,#fffdf8f2 38%,#fffdf880 68%,#fff0 100%),url('../img/bandeau-metz.svg') center/cover no-repeat;border-bottom:1px solid #d5dce0}
+.hero-redesigned:after{content:"";position:absolute;z-index:-1;inset:auto 0 0;height:5px;background:linear-gradient(90deg,#0b3970 0 33.3%,#fff 33.3% 66.6%,#e63946 66.6%)}
+.hero-brand-panel{display:flex;align-items:center;gap:clamp(1rem,2.5vw,2.5rem);max-width:780px}
+.hero-logo{width:clamp(90px,12vw,178px);height:auto;flex:none;filter:drop-shadow(0 5px 12px #102b3f12)}
+.hero-brand-panel .eyebrow{color:#a52b35;margin:0 0 .6rem}
+.hero-brand-panel h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(2.4rem,5vw,5.4rem);line-height:.91;letter-spacing:-.055em;margin:0;color:#092a4a}
+.hero-brand-panel h1 span{color:#174c7e}
+.hero-tagline{margin:.8rem 0 0;text-transform:uppercase;letter-spacing:.12em;font-size:.65rem;font-weight:700;color:#3d5263}
+.hero-message{max-width:450px;border-left:2px solid #174c7e;padding:.3rem 0 .3rem clamp(1rem,2.4vw,2.2rem)}
+.hero-message h2{font-family:Georgia,"Times New Roman",serif;font-size:clamp(1.8rem,3.1vw,3.3rem);line-height:1.05;letter-spacing:-.04em;color:#092a4a;margin:0 0 1rem}
+.hero-message .hero-copy{max-width:390px;margin:0;color:#25445d;font-size:1rem}
+.hero-redesigned .hero-actions{grid-column:1/-1;margin-top:-.5rem;z-index:1}
+.hero-redesigned .hero-note{grid-column:1/-1;margin:0;font-size:.77rem;color:#526779}
+.button-primary{background:#0b3970;border-color:#0b3970}.button-primary:hover{background:#082746}
+.section-heading h2,.territory-card h3{font-family:Georgia,"Times New Roman",serif;letter-spacing:-.035em;color:#0b2b4b}
+.territory-card-featured{border-top:3px solid var(--accent)}
+@media(max-width:1100px){.site-header{align-items:flex-start;flex-direction:column;gap:.5rem}.site-header nav{justify-content:flex-start}.hero-redesigned{grid-template-columns:1fr;gap:1.5rem;background-position:62% center}.hero-message{max-width:620px;margin-left:clamp(0px,12vw,130px);background:#fffdf0d9;padding:1rem 1.2rem}}
+@media(max-width:620px){.brand-logo{width:43px;height:43px}.brand small{font-size:.48rem;letter-spacing:.08em}.site-header nav{gap:.35rem .85rem}.site-header nav a{font-size:.76rem}.site-header nav .presidentielle-link{padding:.35rem .65rem}.hero-redesigned{padding:2rem 1.1rem;min-height:0;background:linear-gradient(90deg,#fffdf8f5,#fffdf8d9),url('../img/bandeau-metz.svg') 64% center/cover no-repeat}.hero-brand-panel{gap:.8rem}.hero-logo{width:72px}.hero-brand-panel h1{font-size:clamp(2.1rem,10vw,3.2rem)}.hero-tagline{font-size:.5rem;letter-spacing:.08em}.hero-message{margin-left:0}.hero-message h2{font-size:2rem}.hero-redesigned .hero-actions{display:flex;flex-wrap:wrap}.hero-redesigned .hero-note{font-size:.7rem}}
