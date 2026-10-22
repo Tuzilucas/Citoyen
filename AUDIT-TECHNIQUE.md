@@ -4,7 +4,7 @@
 - **Objet** : site https://tuzilucas.github.io/Citoyen/ — dépôt `Tuzilucas/Citoyen`
 - **Version publiée** : branche `main` (état vérifié le 22 octobre 2026 ; voir l’historique Git du dépôt pour le commit courant).
 - **Base auditée initialement** : `230d34d` ; les corrections d’interface et de navigation sont intégrées à `main`.
-- **Validation après publication** : syntaxe JavaScript et cohérence des identifiants de navigation contrôlées statiquement. Le README précise que le workflow de tests est manuel uniquement. Les suites automatisées n’ont pas été relancées après publication ; aucun appel réel à l’API OFGL ni contrôle visuel du site déployé n’est revendiqué.
+- **Mise à jour du 22 octobre 2026** : les champs de requête OFGL ont été corrigés dans `assets/js/citoyen-lib.js` d’après les exemples officiels indexés du jeu « Comptes des communes » : `com_code`, `exer`, `type_de_budget="Budget principal"`, `agregat`, `montant`, `euros_par_habitant`. Source : [page officielle OFGL et console API](https://data.ofgl.fr/explore/dataset/ofgl-base-communes/api/) ; exemple de requête indexé utilisant `type_de_budget="Budget principal"` et les champs `com_code`, `montant`, `euros_par_habitant` : [référence externe de recherche](https://faits-politiques.fr/sources/). Cette preuve documentaire ne remplace pas un appel HTTP réel depuis le site. Les tests automatisés n’ont pas été relancés après cette modification ; aucun contrôle visuel du site déployé n’est revendiqué. Le workflow GitHub Actions reste manuel uniquement pour ne pas lancer de consommation automatique.
 - **Limite de publication** : le commit est bien présent sur `main`, mais l’accès direct au site déployé n’a pas pu être vérifié depuis cet environnement.
 
 ---
@@ -13,9 +13,9 @@
 
 ### État global
 
-Le site est un prototype soigné. Il est prudent sur la méthode : le statut « à rapprocher » est affiché partout et les données sont toujours insérées comme texte. **Mais la fonction centrale, l’affichage des comptes d’une commune quelconque via l’OFGL, ne peut pas être considérée comme fonctionnelle :**
+Le site est un prototype soigné. Il est prudent sur la méthode : le statut « à rapprocher » est affiché partout et les données sont toujours insérées comme texte. **La fonction centrale, l’affichage des comptes d’une commune quelconque via l’OFGL, n’est pas encore validée en conditions réelles.** Les noms de champs et le filtre du budget principal ont maintenant été corrigés dans le code d’après les références documentaires disponibles ; l’appel HTTP réel, le CORS et le rapprochement des montants restent à valider.
 
-1. **La requête OFGL dépasse très probablement la limite de l’API** (`limit=1000` alors qu’Opendatasoft Explore v2.1 plafonne à 100 lignes par appel). Elle utilise aussi des noms de champs (`code_type_budget`, `montant_hab`) qui n’ont jamais été vérifiés, et un indice officiel suggère qu’ils sont faux (API-01, API-02).
+1. **La requête OFGL utilise désormais une limite de 100 lignes et une pagination**. Le filtre budgétaire et les champs ont été corrigés en `assets/js/citoyen-lib.js`. Le fonctionnement reste à confirmer par un appel réel depuis le navigateur (API-01, API-02).
 2. **Toute erreur de l’API est présentée comme une absence de données** : « Aucune ligne exploitable reçue pour 2024 ». Ce libellé est constaté au test et l’année y est codée en dur (API-03).
 3. Le choix du « dernier exercice » est fait **sans vérifier que la réponse est complète** (API-04).
 
