@@ -55,8 +55,8 @@
           <span class="territory-status">Préparation des données</span>
           <p class="territory-kicker">Premier territoire local</p>
           <h3>Fameck · Moselle</h3>
-          <p>Le territoire pilote est identifié. Les comptes financiers doivent encore être récupérés, contrôlés et rapprochés des documents officiels avant d’afficher des indicateurs locaux.</p>
-          <a class="button button-secondary" href="https://data.ofgl.fr/explore/dataset/ofgl-base-communes/" target="_blank" rel="noopener noreferrer">Consulter la source OFGL ↗</a>
+          <p>Premiers repères pour l’exercice 2024 affichés plus bas. Les valeurs sont retranscrites d’une page secondaire fondée sur les comptes centralisés par la DGFiP ; le rapprochement avec l’export OFGL reste à faire.</p>
+          <a class="button button-secondary" href="#fameck-finances">Voir les chiffres de Fameck</a>
         </article>
         <article class="territory-card">
           <span class="territory-status">Étape ultérieure</span>
@@ -82,6 +82,18 @@
         <p class="form-hint">Le catalogue affiché ici est partiel. Une commune absente du catalogue n’est pas une commune sans données.</p>
       </form>
       <div id="commune-result" class="commune-result" aria-live="polite" hidden></div>
+    </section>
+
+  <section id="fameck-finances" class="section municipal-finance-section">
+      <div class="section-heading">
+        <div><p class="eyebrow">Territoire pilote · exercice 2024</p><h2>Les finances de Fameck, en chiffres</h2></div>
+        <span class="status status-review">À rapprocher des données brutes</span>
+      </div>
+      <p class="municipal-intro">Budget principal exécuté. Les montants ci-dessous sont issus d’une page secondaire qui indique utiliser les comptes centralisés par la DGFiP. Ils donnent un premier aperçu concret, mais ne sont pas encore validés ligne à ligne à partir de l’export officiel OFGL/DGFiP.</p>
+      <div class="municipal-metrics" id="fameck-metrics"><p>Chargement des repères budgétaires…</p></div>
+      <div class="municipal-calculs" id="fameck-calculs"></div>
+      <div class="municipal-source-note"><strong>Comment lire ces chiffres</strong><p>Les produits de fonctionnement ne sont pas le budget total de la commune. L’encours de dette est un stock à une date donnée. La capacité d’autofinancement mesure une ressource potentielle pour financer les investissements et rembourser la dette ; elle n’est pas identique au résultat comptable.</p>
+      <p>Source de retranscription : <a href="https://www.journaldunet.com/business/budget-ville/fameck/ville-57206/budget" target="_blank" rel="noopener noreferrer">Journal du Net — budget de Fameck en 2024 ↗</a>. Source officielle à rapprocher : <a href="https://data.ofgl.fr/explore/dataset/ofgl-base-communes/" target="_blank" rel="noopener noreferrer">OFGL — comptes des communes ↗</a>. <a href="data/indicators/fameck-finances-2024.json">Données et méthode utilisées (JSON)</a>.</p></div>
     </section>
 
   <section id="verifier" class="section verification-section">
@@ -204,7 +216,7 @@
         <li>Le contrôle automatique d’une affirmation n’est possible que si le jeu de données couvre le même indicateur, la même période et le même périmètre.</li>
         <li>La recherche nationale multi-sujets n’est pas encore activée ; le moteur de recherche ci-dessus est une première interface guidée.</li>
         <li>La série de dette est transcrite depuis la page INSEE et doit encore être rapprochée automatiquement du fichier XLSX officiel.</li>
-        <li>Les données du budget de l’Éducation nationale et les comptes de Fameck doivent être importés et validés avant de produire des verdicts.</li>
+        <li>Les chiffres de Fameck pour 2024 sont intégrés à titre de premier repère, mais doivent encore être rapprochés de l’export brut OFGL/DGFiP avant toute comparaison ou verdict.</li>
       </ul>
     </section>
   </main>
