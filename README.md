@@ -20,7 +20,7 @@ La publication INSEE du 29 septembre 2026 indique qu’au T2 2026 la dette publi
 
 ## Publication
 
-Le site est statique et peut être publié avec GitHub Pages depuis la branche `main`, dossier `/` (root). Aucun backend ni secret n’est requis pour ce prototype.
+Les corrections d’interface et de navigation mobile sont intégrées à `main`. Le site statique est configuré pour GitHub Pages à l’adresse https://tuzilucas.github.io/Citoyen/ ; l’accès direct au site déployé n’a pas pu être vérifié depuis l’environnement d’audit. Aucun backend ni secret n’est requis pour ce prototype.
 
 Important : les fichiers HTML, CSS et JavaScript exécutés dans le navigateur sont nécessairement consultables par le public. Les secrets, clés privées, outils internes, tests et documentation de développement ne doivent pas être copiés dans ce dépôt public.
 
@@ -30,7 +30,7 @@ Aucune étape de construction : le site reste un ensemble de fichiers statiques.
 
 - `npm run test:unit` : fonctions pures de `assets/js/citoyen-lib.js` et cohérence des JSON (Node 22, aucune dépendance).
 - `npm run test:e2e` : recette Playwright (320 à 1440 px). Le dépôt est servi par un serveur Node intégré ; geo.api.gouv.fr et data.ofgl.fr reçoivent des réponses **simulées** : ces tests vérifient le comportement du code, pas l’exactitude des données officielles.
-- Le workflow `.github/workflows/tests.yml` lance les deux suites ; `npm install` est nécessaire pour Playwright.
+- Le workflow `.github/workflows/tests.yml` est déclenchable **manuellement uniquement** (`workflow_dispatch`) : aucun test ne se lance automatiquement à chaque publication. Il n’a pas été lancé pendant cet audit afin de ne pas consommer de minutes GitHub Actions. `npm install` est nécessaire pour Playwright.
 
 Audit et plan de correction : `AUDIT-TECHNIQUE.md`.
 
