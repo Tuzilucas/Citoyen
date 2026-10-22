@@ -225,3 +225,8 @@ tbody tr:hover{background:#eeece3}
 .municipal-history-wrap th{white-space:normal}
 .municipal-history-wrap .numeric-cell{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 .municipal-history-wrap .current-year-row{font-weight:800;background:#f1e8d4}
+
+.municipal-readout{margin:1.5rem 0;padding:1.1rem 0;border-top:2px solid var(--accent);border-bottom:1px solid var(--line)}
+.municipal-readout strong{font-family:Georgia,"Times New Roman",serif;font-size:1.3rem;font-weight:500}
+.municipal-readout p{max-width:1000px;margin:.55rem 0;color:#444b4f}
+.municipal-readout .municipal-analysis-note{color:var(--muted);font-size:.8rem}
