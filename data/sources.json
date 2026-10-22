@@ -194,6 +194,35 @@
       "validation_method": "Transcription de la publication INSEE n° 239 du 29 septembre 2026 ; rapprochement automatisé du XLSX encore à réaliser.",
       "file_sha256": null,
       "notes": "T2 2026 : dette brute 3 595,5 Md€ (119,0 % du PIB), dette nette 3 366,8 Md€ (111,4 % du PIB)."
+    },
+    {
+      "source_id": "fameck-finances-2024-retranscription",
+      "exact_name": "Budget municipal de Fameck — exercice 2024",
+      "producer": "Journal du Net (CCM Benchmark), données comptables centralisées par la DGFiP selon la méthodologie publiée",
+      "administrative_level": "commune",
+      "entity_id": "57206",
+      "category": "comptes_financiers",
+      "description": "Premiers indicateurs du budget principal exécuté de Fameck, retranscrits depuis une page secondaire et destinés à être rapprochés de l'export brut OFGL/DGFiP.",
+      "official_page_url": "https://data.ofgl.fr/explore/dataset/ofgl-base-communes/",
+      "secondary_source_url": "https://www.journaldunet.com/business/budget-ville/fameck/ville-57206/budget",
+      "download_or_api_url": null,
+      "format": "JSON interne alimenté par retranscription",
+      "license_and_obligations": "Vérifier les conditions de réutilisation des données sources avant republication à grande échelle",
+      "available_vintages": [
+        "2024"
+      ],
+      "publication_date": null,
+      "consultation_date": "2026-10-22",
+      "retrieval_date": "2026-10-22",
+      "official_identifier": "57206",
+      "fameck_present": true,
+      "detail_level": "agrégats du budget principal exécuté",
+      "retrieval_status": "retranscription_secondaire_effectuee",
+      "validation_status": "a_recouper_avec_export_OFGL_ou_DGFiP",
+      "known_limitations": "L'export brut officiel n'a pas encore été téléchargé ni rapproché ligne à ligne. Les indicateurs calculés sont indicatifs.",
+      "validation_method": "Transcription de la page source secondaire; prochaine étape: filtrage OFGL sur le code INSEE 57206 et rapprochement des valeurs 2024.",
+      "file_sha256": null,
+      "notes": "Ne pas confondre résultat comptable et capacité d'autofinancement, ni budget principal et comptes consolidés."
     }
   ]
 }
