@@ -296,6 +296,7 @@
   async function initFameckFinances() {
     const metrics = document.getElementById("fameck-metrics");
     const calculations = document.getElementById("fameck-calculs");
+    const history = document.getElementById("fameck-history-body");
     if (!metrics || !calculations) return;
     const euro = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
     try {
@@ -322,6 +323,29 @@
         metrics.appendChild(card);
       });
       calculations.replaceChildren();
+      if (history) {
+        history.replaceChildren();
+        data.annual_series.forEach((year) => {
+          const tr = document.createElement("tr");
+          const cells = [
+            String(year.year),
+            euro.format(year.revenue),
+            euro.format(year.expense),
+            euro.format(year.gross_savings),
+            euro.format(year.debt),
+            ratio.format(year.savings_rate) + " %",
+            ratio.format(year.debt_years) + " ans"
+          ];
+          cells.forEach((text, index) => {
+            const td = document.createElement("td");
+            td.textContent = text;
+            if (index > 0) td.className = "numeric-cell";
+            tr.appendChild(td);
+          });
+          if (year.year === data.display_year) tr.className = "current-year-row";
+          history.appendChild(tr);
+        });
+      }
       data.calculated_indicators.forEach((item) => {
         const article = document.createElement("article");
         article.className = "municipal-calculation";
