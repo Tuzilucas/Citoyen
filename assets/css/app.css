@@ -297,3 +297,14 @@ body{background:var(--paper);color:var(--ink)}
 .glossary-entry .glossary-official,.glossary-entry .glossary-formula{padding-top:.6rem;border-top:1px solid #e2e7e4;color:#5b6c78;font-size:.82rem}
 .glossary-disclaimer{max-width:950px;margin-top:1.4rem;color:var(--muted);font-size:.85rem}
 @media(max-width:760px){.glossary-list{grid-template-columns:1fr}.commune-result-card{padding:.9rem}.glossary-entry summary{padding:.8rem}.glossary-entry p{margin-left:.8rem;margin-right:.8rem}}
+
+
+/* Résultats financiers communaux : lisibilité, hiérarchie et adaptation mobile */
+.result-status{display:inline-block;margin:.25rem 0 .55rem;padding:.3rem .5rem;border:1px solid #cbd8d2;background:#f0f5f1;color:#315c49;font-size:.78rem;font-weight:700}
+.finance-result-list{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:0;margin:1rem 0;border-top:1px solid var(--line)}
+.finance-result-list dt,.finance-result-list dd{margin:0;padding:.7rem .2rem;border-bottom:1px solid var(--line);align-self:center}
+.finance-result-list dt{color:#344e5e;font-size:.9rem}
+.finance-result-list dd{padding-left:1rem;text-align:right;font-variant-numeric:tabular-nums;font-weight:750;color:#142f45;white-space:nowrap}
+.commune-method-note{margin-top:.7rem;padding-left:.75rem;border-left:2px solid #a9323b;color:var(--muted);font-size:.82rem}
+.commune-result-card .button{display:inline-flex;max-width:100%;white-space:normal;line-height:1.35}
+@media(max-width:560px){.finance-result-list{grid-template-columns:minmax(0,1fr)}.finance-result-list dt{padding:.65rem .1rem .1rem;border-bottom:0;font-size:.82rem}.finance-result-list dd{padding:.15rem .1rem .65rem;text-align:left;white-space:normal;font-size:1rem}.commune-result-card h3{font-size:1.25rem}.result-status{line-height:1.4}}
