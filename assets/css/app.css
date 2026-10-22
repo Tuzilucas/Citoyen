@@ -308,3 +308,10 @@ body{background:var(--paper);color:var(--ink)}
 .commune-method-note{margin-top:.7rem;padding-left:.75rem;border-left:2px solid #a9323b;color:var(--muted);font-size:.82rem}
 .commune-result-card .button{display:inline-flex;max-width:100%;white-space:normal;line-height:1.35}
 @media(max-width:560px){.finance-result-list{grid-template-columns:minmax(0,1fr)}.finance-result-list dt{padding:.65rem .1rem .1rem;border-bottom:0;font-size:.82rem}.finance-result-list dd{padding:.15rem .1rem .65rem;text-align:left;white-space:normal;font-size:1rem}.commune-result-card h3{font-size:1.25rem}.result-status{line-height:1.4}}
+
+/* Finitions de lisibilité des résultats communaux */
+.commune-result-card{min-width:0;overflow-wrap:anywhere}
+.commune-result-card .result-status{display:inline-block;max-width:100%;white-space:normal}
+.finance-result-list{grid-template-columns:minmax(0,1fr) minmax(8rem,auto)}
+.finance-result-list dd{white-space:normal;overflow-wrap:anywhere}
+@media(max-width:560px){.finance-result-list{grid-template-columns:minmax(0,1fr)}.finance-result-list dt{padding:.65rem .1rem .1rem;border-bottom:0}.finance-result-list dd{padding:.15rem .1rem .65rem;text-align:left;border-bottom:1px solid var(--line)}.commune-result-card .button{width:100%}}
