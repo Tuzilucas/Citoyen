@@ -358,6 +358,35 @@
     return lib.mergeCommunes([{ communes: await query({ nom: kind.value, boost: "population" }), matchedBy: "nom" }]);
   }
 
+  function initMobileNavigation() {
+    const toggle = document.querySelector(".nav-toggle");
+    const nav = document.getElementById("navigation-principale");
+    if (!toggle || !nav) return;
+    const close = () => {
+      toggle.setAttribute("aria-expanded", "false");
+      nav.classList.remove("is-open");
+      toggle.querySelector(".nav-toggle-icon").textContent = "+";
+    };
+    toggle.addEventListener("click", () => {
+      const expanded = toggle.getAttribute("aria-expanded") === "true";
+      toggle.setAttribute("aria-expanded", String(!expanded));
+      nav.classList.toggle("is-open", !expanded);
+      toggle.querySelector(".nav-toggle-icon").textContent = expanded ? "+" : "−";
+    });
+    nav.addEventListener("click", (event) => {
+      if (event.target.closest("a") && window.matchMedia("(max-width: 679px)").matches) close();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") {
+        close();
+        toggle.focus();
+      }
+    });
+    window.addEventListener("resize", () => {
+      if (!window.matchMedia("(max-width: 679px)").matches) close();
+    });
+  }
+
   async function initMunicipalitySearch() {
     const form = document.getElementById("commune-form");
     const input = document.getElementById("commune-query");
@@ -653,5 +682,6 @@
     requestAnimationFrame(() => restoreAnchor(scrollBefore));
   }
 
+  document.addEventListener("DOMContentLoaded", initMobileNavigation);
   document.addEventListener("DOMContentLoaded", init);
 })();
