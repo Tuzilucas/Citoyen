@@ -215,3 +215,13 @@ tbody tr:hover{background:#eeece3}
 .municipal-source-note{margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--ink);font-size:.82rem;color:#555750}
 .municipal-source-note p{max-width:1000px}
 @media(max-width:620px){.municipal-metrics,.municipal-calculs{grid-template-columns:1fr}.municipal-metric{padding:1rem .6rem}}
+
+
+/* Série annuelle des finances de Fameck */
+.municipal-history-wrap{margin-top:2rem;overflow-x:auto}
+.municipal-history-wrap h3{font-family:Georgia,"Times New Roman",serif;font-size:1.6rem;font-weight:500}
+.municipal-history-wrap>p{font-size:.82rem;color:var(--muted)}
+.municipal-history-wrap table{min-width:850px;width:100%;border-collapse:collapse}
+.municipal-history-wrap th{white-space:normal}
+.municipal-history-wrap .numeric-cell{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.municipal-history-wrap .current-year-row{font-weight:800;background:#f1e8d4}
