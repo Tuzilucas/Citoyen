@@ -1,0 +1,114 @@
+{
+  "schema_version": "1.0.0",
+  "dataset_id": "fameck-finances-2024",
+  "title": "Repères budgétaires de Fameck — exercice 2024",
+  "entity": {
+    "name": "Fameck",
+    "insee_code": "57206",
+    "postal_code": "57290",
+    "department": "Moselle"
+  },
+  "period": 2024,
+  "budget_scope": "budget principal exécuté",
+  "currency": "EUR",
+  "population_reference": 14965,
+  "indicators": [
+    {
+      "id": "operating_revenue",
+      "label": "Produits de fonctionnement",
+      "value_eur": 13221450,
+      "value_per_capita_eur": 886,
+      "definition": "Recettes de fonctionnement de l'exercice.",
+      "source_page": "https://www.journaldunet.com/business/budget-ville/fameck/ville-57206/budget"
+    },
+    {
+      "id": "operating_expenses",
+      "label": "Charges de fonctionnement",
+      "value_eur": 12224730,
+      "value_per_capita_eur": 820,
+      "definition": "Dépenses de fonctionnement de l'exercice.",
+      "source_page": "https://www.journaldunet.com/business/budget-ville/fameck/ville-57206/budget"
+    },
+    {
+      "id": "accounting_result",
+      "label": "Résultat comptable",
+      "value_eur": 996730,
+      "value_per_capita_eur": 67,
+      "definition": "Différence entre produits et charges de fonctionnement telle que publiée par la source.",
+      "source_page": "https://www.journaldunet.com/business/budget-ville/fameck/ville-57206/budget"
+    },
+    {
+      "id": "gross_savings",
+      "label": "Capacité d’autofinancement",
+      "value_eur": 1320130,
+      "value_per_capita_eur": 88,
+      "definition": "Capacité d’autofinancement publiée; ne pas la confondre avec le résultat comptable.",
+      "source_page": "https://www.journaldunet.com/business/budget-ville/fameck/ville-57206/budget"
+    },
+    {
+      "id": "investment_expenses",
+      "label": "Emplois d’investissement",
+      "value_eur": 4742130,
+      "value_per_capita_eur": 318,
+      "definition": "Emplois d’investissement du budget principal exécuté.",
+      "source_page": "https://www.journaldunet.com/business/budget-ville/fameck/ville-57206/budget"
+    },
+    {
+      "id": "debt_outstanding",
+      "label": "Encours de dette",
+      "value_eur": 7171310,
+      "value_per_capita_eur": 481,
+      "definition": "Capital de dette restant dû en fin d’exercice, selon la source secondaire consultée.",
+      "source_page": "https://www.journaldunet.com/business/budget-ville/fameck/ville-57206/budget"
+    },
+    {
+      "id": "working_capital",
+      "label": "Fonds de roulement",
+      "value_eur": 3561670,
+      "value_per_capita_eur": 239,
+      "definition": "Fonds de roulement tel que publié par la source.",
+      "source_page": "https://www.journaldunet.com/business/budget-ville/fameck/ville-57206/budget"
+    }
+  ],
+  "calculated_indicators": [
+    {
+      "id": "gross_savings_rate",
+      "label": "Taux d’épargne brute calculé",
+      "value_percent": 9.98,
+      "formula": "Capacité d’autofinancement / produits de fonctionnement × 100",
+      "inputs": [
+        "gross_savings",
+        "operating_revenue"
+      ],
+      "status": "calcul_indicatif_non_reconcilie"
+    },
+    {
+      "id": "debt_to_gross_savings",
+      "label": "Dette / capacité d’autofinancement",
+      "value_years": 5.43,
+      "formula": "Encours de dette / capacité d’autofinancement",
+      "inputs": [
+        "debt_outstanding",
+        "gross_savings"
+      ],
+      "status": "calcul_indicatif_non_reconcilie"
+    }
+  ],
+  "provenance": {
+    "primary_source_producer": "DGFiP",
+    "dataset_publisher": "Journal du Net (CCM Benchmark)",
+    "source_page_url": "https://www.journaldunet.com/business/budget-ville/fameck/ville-57206/budget",
+    "source_methodology": "La page précise que les chiffres proviennent des budgets principaux exécutés dont les données comptables ont été centralisées par la DGFiP; les valeurs par habitant utilisent la population légale INSEE.",
+    "official_dataset_url": "https://data.ofgl.fr/explore/dataset/ofgl-base-communes/",
+    "consultation_date": "2026-10-22",
+    "retrieval_status": "valeurs_retranscrites_depuis_page_secondaire",
+    "validation_status": "a_recouper_avec_export_OFGL_ou_DGFiP",
+    "limitations": [
+      "Les valeurs ont été transcrites depuis une page secondaire qui décrit les données comme issues des comptes centralisés par la DGFiP; l’export brut OFGL/DGFiP n’a pas encore été téléchargé et rapproché ligne à ligne.",
+      "Les valeurs par habitant publiées peuvent différer légèrement selon la population retenue et les arrondis.",
+      "Les emplois d’investissement ne sont pas nécessairement équivalents aux seules dépenses d’équipement.",
+      "Ne pas comparer ce budget principal aux comptes consolidés incluant les budgets annexes sans expliciter le périmètre.",
+      "Les ratios calculés par le prototype sont indicatifs tant que les données d’entrée n’ont pas été rapprochées de l’export officiel."
+    ]
+  }
+}
