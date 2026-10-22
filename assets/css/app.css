@@ -343,3 +343,18 @@ body{background:var(--paper);color:var(--ink)}
 .municipal-history-wrap>h3,.municipal-history-wrap>p{position:sticky;left:0;max-width:min(100%,calc(100vw - 2rem))}
 .municipal-history-wrap tbody td:first-child,.municipal-history-wrap thead th:first-child{position:sticky;left:0;z-index:1;background:var(--paper,#f8f7f2);box-shadow:1px 0 0 var(--line)}
 .municipal-history-wrap tr.current-year-row td:first-child{background:inherit}
+
+
+/* Navigation mobile accessible : menu repliable sous 680 px */
+.nav-toggle{display:none;align-items:center;justify-content:space-between;gap:1rem;min-height:42px;padding:.55rem .75rem;border:1px solid var(--ink);background:transparent;color:var(--ink);font-weight:800;cursor:pointer}
+.nav-toggle:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.nav-toggle-icon{font-size:1.25rem;line-height:1}
+@media(max-width:679px){
+  .site-header{align-items:stretch;gap:.55rem}
+  .site-header>.brand{align-self:flex-start;max-width:100%}
+  .nav-toggle{display:flex;width:100%}
+  .site-header nav{display:none;flex-direction:column;align-items:stretch;gap:0;width:100%;padding:.25rem 0 0;border-top:1px solid var(--line)}
+  .site-header nav.is-open{display:flex}
+  .site-header nav a{display:flex;align-items:center;min-height:40px;padding:.45rem .25rem;border-bottom:1px solid var(--line);font-size:.88rem}
+  .site-header nav .presidentielle-link{padding:.45rem .25rem}
+}
