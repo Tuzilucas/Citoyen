@@ -383,10 +383,12 @@
           const title = document.createElement("strong");
           title.textContent = "Ce que montre la série 2019–2024";
           const paragraph = document.createElement("p");
-          paragraph.textContent = "L’épargne brute recule de " + ratio.format(Math.abs(savingsChange)) + " % tandis que l’encours de dette augmente de " + ratio.format(debtChange) + " %. Le taux d’épargne brute passe de " + ratio.format(first.savings_rate) + " % à " + ratio.format(last.savings_rate) + " %, et la capacité de désendettement publiée passe de " + ratio.format(first.debt_years) + " à " + ratio.format(last.debt_years) + " ans.";
+          const revenueChange = change(last.revenue, first.revenue);
+          const expenseChange = change(last.expense, first.expense);
+          paragraph.textContent = "Entre 2019 et 2024, les recettes de fonctionnement progressent de " + ratio.format(revenueChange) + " %, tandis que les dépenses progressent de " + ratio.format(expenseChange) + " %. L’épargne brute recule de " + ratio.format(Math.abs(savingsChange)) + " %. Le taux d’épargne brute passe de " + ratio.format(first.savings_rate) + " % à " + ratio.format(last.savings_rate) + " %, et la capacité de désendettement publiée passe de " + ratio.format(first.debt_years) + " à " + ratio.format(last.debt_years) + " ans. En clair : dans cette série, les dépenses ont augmenté plus vite que les recettes, ce qui laisse moins de marge annuelle pour financer les projets et rembourser la dette.";
           const note = document.createElement("p");
           note.className = "municipal-analysis-note";
-          note.textContent = "Lecture descriptive des valeurs retranscrites, sans attribution de cause ni jugement sur les choix municipaux. À confirmer après rapprochement avec l’export officiel OFGL.";
+          note.textContent = "Lecture descriptive des valeurs retranscrites, sans attribution de cause ni jugement politique. Montants nominaux : l’inflation n’est pas corrigée. Ces résultats restent provisoires, car la série secondaire n’a pas encore été rapprochée ligne à ligne de l’export officiel OFGL.";
           analysis.append(title, paragraph, note);
         }
       }
