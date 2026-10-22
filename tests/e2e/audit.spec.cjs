@@ -381,7 +381,7 @@ async function overflow(page) {
     const analysis = (await page.textContent("#fameck-analysis")).replace(/\s+/g, " ");
     fs.writeFileSync(path.join(OUT, "fameck-analyse.txt"), analysis);
     const ribbon = await page.$$eval(".headline-metric strong", (s) => s.map((x) => x.textContent));
-    record("DATA-RIBBON-JS", "Bandeau national chargé, valeurs communales vides avant sélection", "375", ribbon[0].replace(/\\u202f/g, " ").includes("3 595,5") && ribbon.slice(1).every((v) => v === "—") ? "VALIDÉ" : "ÉCHOUÉ", ribbon.join(" / "));
+    record("DATA-RIBBON-JS", "Bandeau national chargé, valeurs communales vides avant sélection", "375", ribbon[0].replace(/\u202f/g, " ").includes("3 595,5") && ribbon.slice(1).every((v) => v === "—") ? "VALIDÉ" : "ÉCHOUÉ", ribbon.join(" / "));
     const ribbonDisplay = await page.$eval(".headline-ribbon", (e) => getComputedStyle(e).display);
     record("RESP-RIBBON", "Bandeau de chiffres clés mis en grille", "375", ribbonDisplay === "grid" ? "VALIDÉ" : "ÉCHOUÉ", "display=" + ribbonDisplay);
     record("FAM-ANALYSIS", "L’analyse locale attend une commune sélectionnée", "375", /apparaîtront ici après la recherche/.test(analysis) ? "VALIDÉ" : "ÉCHOUÉ", analysis.slice(0, 260));
