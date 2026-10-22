@@ -125,16 +125,17 @@ test("Fameck : épargne brute ≈ recettes − dépenses et ratios recalculables
   data.indicators.forEach((i) => assert.equal(Math.round(i.value_eur / y.population), i.value_per_capita_eur, i.id));
 });
 
-test("Bandeau HTML statique cohérent avec les JSON (valeur de repli avant chargement)", () => {
+test("Analyse communale dynamique : aucune commune n'est imposée par défaut", () => {
   const html = fs.readFileSync(path.join(__dirname, "../../index.html"), "utf8");
-  const fameck = JSON.parse(fs.readFileSync(path.join(__dirname, "../../data/indicators/fameck-finances-2024.json"), "utf8"));
   const debt = JSON.parse(fs.readFileSync(path.join(__dirname, "../../data/indicators/dette-publique-france.json"), "utf8"));
-  const y = fameck.annual_series.find((r) => r.year === fameck.display_year);
-  const fmt = (v) => new Intl.NumberFormat("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v).replace(/ /g, " ");
   const text = html.replace(/ /g, " ");
-  assert.ok(text.includes('id="ribbon-fameck-savings">' + fmt(y.gross_savings / 1e6) + " M€"));
-  assert.ok(text.includes('id="ribbon-fameck-debt">' + fmt(y.debt / 1e6) + " M€"));
-  assert.ok(text.includes('id="ribbon-fameck-rate">' + fmt(y.gross_savings / y.revenue * 100) + " %"));
+  assert.ok(text.includes('id="municipal-title">Les finances de la commune recherchée'));
+  assert.ok(text.includes('id="municipal-status">En attente d’une commune'));
+  assert.ok(text.includes('id="ribbon-fameck-savings">—'));
+  assert.ok(text.includes('id="ribbon-fameck-debt">—'));
+  assert.ok(text.includes('id="ribbon-fameck-rate">—'));
+  assert.ok(text.includes('id="municipal-history-wrap" hidden'));
+  assert.ok(!/Épargne brute · Fameck|Encours de dette · Fameck|Taux d’épargne brute · Fameck/.test(text));
   const d = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1 }).format(debt.records[0].debt_eur_billion).replace(/ /g, " ");
   assert.ok(text.includes('id="ribbon-debt">' + d + " Md€"));
 });
