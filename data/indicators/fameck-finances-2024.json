@@ -11,7 +11,6 @@
   "period": 2024,
   "budget_scope": "budget principal exécuté",
   "currency": "EUR",
-  "population_reference": 14965,
   "indicators": [
     {
       "id": "operating_revenue",
