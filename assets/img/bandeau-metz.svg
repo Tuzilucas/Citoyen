@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 620" role="img" aria-labelledby="title desc">
+<title id="title">Bannière Information citoyenne</title><desc id="desc">Panorama illustré de Metz au crépuscule, avec la cathédrale, la Moselle et une carte de France discrète.</desc>
+<defs>
+ <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#dbe8f2"/><stop offset=".48" stop-color="#f5ead7"/><stop offset="1" stop-color="#e4a879"/></linearGradient>
+ <linearGradient id="water" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#35627b"/><stop offset="1" stop-color="#092c4c"/></linearGradient>
+ <linearGradient id="fade" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#fff" stop-opacity=".96"/><stop offset=".52" stop-color="#fff" stop-opacity=".78"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+</defs>
+<rect width="1800" height="620" fill="url(#sky)"/>
+<circle cx="1330" cy="140" r="88" fill="#fff7e8" opacity=".75"/>
+<path d="M0 355 130 320 250 337 370 292 470 325 600 286 730 323 870 274 990 312 1100 278 1210 305 1340 260 1450 305 1560 270 1680 302 1800 260V450H0Z" fill="#8a9eab" opacity=".35"/>
+<path d="M0 390 180 350 300 375 410 340 520 365 640 325 760 354 870 315 1000 347 1120 320 1230 344 1350 300 1460 330 1580 305 1700 340 1800 310V500H0Z" fill="#536f80" opacity=".38"/>
+<!-- silhouette de Metz -->
+<g fill="#183e59">
+<path d="M830 405V335H860V315H886V347H914V310H934V282H954V315H979V348H1004V323H1029V355H1054V405Z"/>
+<path d="M1035 407V290L1053 273 1070 290V407Z"/>
+<path d="M1049 275V235L1060 212 1070 235V275Z"/>
+<path d="M1028 294H1090V311H1028Z"/>
+<path d="M1100 408V328H1122V305H1144V326H1168V287H1190V310H1210V278H1233V308H1254V330H1280V407Z"/>
+<path d="M1225 407V246L1244 226 1263 246V407Z"/>
+<path d="M1239 230V171L1244 151 1249 171V230Z"/>
+<path d="M1210 249H1277V263H1210Z"/>
+<path d="M1290 408V344H1320V319H1345V345H1370V330H1400V408Z"/>
+</g>
+<g fill="#d9c6a5" stroke="#183e59" stroke-width="4">
+<path d="M1170 408V270L1195 240 1220 270V408Z"/>
+<path d="M1187 243V150L1195 120 1203 150V243Z"/>
+<path d="M1163 270H1227V285H1163Z"/>
+<path d="M1168 312H1222V328H1168Z"/>
+</g>
+<g fill="#f1dfc2" opacity=".92"><rect x="830" y="370" width="26" height="35"/><rect x="875" y="356" width="22" height="49"/><rect x="935" y="350" width="20" height="55"/><rect x="1005" y="362" width="21" height="43"/><rect x="1285" y="359" width="20" height="46"/><rect x="1320" y="360" width="22" height="45"/><rect x="1365" y="359" width="20" height="46"/></g>
+<path d="M0 440Q220 400 420 445T840 436T1260 450T1800 430V620H0Z" fill="url(#water)"/>
+<path d="M0 474Q240 434 480 476T960 470T1440 480T1800 463" stroke="#e6c9a2" stroke-width="4" opacity=".7" fill="none"/>
+<!-- carte stylisée en filigrane -->
+<path d="M580 70 625 55 650 74 684 63 710 87 700 115 723 133 703 162 711 185 686 201 675 232 650 226 638 250 614 231 595 244 582 213 557 203 567 174 547 151 562 125 549 101 570 84Z" fill="#0b3970" opacity=".12" stroke="#0b3970" stroke-width="3"/>
+<path d="M0 0H1050V620H0Z" fill="url(#fade)"/>
+</svg>
