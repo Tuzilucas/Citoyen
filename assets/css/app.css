@@ -196,3 +196,22 @@ tbody tr:hover{background:#eeece3}
 .composition-notes p{margin:.45rem 0 0;color:#555750;font-size:.87rem}
 .composition-source{margin:1.2rem 0 0;color:var(--muted);font-size:.76rem;line-height:1.6}
 @media(max-width:760px){.composition-notes{grid-template-columns:1fr}.composition-notes article,.composition-notes article+article{padding:1rem 0;border-right:0;border-bottom:1px solid var(--line)}.composition-notes article:last-child{border-bottom:0}.composition-lead{align-items:flex-start;flex-direction:column;gap:.6rem}}
+
+
+/* Repères financiers du territoire pilote Fameck */
+.municipal-finance-section{background:#fff;border-top:2px solid var(--ink);border-bottom:1px solid var(--ink)}
+.municipal-intro{max-width:900px;color:#555750;font-size:.92rem}
+.municipal-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;margin-top:1.5rem;border-top:1px solid var(--ink);border-left:1px solid var(--line)}
+.municipal-metric{padding:1.2rem;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.municipal-metric-label{margin:0;color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.07em}
+.municipal-metric-value{margin:.45rem 0;font-family:Georgia,"Times New Roman",serif;font-size:clamp(1.8rem,4vw,2.8rem);line-height:1.1;letter-spacing:-.04em;overflow-wrap:anywhere}
+.municipal-metric-context{margin:0;color:var(--accent);font-weight:700;font-size:.82rem}
+.municipal-metric-definition{margin:.65rem 0 0;color:#555750;font-size:.8rem}
+.municipal-calculs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin:1.5rem 0}
+.municipal-calculation{padding:1rem 0;border-top:2px solid var(--accent);border-bottom:1px solid var(--line)}
+.municipal-calculation strong{display:block;font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:1.05rem}
+.municipal-calculation span{display:block;margin:.4rem 0;font-family:Georgia,"Times New Roman",serif;font-size:2rem}
+.municipal-calculation p{margin:0;color:var(--muted);font-size:.8rem}
+.municipal-source-note{margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--ink);font-size:.82rem;color:#555750}
+.municipal-source-note p{max-width:1000px}
+@media(max-width:620px){.municipal-metrics,.municipal-calculs{grid-template-columns:1fr}.municipal-metric{padding:1rem .6rem}}
