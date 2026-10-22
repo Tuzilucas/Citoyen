@@ -313,7 +313,7 @@ Glossaire : 48 définitions compréhensibles et non contradictoires avec les cal
 | 9 | Vérification d’affirmation : sujet communal, périodes annuelles. | — | CLAIM-01 à 03 | **Fait, testé** |
 | 10 | Métadonnées de partage (ajouter une image PNG 1200×630). | — | SEO-01 | Fait, sauf image |
 | 11 | Décider de l’emplacement des tests et de l’audit (dépôt public ou privé). | — | README-01 | **Décision du propriétaire** |
-| 12 | Réduire la navigation mobile. | 8 | RESP-02 | À faire |
+| 12 | Réduire la navigation mobile. | 8 | RESP-02 | **Code ajouté** : bouton accessible, ouverture/fermeture, Escape, fermeture après navigation ; tests e2e ajoutés, exécution à confirmer. |
 | 13 | Consolider `app.css` (variables, points de rupture, règles écrasées), avec comparaison de captures. | 8, 12 | CSS-01 | À faire |
 | 14 | Améliorations facultatives : extraction « Md€ », liens officiels du glossaire, cohérence du lien « Présidentielle 2027 », arbitrage sur le logo. | — | CLAIM-04, A11Y-01, NEUT-01 | Facultatif |
 
