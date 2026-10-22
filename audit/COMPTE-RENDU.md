@@ -1,6 +1,6 @@
 # Compte rendu de l’audit — Information citoyenne
 
-- **Date** : 22 octobre 2026
+- **Date** : 22 octobre 2026 (mise à jour après corrections complémentaires)
 - **Version auditée** : `main`, commit `230d34d`
 - **Branche de correction** : `ccr-8e430522-ifzcgl` (non fusionnée dans `main`)
 - **Rapport détaillé** : [`AUDIT-TECHNIQUE.md`](../AUDIT-TECHNIQUE.md). Il contient le tableau des anomalies, la matrice des tests, le contrôle des données, le plan de correction et le prompt pour l’étape suivante.
@@ -33,7 +33,7 @@ Ces points sont notés « NON TESTÉ » ou « À CONFIRMER » dans le rapport. L
 
 ## Corrections apportées sur la branche
 
-Tous les points ci-dessus sont corrigés, sauf deux qui demandent l’accès aux sources officielles : les noms de champs OFGL et la vérification des chiffres de Fameck.
+Les défauts d’interface et de logique listés ci-dessus ont été corrigés sur la branche, à l’exception du nettoyage CSS. La navigation mobile a ensuite été ajoutée à la branche avec des tests dédiés ; cette modification complémentaire n’a pas encore été exécutée dans Chromium. Les deux points qui demandent un accès réel aux sources officielles restent ouverts : les noms de champs OFGL et le rapprochement des chiffres de Fameck.
 
 - Les fonctions de calcul sont regroupées dans `assets/js/citoyen-lib.js` et le site reste statique, sans dépendance à l’exécution.
 - **Résultats des tests** :
@@ -45,7 +45,7 @@ Tous les points ci-dessus sont corrigés, sauf deux qui demandent l’accès aux
 
 1. **Vérifier le schéma réel de l’OFGL** (étape 0 du rapport), puis corriger les noms de champs et comparer les montants avec les fiches officielles.
 2. **Rapprocher la série de Fameck** de l’export OFGL.
-3. **Réduire la navigation sur mobile** : l’en-tête occupe 35 % de l’écran à 320 px.
+3. **Valider la navigation mobile corrigée** : menu repliable accessible ajouté sur la branche ; tests modifiés mais non exécutés dans cet environnement.
 4. **Nettoyer le CSS** : 104 règles sont redéfinies plusieurs fois et 3 blocs `:root` coexistent.
 
 ## Décisions à prendre avant fusion
