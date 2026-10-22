@@ -184,8 +184,8 @@
     const endpoint = "https://data.ofgl.fr/api/explore/v2.1/catalog/datasets/ofgl-base-communes/records";
     const params = new URLSearchParams({
       where: 'com_code="' + commune.code + '" AND exer=2024 AND code_type_budget=1',
-      limit: "100",
-      order_by: "agregat"
+      limit: "1000",
+      order_by: "exer DESC, agregat"
     });
     const response = await fetch(endpoint + "?" + params.toString(), { headers: { Accept: "application/json" } });
     if (!response.ok) throw new Error("Données OFGL indisponibles (" + response.status + ")");
@@ -214,19 +214,22 @@
     link.textContent = "Ouvrir la source officielle OFGL ↗";
     card.append(title, meta);
     if (records && records.length) {
+      const years = [...new Set(records.map((row) => Number(row.exer)).filter(Number.isFinite))].sort((a, b) => b - a);
+      const latestYear = years[0];
+      const latestRecords = records.filter((row) => Number(row.exer) === latestYear);
       status.classList.add("result-status-verified");
-      status.textContent = "Données OFGL reçues · exercice 2024 · budget principal";
-      explanation.textContent = "Les montants ci-dessous proviennent de l’API officielle de l’Observatoire des finances et de la gestion publique locales. Ils concernent le budget principal et l’exercice 2024 uniquement ; l’absence d’une ligne ne signifie pas que le montant est nul.";
+      status.textContent = "Données OFGL reçues · exercice " + latestYear + " · budget principal";
+      explanation.textContent = "Montants récupérés depuis l’API officielle OFGL pour le dernier exercice présent dans la réponse. Seul le budget principal est inclus ; une ligne absente ne signifie pas un montant nul.";
       card.append(status, explanation);
       const list = document.createElement("dl");
       list.className = "finance-result-list";
-      const priority = ["Recettes de fonctionnement", "Dépenses de fonctionnement", "Epargne brute", "Encours de dette", "Dépenses d'investissement", "Recettes d'investissement", "Epargne nette", "Frais de personnel"];
+      const priority = ["Recettes de fonctionnement", "Dépenses de fonctionnement", "Epargne brute", "Encours de dette", "Annuité de la dette", "Dépenses d'équipement", "Dépenses d'investissement", "Recettes d'investissement", "Epargne nette", "Frais de personnel"];
       const selected = [];
       priority.forEach((label) => {
-        const found = records.find((row) => String(row.agregat || "").toLocaleLowerCase("fr") === label.toLocaleLowerCase("fr"));
+        const found = latestRecords.find((row) => String(row.agregat || "").toLocaleLowerCase("fr") === label.toLocaleLowerCase("fr"));
         if (found) selected.push(found);
       });
-      (selected.length ? selected : records.slice(0, 8)).forEach((row) => {
+      (selected.length ? selected : latestRecords.slice(0, 8)).forEach((row) => {
         const dt = document.createElement("dt");
         dt.textContent = row.agregat || "Agrégat financier";
         const dd = document.createElement("dd");
@@ -239,9 +242,8 @@
       card.appendChild(list);
       const method = document.createElement("p");
       method.className = "commune-method-note";
-      method.textContent = "Lecture prudente : chiffres nominaux, sans correction de l’inflation. Les budgets annexes ne sont pas inclus dans cet aperçu.";
-      card.appendChild(method);
-    } else {
+      method.textContent = "Exercices présents dans la réponse : " + years.join(", ") + ". Montants nominaux, non corrigés de l’inflation. Les budgets annexes ne sont pas inclus.";
+      card.appendChild(method);    } else {
       status.className = "result-status";
       status.textContent = "Aucune ligne exploitable reçue pour 2024";
       explanation.textContent = "La commune est bien identifiée, mais l’API n’a pas renvoyé de ligne financière exploitable pour ce filtre. Cela peut venir d’une donnée absente, d’un champ différent ou d’une indisponibilité : aucun zéro n’est affiché. Consulte la source officielle pour vérifier.";
