@@ -221,7 +221,7 @@
           limit: "10"
         });
         let communes = [];
-        if (/^\\d{5}$/.test(query)) {
+        if (/^\d{5}$/.test(query)) {
           params.set("codePostal", query);
           let response = await fetch("https://geo.api.gouv.fr/communes?" + params.toString(), { headers: { Accept: "application/json" } });
           if (!response.ok) throw new Error("Référentiel indisponible (" + response.status + ")");
