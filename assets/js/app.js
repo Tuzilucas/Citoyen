@@ -220,19 +220,26 @@
           fields: "nom,code,codeDepartement,codesPostaux,population",
           limit: "10"
         });
+        let communes = [];
         if (/^\\d{5}$/.test(query)) {
           params.set("codePostal", query);
-        } else if (/^\\d{4,5}$/.test(query)) {
-          params.set("code", query);
+          let response = await fetch("https://geo.api.gouv.fr/communes?" + params.toString(), { headers: { Accept: "application/json" } });
+          if (!response.ok) throw new Error("Référentiel indisponible (" + response.status + ")");
+          communes = await response.json();
+          if (!communes.length) {
+            params.delete("codePostal");
+            params.set("code", query);
+            response = await fetch("https://geo.api.gouv.fr/communes?" + params.toString(), { headers: { Accept: "application/json" } });
+            if (!response.ok) throw new Error("Référentiel indisponible (" + response.status + ")");
+            communes = await response.json();
+          }
         } else {
           params.set("nom", query);
           params.set("boost", "population");
+          const response = await fetch("https://geo.api.gouv.fr/communes?" + params.toString(), { headers: { Accept: "application/json" } });
+          if (!response.ok) throw new Error("Référentiel indisponible (" + response.status + ")");
+          communes = await response.json();
         }
-        const response = await fetch("https://geo.api.gouv.fr/communes?" + params.toString(), {
-          headers: { Accept: "application/json" }
-        });
-        if (!response.ok) throw new Error("Référentiel indisponible (" + response.status + ")");
-        const communes = await response.json();
         result.replaceChildren();
         if (!Array.isArray(communes) || communes.length === 0) {
           const title = document.createElement("h3");
