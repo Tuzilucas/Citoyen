@@ -8,22 +8,22 @@
 })(typeof self !== "undefined" ? self : this, function () {
   "use strict";
 
-  // Jeu de données OFGL « Comptes des communes ». Les noms de champs ci-dessous sont
-  // ceux utilisés par la version précédente du site : ils n'ont PAS pu être vérifiés
-  // contre le schéma réel de l'API (voir AUDIT-TECHNIQUE.md, anomalie API-01).
-  // Ils sont centralisés ici pour être corrigés en un seul endroit.
+  // Schéma du jeu OFGL « Comptes des communes » : com_code, exer, type_de_budget,
+  // agregat, montant et euros_par_habitant. Le portail OFGL indexe ces champs dans
+  // ses exemples de requêtes et ses enregistrements. Le test HTTP réel depuis le site
+  // déployé reste à faire ; voir AUDIT-TECHNIQUE.md.
   const OFGL = {
     endpoint: "https://data.ofgl.fr/api/explore/v2.1/catalog/datasets/ofgl-base-communes/records",
     datasetPage: "https://data.ofgl.fr/explore/dataset/ofgl-base-communes/",
     fields: {
       insee: "com_code",
       year: "exer",
-      budgetType: "code_type_budget",
+      budgetType: "type_de_budget",
       aggregate: "agregat",
-      amount: ["montant", "montant_eur", "valeur"],
-      perCapita: ["euros_par_habitant", "montant_hab", "montant_eur_par_habitant"]
+      amount: ["montant"],
+      perCapita: ["euros_par_habitant"]
     },
-    mainBudgetCode: 1,
+    mainBudgetCode: "Budget principal",
     // L'API Explore v2.1 d'Opendatasoft limite « limit » à 100 lignes par appel.
     pageSize: 100,
     maxPages: 20
@@ -85,7 +85,7 @@
     if (!isInseeCode(inseeCode)) throw new Error("Code INSEE invalide");
     const f = OFGL.fields;
     return new URLSearchParams({
-      where: f.insee + '="' + String(inseeCode).toUpperCase() + '" AND ' + f.budgetType + "=" + OFGL.mainBudgetCode,
+      where: f.insee + '="' + String(inseeCode).toUpperCase() + '" AND ' + f.budgetType + '="' + OFGL.mainBudgetCode + '"',
       limit: String(OFGL.pageSize),
       offset: String(offset || 0),
       order_by: f.year + " DESC, " + f.aggregate
