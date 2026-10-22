@@ -15,7 +15,7 @@ La publication INSEE du 29 septembre 2026 indique qu’au T2 2026 la dette publi
 - Indicateur présenté : dette publique française au sens de Maastricht, par trimestre.
 - Les sources et limites sont documentées dans `data/sources.json` et dans l’interface.
 - La recherche de commune interroge le référentiel national geo.api.gouv.fr (nom, code postal ou code INSEE, Corse comprise) ; chaque commune est identifiée par son code INSEE. La requête OFGL utilise les champs documentés dans les exemples officiels indexés du jeu « Comptes des communes » : `com_code`, `exer`, `type_de_budget="Budget principal"`, `agregat`, `montant` et `euros_par_habitant`. Le test HTTP réel depuis le site déployé et le rapprochement ligne à ligne des montants restent à faire ; les données locales restent donc marquées « non rapprochées » (voir `AUDIT-TECHNIQUE.md`).
-- Les données financières de Fameck sont affichées comme repères retranscrits d’une source secondaire (FMPC), non encore rapprochés de l’OFGL : aucune valeur locale n’est présentée comme vérifiée.
+- La section locale n’est plus figée sur Fameck : elle se remplit avec la commune recherchée, présente les agrégats reconnus, calcule des ratios quand les données nécessaires sont disponibles, explique les indicateurs en langage courant et affiche une série annuelle. Les montants OFGL restent à rapprocher de la documentation officielle ; une donnée absente n’est jamais assimilée à zéro.
 - Le rapprochement automatique du fichier XLSX brut de l’INSEE reste à effectuer. Les chiffres affichés doivent donc être considérés comme un prototype tant que ce contrôle n’est pas terminé.
 
 ## Publication
@@ -39,8 +39,8 @@ Audit et plan de correction : `AUDIT-TECHNIQUE.md`.
 Les sources officielles et les limites de chaque série sont répertoriées dans `data/sources.json`.
 
 
-## Premier jeu de données local : Fameck 2024
+## Analyse territoriale dynamique
 
-Le site affiche désormais des repères budgétaires du budget principal exécuté de Fameck pour 2024 : produits et charges de fonctionnement, résultat comptable, capacité d'autofinancement, emplois d'investissement, dette et fonds de roulement. La série 2019–2025 a été retranscrite depuis la page [FMPC consacrée aux chiffres clés de Fameck](https://www.fmpc.fr/finances-locales/index.php?ido=20758). Le jeu interne est disponible dans [fameck-finances-2024.json](data/indicators/fameck-finances-2024.json).
+La recherche communale pilote désormais la section d’analyse locale : le titre, les indicateurs, les explications, les ratios et le tableau historique se mettent à jour après sélection de la commune. Les explications distinguent flux annuels et stocks, détaillent les formules et signalent les limites des comparaisons. Le fichier historique Fameck reste dans le dépôt comme donnée de travail historique, mais il n’est plus utilisé comme analyse locale affichée par défaut.
 
-**Limite explicite :** le fichier brut officiel OFGL/DGFiP n'a pas encore été téléchargé et rapproché ligne à ligne. Les données sont donc marquées « à rapprocher » et les ratios calculés par le prototype restent indicatifs. Le budget principal ne doit pas être confondu avec les comptes consolidés incluant les budgets annexes.
+**Limite explicite :** le fonctionnement réel de l’API OFGL depuis le navigateur et le rapprochement des champs/montants avec les fiches méthodologiques doivent encore être validés. L’analyse ne doit pas être lue comme un audit certifié des comptes ni comme un jugement sur la gestion d’une équipe municipale.
