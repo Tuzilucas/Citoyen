@@ -384,7 +384,7 @@ async function overflow(page) {
     record("DATA-RIBBON-JS", "Bandeau rempli depuis les JSON après chargement", "375", ribbon.join("|") === "3 595,5 Md€|1,34 M€|7,17 M€|10,09 %".replace(/ /g, "\u202f") || ribbon.join("|").replace(/\u202f/g, " ") === "3 595,5 Md€|1,34 M€|7,17 M€|10,09 %" ? "VALIDÉ" : "ÉCHOUÉ", ribbon.join(" / "));
     const ribbonDisplay = await page.$eval(".headline-ribbon", (e) => getComputedStyle(e).display);
     record("RESP-RIBBON", "Bandeau de chiffres clés mis en grille", "375", ribbonDisplay === "grid" ? "VALIDÉ" : "ÉCHOUÉ", "display=" + ribbonDisplay);
-    record("FAM-ANALYSIS", "Analyse 2019–2024 calculée depuis le JSON", "375", /7,9 %/.test(analysis) && /16,8 %/.test(analysis) && /35,7 %/.test(analysis) ? "VALIDÉ" : "ÉCHOUÉ", analysis.slice(0, 260));
+    record("FAM-ANALYSIS", "L’analyse locale attend une commune sélectionnée", "375", /apparaîtront ici après la recherche/.test(analysis) ? "VALIDÉ" : "ÉCHOUÉ", analysis.slice(0, 260));
     const rows = await page.$$eval("#fameck-history-body tr", (r) => r.length);
     await page.locator("#fameck-finances").screenshot({ path: path.join(OUT, "fameck-375.png") });
     const wrap = await page.$eval(".municipal-history-wrap", (e) => ({ sw: e.scrollWidth, cw: e.clientWidth }));
