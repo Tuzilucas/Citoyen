@@ -6,6 +6,10 @@ Ce dépôt contient la version web publique de l’Observatoire citoyen : interf
 
 L’interface adopte une direction éditoriale : grille de publication, typographie à empattements pour les titres, séparateurs francs et annotations proches des données. Elle évite les tableaux de bord génériques et conserve les états de validation explicites. Le brief réutilisable est documenté dans le dépôt privé STRUCTURE-PROJET, sous `03-ui/exemples/direction-artistique-information-citoyenne.md`.
 
+## Chiffres disponibles
+
+La publication INSEE du 29 septembre 2026 indique qu’au T2 2026 la dette publique brute atteint **3 595,5 Md€**, soit **119,0 % du PIB**. La dette publique nette s’établit à **3 366,8 Md€** (111,4 % du PIB). La dette brute augmente de **59,6 Md€** sur le trimestre ; la contribution de l’État progresse de 53,0 Md€, tandis que celle des administrations publiques locales baisse de 1,7 Md€. Ces chiffres sont transcrits de la publication officielle ; le rapprochement automatisé du fichier XLSX source reste à réaliser. Les données de détail sont dans `data/indicators/dette-publique-composition-2026-T2.json`.
+
 ## État du prototype
 
 - Indicateur présenté : dette publique française au sens de Maastricht, par trimestre.
