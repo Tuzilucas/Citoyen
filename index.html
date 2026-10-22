@@ -30,7 +30,7 @@
       <a href="#contenu">Accueil</a>
       <a href="#territoires">France</a>
       <a href="#communes">Communes</a>
-      <a href="#fameck-finances">Fameck 2024</a>
+      <a href="#fameck-finances">Analyse communale</a>
       <a href="#verifier">Vérifier un chiffre</a>
       <a href="#explorer">Explorer les données</a>
       <a href="#composition-dette">Répartition de la dette</a>
@@ -65,9 +65,9 @@
 
     <section class="headline-ribbon" aria-label="Quelques chiffres clés">
       <a href="#indicateur-dette" class="headline-metric"><span class="headline-icon" aria-hidden="true">⌂</span><span><small>Dette publique brute · France</small><strong id="ribbon-debt">3 595,5 Md€</strong><em id="ribbon-debt-context">119,0 % du PIB · T2 2026</em></span></a>
-      <a href="#fameck-finances" class="headline-metric"><span class="headline-icon" aria-hidden="true">▥</span><span><small>Épargne brute · Fameck</small><strong id="ribbon-fameck-savings">1,34 M€</strong><em>Exercice 2024 · série à vérifier</em></span></a>
-      <a href="#fameck-finances" class="headline-metric"><span class="headline-icon" aria-hidden="true">▤</span><span><small>Encours de dette · Fameck</small><strong id="ribbon-fameck-debt">7,17 M€</strong><em>Fin 2024 · série à vérifier</em></span></a>
-      <a href="#fameck-finances" class="headline-metric"><span class="headline-icon" aria-hidden="true">↗</span><span><small>Taux d’épargne brute · Fameck</small><strong id="ribbon-fameck-rate">10,09 %</strong><em>Calculé sur la série retranscrite</em></span></a>
+      <a href="#fameck-finances" class="headline-metric"><span class="headline-icon" aria-hidden="true">▥</span><span><small>Épargne brute · commune recherchée</small><strong id="ribbon-fameck-savings">—</strong><em id="ribbon-local-savings-context">Choisissez une commune</em></span></a>
+      <a href="#fameck-finances" class="headline-metric"><span class="headline-icon" aria-hidden="true">▤</span><span><small>Encours de dette · commune recherchée</small><strong id="ribbon-fameck-debt">—</strong><em id="ribbon-local-debt-context">En fin d’exercice</em></span></a>
+      <a href="#fameck-finances" class="headline-metric"><span class="headline-icon" aria-hidden="true">↗</span><span><small>Taux d’épargne brute · commune recherchée</small><strong id="ribbon-fameck-rate">—</strong><em id="ribbon-local-rate-context">Calculé si les données sont disponibles</em></span></a>
     </section>
 
     <section id="territoires" class="section territory-section">
@@ -84,11 +84,11 @@
           <a class="button button-primary" href="#indicateur-dette">Explorer la dette publique</a>
         </article>
         <article class="territory-card">
-          <span class="territory-status">Préparation des données</span>
-          <p class="territory-kicker">Premier territoire local</p>
-          <h3>Fameck · Moselle</h3>
-          <p>Premiers repères pour l’exercice 2024 affichés plus bas. Les valeurs sont retranscrites d’une page secondaire fondée sur les comptes centralisés par la DGFiP ; le rapprochement avec l’export OFGL reste à faire.</p>
-          <a class="button button-secondary" href="#fameck-finances">Voir les chiffres de Fameck</a>
+          <span class="territory-status">Recherche en direct</span>
+          <p class="territory-kicker">Échelle locale</p>
+          <h3>La commune de votre choix</h3>
+          <p>Recherchez une commune pour remplacer automatiquement l’analyse locale. Les données, les indicateurs, les comparaisons annuelles et les explications s’adaptent à la commune sélectionnée.</p>
+          <a class="button button-secondary" href="#communes">Choisir une commune</a>
         </article>
         <article class="territory-card">
           <span class="territory-status">Étape ultérieure</span>
@@ -118,16 +118,19 @@
 
   <section id="fameck-finances" class="section municipal-finance-section">
       <div class="section-heading">
-        <div><p class="eyebrow">Territoire pilote · série 2019–2025</p><h2>Les finances de Fameck, en chiffres</h2></div>
-        <span class="status status-review">À rapprocher des données brutes</span>
+        <div><p class="eyebrow">Analyse territoriale détaillée</p><h2 id="municipal-title">Les finances de la commune recherchée</h2></div>
+        <span class="status status-review" id="municipal-status">En attente d’une commune</span>
       </div>
-      <p class="municipal-intro">Les chiffres suivent les agrégats « recettes réelles », « dépenses réelles » et « épargne brute » de la source consultée. Ils restent à rapprocher de l’export brut OFGL : une autre page secondaire publie des valeurs 2024 différentes pour certains postes, probablement liées à des définitions ou périmètres distincts.</p>
-      <div class="municipal-metrics" id="fameck-metrics"><p>Chargement des repères budgétaires…</p></div>
+      <p class="municipal-intro" id="municipal-intro">Recherchez une commune dans la section « Rechercher une commune », puis sélectionnez-la si plusieurs résultats sont proposés. Cette partie sera remplacée par son analyse : données disponibles, explication de chaque indicateur, calculs, évolution dans le temps et limites méthodologiques. Aucune donnée de Fameck ne sera imposée par défaut.</p>
+      <div class="municipal-metrics" id="fameck-metrics"><p>Choisissez une commune pour charger ses données.</p></div>
       <div class="municipal-calculs" id="fameck-calculs"></div>
-      <div class="municipal-readout" id="fameck-analysis"><strong>Ce que montre la série</strong><p>Chargement des comparaisons annuelles…</p></div>
-      <div class="municipal-history-wrap"><h3>Évolution annuelle</h3><p>Montants nominaux en euros. La série 2025 est reprise de la source secondaire et doit être vérifiée directement auprès de l’OFGL.</p><table><caption>Fameck · budget principal · série retranscrite</caption><thead><tr><th scope="col">Année</th><th scope="col">Recettes de fonctionnement</th><th scope="col">Dépenses de fonctionnement</th><th scope="col">Épargne brute</th><th scope="col">Dette en fin d’année</th><th scope="col">Taux d’épargne</th><th scope="col">Désendettement</th></tr></thead><tbody id="fameck-history-body"><tr><td colspan="7">Chargement de la série…</td></tr></tbody></table></div>
-      <div class="municipal-source-note"><strong>Comment lire ces chiffres</strong><p>Les produits de fonctionnement ne sont pas le budget total de la commune. L’encours de dette est un stock à une date donnée. La capacité d’autofinancement mesure une ressource potentielle pour financer les investissements et rembourser la dette ; elle n’est pas identique au résultat comptable.</p>
-      <p>Source de retranscription : <a href="https://www.fmpc.fr/finances-locales/index.php?ido=20758" target="_blank" rel="noopener noreferrer">FMPC — chiffres clés de Fameck ↗</a>. Une autre série secondaire affiche certains montants 2024 différents ; les périmètres ne sont pas encore réconciliés. Source officielle à rapprocher : <a href="https://data.ofgl.fr/explore/dataset/ofgl-base-communes/" target="_blank" rel="noopener noreferrer">OFGL — comptes des communes ↗</a>. <a href="data/indicators/fameck-finances-2024.json">Données et méthode utilisées (JSON)</a>.</p></div>
+      <div class="municipal-readout" id="fameck-analysis"><strong>Comment lire les comptes de cette commune</strong><p>Les indicateurs apparaîtront ici après la recherche.</p></div>
+      <div class="municipal-history-wrap" id="municipal-history-wrap" hidden><h3>Évolution annuelle</h3><p id="municipal-history-intro">Les années ne sont comparées que lorsque les agrégats et les périmètres sont disponibles.</p><table><caption id="municipal-history-caption">Commune sélectionnée · budget principal · données OFGL à contrôler</caption><thead><tr><th scope="col">Année</th><th scope="col">Recettes de fonctionnement</th><th scope="col">Dépenses de fonctionnement</th><th scope="col">Épargne brute</th><th scope="col">Dette en fin d’année</th><th scope="col">Taux d’épargne</th><th scope="col">Désendettement théorique</th></tr></thead><tbody id="fameck-history-body"><tr><td colspan="7">Aucune commune sélectionnée.</td></tr></tbody></table></div>
+      <div class="municipal-source-note" id="municipal-method">
+        <strong>La méthode d’analyse</strong>
+        <p>Le budget principal est séparé des budgets annexes. Une valeur absente n’est jamais remplacée par zéro. L’encours de dette est un stock à une date donnée ; les recettes et dépenses sont des flux sur l’exercice. Le taux d’épargne brute est calculé comme épargne brute ÷ recettes de fonctionnement × 100, uniquement si les deux données sont disponibles et comparables. La capacité de désendettement est encours de dette ÷ épargne brute, uniquement si l’épargne brute est positive.</p>
+        <p>Source financière : <a href="https://data.ofgl.fr/explore/dataset/ofgl-base-communes/" target="_blank" rel="noopener noreferrer">OFGL — comptes des communes ↗</a>. Les données chargées automatiquement doivent être rapprochées des fiches méthodologiques officielles ; les calculs sont descriptifs et ne suffisent pas à conclure qu’une gestion est bonne ou mauvaise.</p>
+      </div>
     </section>
 
   <section id="verifier" class="section verification-section">
