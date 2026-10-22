@@ -1,27 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 440" preserveAspectRatio="xMidYMid slice">
-<defs>
- <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#dce8f1"/><stop offset=".62" stop-color="#f6d9b8"/><stop offset="1" stop-color="#f4eee4"/></linearGradient>
- <linearGradient id="river" x2="0" y2="1"><stop stop-color="#718fa2"/><stop offset="1" stop-color="#0c2d4c"/></linearGradient>
- <linearGradient id="shade"><stop stop-color="#fff" stop-opacity=".97"/><stop offset=".45" stop-color="#fff" stop-opacity=".88"/><stop offset=".7" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#0b2b4b" stop-opacity=".25"/></linearGradient>
-</defs>
-<rect width="1800" height="440" fill="url(#sky)"/>
-<circle cx="1260" cy="94" r="54" fill="#fff4d5" opacity=".85"/>
-<path d="M0 275 100 220 185 252 265 205 365 250 470 215 590 267 690 230 805 268 910 215 1030 248 1140 210 1240 245 1360 200 1470 246 1580 196 1700 230 1800 194V440H0Z" fill="#a3b7c1" opacity=".55"/>
-<path d="M0 320 130 274 250 296 370 250 500 300 650 263 800 302 960 245 1090 290 1240 244 1400 275 1540 232 1690 270 1800 245V440H0Z" fill="#b5b7a5"/>
-<g transform="translate(1030 35)" fill="#263f55" stroke="#263f55" stroke-width="4">
- <path d="M0 270V180L42 180V150L64 150V95L79 95V52L89 12 100 52V95H115V150H138V180H170V270Z"/>
- <path d="M24 180 24 125 41 125 41 180M68 150V115H87V150M103 150V115H121V150M145 180V130H160V180" fill="#e5e1d7"/>
- <path d="M-8 270H184V287H-8Z" fill="#182f45"/>
-</g>
-<g fill="#304b5b">
- <path d="M900 300V235H920V210H945V187H960V170H974V210H995V230H1018V300Z"/>
- <path d="M1450 288V240H1470V200H1492V240H1510V288Z"/>
- <path d="M1540 295V230H1560V205H1580V230H1600V295Z"/>
-</g>
-<path d="M0 340Q300 316 560 340T1080 337T1800 325V440H0Z" fill="url(#river)"/>
-<path d="M0 358Q300 339 560 363T1080 358T1800 346" fill="none" stroke="#d4e1e5" stroke-width="4" opacity=".6"/>
-<g fill="#fff" opacity=".6"><path d="M0 375 250 368 480 381 690 371 900 386 1130 371 1360 381 1600 364 1800 375V440H0Z"/></g>
-<rect width="1800" height="440" fill="url(#shade)"/>
-<path d="M0 0H18L0 24Z" fill="#e52d3b"/><path d="M0 25H32L0 66Z" fill="#0b3970"/>
-<path d="M1765 0H1800V440H1760L1792 390V55Z" fill="#e52d3b" opacity=".8"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 560" preserveAspectRatio="xMidYMid slice" role="img" aria-labelledby="title desc">
+<title id="title">Paysage abstrait de la Lorraine</title><desc id="desc">Composition sobre inspirée de la Moselle, des reliefs lorrains et de l’architecture de Metz.</desc>
+<defs><linearGradient id="paper" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#e7ecea"/><stop offset="1" stop-color="#d6dedc"/></linearGradient><linearGradient id="water" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#7799a4"/><stop offset="1" stop-color="#294e66"/></linearGradient><linearGradient id="veil"><stop stop-color="#f8f7f2" stop-opacity=".4"/><stop offset=".52" stop-color="#f8f7f2" stop-opacity=".08"/><stop offset="1" stop-color="#102f49" stop-opacity=".14"/></linearGradient></defs>
+<rect width="1800" height="560" fill="url(#paper)"/>
+<path d="M0 245L145 188 270 222 395 163 535 218 680 151 830 211 965 159 1115 205 1275 137 1415 188 1570 126 1710 175 1800 142V560H0Z" fill="#b6c6c5"/>
+<path d="M0 322L160 265 310 302 455 236 610 290 780 232 930 280 1090 225 1250 273 1405 217 1555 258 1710 204 1800 222V560H0Z" fill="#8ea9a9"/>
+<path d="M0 365Q260 335 460 362T850 351T1240 344T1580 331T1800 315V560H0Z" fill="#c3ceca"/>
+<g fill="#536e7b" opacity=".88"><path d="M1020 346V233H1042V209H1064V185H1082V145L1096 112 1110 145V185H1134V209H1154V233H1175V346Z"/><path d="M1195 346V266H1215V238H1236V266H1257V346Z"/><path d="M1274 346V280H1296V254H1317V280H1337V346Z"/><path d="M1380 346V270H1404V241H1427V270H1448V346Z"/></g>
+<g fill="#e7e9e2" opacity=".85"><path d="M1034 228H1160V237H1034Z"/><path d="M1056 191H1138V199H1056Z"/><path d="M1086 156H1108V346H1086Z"/></g>
+<path d="M0 402Q260 374 470 401T880 390T1290 379T1800 366V560H0Z" fill="url(#water)"/>
+<path d="M0 431Q300 402 540 431T1010 419T1440 404T1800 398" fill="none" stroke="#dce6e2" stroke-width="4" opacity=".7"/><path d="M0 467Q330 442 620 465T1180 451T1800 437" fill="none" stroke="#dce6e2" stroke-width="2" opacity=".5"/>
+<g fill="none" stroke="#f8f7f2" stroke-width="2" opacity=".65"><path d="M1310 0C1190 110 1400 180 1270 300S1390 430 1250 560"/><path d="M1370 0C1250 110 1460 180 1330 300S1450 430 1310 560"/><path d="M1430 0C1310 110 1520 180 1390 300S1510 430 1370 560"/></g>
+<rect width="1800" height="560" fill="url(#veil)"/><path d="M0 0H1800V10H0Z" fill="#102f49"/><path d="M0 10H620V15H0Z" fill="#a9323b"/><path d="M620 10H1120V15H620Z" fill="#d8c28e"/>
 </svg>
