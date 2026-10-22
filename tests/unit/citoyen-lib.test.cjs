@@ -40,6 +40,9 @@ test("buildOfglParams respecte la limite de 100 lignes et pagine", () => {
   assert.equal(p.get("limit"), "100");
   assert.equal(p.get("offset"), "200");
   assert.match(p.get("where"), /com_code="57206"/);
+  assert.match(p.get("where"), /type_de_budget="Budget principal"/);
+  assert.equal(lib.OFGL.fields.year, "exer");
+  assert.equal(lib.OFGL.fields.aggregate, "agregat");
   assert.throws(() => lib.buildOfglParams('57206" OR "1"="1', 0));
 });
 
@@ -54,7 +57,7 @@ test("pickAmount : absent → null, zéro → 0, texte non numérique → null",
   assert.equal(lib.pickAmount({ montant: 0 }), 0);
   assert.equal(lib.pickAmount({ montant: "abc" }), null);
   assert.equal(lib.pickPerCapita({ euros_par_habitant: 479.2 }), 479.2);
-  assert.equal(lib.pickPerCapita({ montant_hab: 12 }), 12);
+  assert.equal(lib.pickAmount({ montant: 12 }), 12);
 });
 
 test("summarizeOfglRecords refuse de choisir un exercice si la réponse est tronquée", () => {
