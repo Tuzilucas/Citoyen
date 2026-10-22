@@ -12,3 +12,16 @@
 .territory-card .button{margin-top:auto}
 .territory-note{margin-top:auto;padding-top:.8rem;color:var(--muted);font-size:.78rem}
 @media(max-width:800px){.territory-grid{grid-template-columns:1fr}.territory-card{padding:1.2rem}}
+
+/* Recherche communale : catalogue partiel, état des données explicite */
+.commune-search-section{background:#f7fafb;border-bottom:1px solid var(--line)}
+.commune-form{max-width:850px}
+.commune-search-row{display:flex;gap:.65rem;margin-top:.45rem}
+.commune-search-row input{flex:1;min-width:0}
+.commune-result{max-width:850px;margin-top:1rem;padding:1.2rem 1.4rem;border:1px solid var(--line);border-radius:12px;background:#fff}
+.commune-result h3{margin:0 0 .55rem;font-size:1.15rem}
+.commune-result p{color:var(--muted);font-size:.9rem}
+.commune-result .commune-meta{margin:.2rem 0 .65rem;font-size:.82rem}
+.commune-result .result-status{display:inline-block;margin:.2rem 0 .5rem;padding:.25rem .55rem;border-radius:6px;background:#e8f2ed;color:#286447;font-size:.75rem;font-weight:800}
+.commune-result a{font-size:.88rem;font-weight:750}
+@media(max-width:560px){.commune-search-row{align-items:stretch;flex-direction:column}.commune-search-row .button{width:100%}}
