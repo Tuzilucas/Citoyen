@@ -263,6 +263,26 @@
     });
   }
 
+  function initGlossary() {
+    const input = document.getElementById("glossary-search");
+    const list = document.getElementById("glossary-list");
+    const count = document.getElementById("glossary-count");
+    if (!input || !list || !count) return;
+    const entries = Array.from(list.querySelectorAll(".glossary-entry"));
+    const update = () => {
+      const query = normalizeSearch(input.value);
+      let visible = 0;
+      entries.forEach((entry) => {
+        const matches = !query || normalizeSearch(entry.textContent).includes(query);
+        entry.hidden = !matches;
+        if (matches) visible += 1;
+      });
+      count.textContent = visible + " définition" + (visible > 1 ? "s" : "") + " affichée" + (visible > 1 ? "s" : "") + (query ? " pour « " + input.value.trim() + " »." : " dans le glossaire.");
+    };
+    input.addEventListener("input", update);
+    update();
+  }
+
   async function initDebtComposition() {
     const table = document.getElementById("composition-table-body");
     if (!table) return;
@@ -405,6 +425,7 @@
 
   async function init() {
     initMunicipalitySearch();
+    initGlossary();
     initDebtComposition();
     initFameckFinances();
     const form = document.getElementById("claim-form");
