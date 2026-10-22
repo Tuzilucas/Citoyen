@@ -160,7 +160,90 @@
     showResult(result.title, "Pas encore de données validées pour conclure", paragraphs, result.links);
   }
 
+  function normalizeSearch(value) {
+    return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("fr-FR").trim();
+  }
+
+  function addResultLink(container, label, href) {
+    const p = document.createElement("p");
+    const a = document.createElement("a");
+    a.href = href;
+    a.textContent = label;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    p.appendChild(a);
+    container.appendChild(p);
+  }
+
+  function renderCommuneResult(container, entity) {
+    container.replaceChildren();
+    const title = document.createElement("h3");
+    title.textContent = entity.official_name + " — " + entity.department_name;
+    container.appendChild(title);
+
+    const code = document.createElement("p");
+    code.className = "commune-meta";
+    code.textContent = "Code INSEE : " + entity.entity_id + " · Code postal : " + (entity.postal_codes || []).join(", ");
+    container.appendChild(code);
+
+    const status = document.createElement("span");
+    status.className = "result-status";
+    status.textContent = "Identité géographique référencée";
+    container.appendChild(status);
+
+    const explanation = document.createElement("p");
+    explanation.textContent = "Les données financières de cette commune ne sont pas encore intégrées et validées dans l’observatoire. Aucun montant local n’est donc affiché. La prochaine étape est de récupérer les comptes officiels, contrôler les exercices disponibles et documenter les périmètres.";
+    container.appendChild(explanation);
+
+    addResultLink(container, "Consulter les comptes des communes — OFGL", "https://data.ofgl.fr/explore/dataset/ofgl-base-communes/");
+    addResultLink(container, "Consulter les comptes individuels des communes — DGFiP", "https://www.data.gouv.fr/datasets/comptes-individuels-des-communes-fichier-global-2025");
+    container.hidden = false;
+  }
+
+  async function initMunicipalitySearch() {
+    const form = document.getElementById("commune-form");
+    const input = document.getElementById("commune-query");
+    const result = document.getElementById("commune-result");
+    if (!form || !input || !result) return;
+
+    let entities = [];
+    try {
+      const response = await fetch("data/entities.json", { cache: "no-store" });
+      if (!response.ok) throw new Error("HTTP " + response.status);
+      const data = await response.json();
+      entities = Array.isArray(data.entities) ? data.entities : [];
+    } catch (error) {
+      result.textContent = "Le catalogue territorial est momentanément indisponible. Consulte les sources officielles en attendant.";
+      result.hidden = false;
+      return;
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const query = normalizeSearch(input.value);
+      if (!query) return;
+      const matches = entities.filter((entity) => {
+        const values = [entity.official_name, entity.entity_id, ...(entity.postal_codes || [])];
+        return values.some((value) => normalizeSearch(String(value)).includes(query));
+      });
+      result.replaceChildren();
+      if (matches.length) {
+        matches.slice(0, 5).forEach((entity) => renderCommuneResult(result, entity));
+      } else {
+        const title = document.createElement("h3");
+        title.textContent = "Commune non présente dans le catalogue actuel";
+        const explanation = document.createElement("p");
+        explanation.textContent = "Le catalogue de l’observatoire ne contient pour l’instant qu’un nombre limité de communes. Cela ne signifie pas que les données officielles sont indisponibles. Tu peux consulter les bases nationales ci-dessous.";
+        result.append(title, explanation);
+        addResultLink(result, "Rechercher dans les comptes des communes — OFGL", "https://data.ofgl.fr/explore/dataset/ofgl-base-communes/");
+        addResultLink(result, "Rechercher les comptes individuels — DGFiP", "https://www.data.gouv.fr/datasets/comptes-individuels-des-communes-fichier-global-2025");
+      }
+      result.hidden = false;
+    });
+  }
+
   async function init() {
+    initMunicipalitySearch();
     const form = document.getElementById("claim-form");
     if (form) form.addEventListener("submit", handleClaim);
     try {
