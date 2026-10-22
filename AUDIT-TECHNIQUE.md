@@ -9,6 +9,19 @@
 
 > **Addendum post-correction** — Les tableaux d’anomalies ci-dessous décrivent en partie l’état constaté lors de l’audit initial. Pour l’état actuel du code, la correction des champs OFGL documentée ci-dessus prévaut : `type_de_budget="Budget principal"`, montant `montant`, montant par habitant `euros_par_habitant`. Les tests automatisés n’ont pas été exécutés après cette dernière modification. Ne pas considérer les données comme officiellement rapprochées avant le test réel et la comparaison des montants.
 
+
+
+## État final — 22 octobre 2026
+
+Cette note d’état prévaut sur les constats historiques des tableaux ci-dessous, qui décrivent en partie la version auditée initialement et dont certaines lignes de code ne correspondent plus à `main`.
+
+- **Publication du code :** les corrections sont présentes sur `main`. Le site public attendu est [GitHub Pages](https://tuzilucas.github.io/Citoyen/), mais son rendu déployé n’a pas pu être ouvert depuis cet environnement.
+- **Navigation mobile :** le bouton de menu accessible est intégré ; ouverture/fermeture, touche Échap et fermeture après sélection sont implémentées.
+- **API communale :** la requête est centralisée dans `assets/js/citoyen-lib.js`, avec `com_code`, `exer`, `type_de_budget="Budget principal"`, `agregat`, `montant` et `euros_par_habitant`. La pagination utilise 100 lignes par appel. Ces choix sont étayés par les références documentaires disponibles, mais l’endpoint OFGL et le site sont inaccessibles depuis l’environnement utilisé : aucune requête HTTP réelle n’a été validée.
+- **Tests :** les tests unitaires et Playwright existent. Les tests n’ont pas été relancés après les dernières modifications ; aucun résultat vert récent n’est revendiqué. Le workflow GitHub Actions est manuel uniquement et n’a pas été déclenché, afin de ne pas consommer de minutes.
+- **Données Fameck :** la série 2019–2025 provient d’une source secondaire et n’a pas été rapprochée ligne à ligne de l’export OFGL/DGFiP. Les valeurs restent explicitement indicatives.
+- **Reste bloquant avant de qualifier les données de vérifiées :** ouvrir le site depuis un navigateur connecté, confirmer la réponse réelle de l’API pour Fameck (57206) et une autre commune, vérifier les libellés d’agrégats et comparer les valeurs de Fameck à l’export officiel. Tant que ces étapes ne sont pas faites, le site doit rester présenté comme un prototype et les montants communaux comme « non rapprochés ».
+
 ---
 
 ## A. Résumé exécutif
@@ -304,7 +317,7 @@ Glossaire : 48 définitions compréhensibles et non contradictoires avec les cal
 
 | Ordre | Action | Dépend de | Anomalies | État sur la branche |
 |---|---|---|---|---|
-| **0** | **Terminer l’audit réseau** depuis un poste connecté (procédure ci-dessous). | — | API-01, API-05, API-06, FAM-01 | **À faire** |
+| **0** | **Terminer l’audit réseau** depuis un poste connecté (procédure ci-dessous). | — | API-01, API-05, API-06, FAM-01 | **Bloqué dans cet environnement : site et endpoint inaccessibles ; validation réelle à faire depuis un navigateur connecté.** |
 | 1 | Corriger les noms de champs OFGL dans `OFGL.fields` (`citoyen-lib.js`) et la valeur du budget principal, à partir du schéma réel. | 0 | API-01, API-05 | À faire |
 | 2 | Pagination, limite à 100, contrôle d’exhaustivité, exclusion des lignes étrangères. | — | API-02, API-04 | **Fait, testé** |
 | 3 | Distinguer erreur, délai, format, absence de données et réponse incomplète. | — | API-03 | **Fait, testé** |
