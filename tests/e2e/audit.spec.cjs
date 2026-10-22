@@ -139,9 +139,21 @@ async function overflow(page) {
     record("RESP-OVERFLOW", "Absence de débordement horizontal", vp.name, ov.scrollWidth <= ov.vw ? "VALIDÉ" : "ÉCHOUÉ",
       `scrollWidth=${ov.scrollWidth}, viewport=${ov.vw}, éléments débordants=${ov.offenders.join(", ") || "aucun"}`);
     const headerH = await page.$eval(".site-header", (e) => Math.round(e.getBoundingClientRect().height));
-    record("RESP-HEADER", "Hauteur de l'en-tête (navigation 10 liens)", vp.name, "VALIDÉ", `${headerH}px (${Math.round(headerH / vp.height * 100)} % de la hauteur d'écran)`);
+    const mobileHeader = vp.width < 680;
+    record("RESP-HEADER", "En-tête compact sur mobile (≤120 px)", vp.name, !mobileHeader || headerH <= 120 ? "VALIDÉ" : "ÉCHOUÉ", String(headerH) + "px" + (mobileHeader ? " (seuil 120 px)" : ""));
+    if (mobileHeader) {
+      const menuState = await page.evaluate(() => ({
+        toggleVisible: getComputedStyle(document.querySelector(".nav-toggle")).display !== "none",
+        navHidden: getComputedStyle(document.querySelector(".site-header nav")).display === "none",
+        expanded: document.querySelector(".nav-toggle").getAttribute("aria-expanded")
+      }));
+      record("RESP-MENU", "Menu mobile replié et accessible", vp.name, menuState.toggleVisible && menuState.navHidden && menuState.expanded === "false" ? "VALIDÉ" : "ÉCHOUÉ", JSON.stringify(menuState));
+      await page.click(".nav-toggle");
+      const opened = await page.evaluate(() => document.querySelector(".nav-toggle").getAttribute("aria-expanded") === "true" && getComputedStyle(document.querySelector(".site-header nav")).display !== "none");
+      record("RESP-MENU-OPEN", "Ouverture du menu mobile", vp.name, opened ? "VALIDÉ" : "ÉCHOUÉ", "expanded=" + opened);
+    }
     const small = await page.evaluate(() => [...document.querySelectorAll(".site-header nav a")].map((a) => { const r = a.getBoundingClientRect(); return Math.round(r.height); }));
-    if (vp.width < 700) record("A11Y-TARGET", "Hauteur des liens de navigation ≥ 24px (WCAG 2.5.8)", vp.name, Math.min(...small) >= 24 ? "VALIDÉ" : "ÉCHOUÉ", `hauteurs=${small.join(",")}px`);
+    if (vp.width < 700) record("A11Y-TARGET", "Hauteur des liens de navigation ≥ 24px (WCAG 2.5.8)", vp.name, Math.min(...small) >= 24 ? "VALIDÉ" : "ÉCHOUÉ", "hauteurs=" + small.join(",") + "px");
     await context.close();
   }
 
