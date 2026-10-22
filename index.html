@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Vérifier les chiffres des finances publiques avec des sources officielles, les données brutes et les calculs transparents.">
+  <meta name="theme-color" content="#102b3f">
+  <title>Observatoire citoyen — Vérifier les chiffres publics</title>
+  <link rel="stylesheet" href="assets/css/app.css">
+  <script src="assets/js/app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#contenu">Aller au contenu</a>
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="Accueil Observatoire citoyen">
+      <span class="brand-mark" aria-hidden="true">OC</span>
+      <span><strong>Observatoire citoyen</strong><small>Les chiffres publics, sources à l’appui</small></span>
+    </a>
+    <nav aria-label="Navigation principale">
+      <a href="#territoires">Territoires</a>
+      <a href="#verifier">Vérifier un chiffre</a>
+      <a href="#explorer">Explorer les données</a>
+      <a href="#methode">Notre méthode</a>
+    </nav>
+  </header>
+
+  <main id="contenu">
+    <section class="hero">
+      <p class="eyebrow">Comprendre · vérifier · partager</p>
+      <h1>Un chiffre annoncé.<br><span>Une source pour le vérifier.</span></h1>
+      <p class="hero-copy">Retrouve les chiffres des finances publiques, comprends ce qu’ils mesurent et ouvre les données originales. Pas besoin d’être économiste.</p>
+      <div class="hero-actions">
+        <a class="button button-primary" href="#verifier">Vérifier une affirmation</a>
+        <a class="button button-secondary" href="#explorer">Explorer les données</a>
+      </div>
+      <p class="hero-note"><span class="live-dot" aria-hidden="true"></span> Dernière publication officielle identifiée : 29 septembre 2026. Les données ne sont pas diffusées en temps réel.</p>
+    </section>
+
+    <section id="territoires" class="section territory-section">
+      <div class="section-heading">
+        <div><p class="eyebrow">Un observatoire, plusieurs échelles</p><h2>Commencer par un territoire</h2></div>
+        <p class="muted">Le site s’élargira progressivement. Chaque territoire n’affichera des chiffres qu’une fois les sources et les périmètres contrôlés.</p>
+      </div>
+      <div class="territory-grid">
+        <article class="territory-card territory-card-featured">
+          <span class="territory-status territory-status-review">Prototype disponible · données à contrôler</span>
+          <p class="territory-kicker">Échelle nationale</p>
+          <h3>France</h3>
+          <p>Explorer la série trimestrielle de dette publique, comprendre ce qu’elle mesure et retrouver les publications de l’INSEE.</p>
+          <a class="button button-primary" href="#indicateur-dette">Explorer la dette publique</a>
+        </article>
+        <article class="territory-card">
+          <span class="territory-status">Préparation des données</span>
+          <p class="territory-kicker">Premier territoire local</p>
+          <h3>Fameck · Moselle</h3>
+          <p>Le territoire pilote est identifié. Les comptes financiers doivent encore être récupérés, contrôlés et rapprochés des documents officiels avant d’afficher des indicateurs locaux.</p>
+          <a class="button button-secondary" href="https://data.ofgl.fr/explore/dataset/ofgl-base-communes/" target="_blank" rel="noopener noreferrer">Consulter la source OFGL ↗</a>
+        </article>
+        <article class="territory-card">
+          <span class="territory-status">Étape ultérieure</span>
+          <p class="territory-kicker">Généralisation</p>
+          <h3>Toutes les communes</h3>
+          <p>L’objectif est de permettre une recherche par commune, puis d’appliquer les mêmes règles de calcul, avec les exceptions et les données manquantes clairement signalées.</p>
+          <span class="territory-note">Aucune couverture nationale des communes n’est revendiquée à ce stade.</span>
+        </article>
+      </div>
+    </section>
+
+  <section id="verifier" class="section verification-section">
+      <div class="section-heading">
+        <div><p class="eyebrow">Vérification rapide</p><h2>Qu’est-ce que tu veux vérifier ?</h2></div>
+        <p class="muted">Cherche un sujet ou saisis une affirmation entendue dans un débat.</p>
+      </div>
+      <form id="claim-form" class="claim-form">
+        <label for="claim-text">Le chiffre ou l’affirmation</label>
+        <input id="claim-text" name="claim" type="search" placeholder="Ex. : la dette publique est de 3 500 milliards" autocomplete="off" required>
+        <div class="form-grid">
+          <div><label for="claim-period">Période concernée (si connue)</label><select id="claim-period" name="period"><option value="">Je ne sais pas</option><option value="2026-T2">2e trimestre 2026</option><option value="2026-T1">1er trimestre 2026</option><option value="2025-T4">4e trimestre 2025</option><option value="2025">Année 2025</option><option value="2024">Année 2024</option><option value="2014-2015">2014–2015 (deux exercices)</option><option value="2014">Année 2014</option><option value="2015">Année 2015</option></select></div>
+          <div><label for="claim-scope">Sujet</label><select id="claim-scope" name="scope"><option value="auto">Détecter automatiquement</option><option value="dette">Dette publique</option><option value="education">Budget de l’Éducation nationale</option><option value="commune">Finances d’une commune</option><option value="budget-etat">Budget de l’État</option></select></div>
+        </div>
+        <button class="button button-primary" type="submit">Rechercher les données officielles</button>
+        <p class="form-hint">Le site ne juge pas une personne et ne qualifie pas une affirmation de « vraie » ou « fausse » sans données correspondant exactement au sujet, à la période et au périmètre.</p>
+      </form>
+      <div id="claim-result" class="claim-result" aria-live="polite" hidden></div>
+    </section>
+
+    <section id="indicateur-dette" class="section debt-section">
+      <div class="section-heading">
+        <div><p class="eyebrow">Indicateur national disponible</p><h2>La dette publique en un coup d’œil</h2></div>
+        <span class="status status-review">Source officielle · rapprochement du fichier brut à terminer</span>
+      </div>
+      <div class="debt-card">
+        <div class="debt-main">
+          <p class="metric-label">Dette publique au sens de Maastricht</p>
+          <p class="metric-value" id="latest-debt">—</p>
+          <p class="metric-context" id="latest-period">Chargement des données de référence…</p>
+        </div>
+        <div class="debt-ratio">
+          <p class="metric-label">En proportion du PIB</p>
+          <p class="ratio-value" id="latest-ratio">—</p>
+          <p class="metric-context">Valeur publiée par l’INSEE pour la même période</p>
+        </div>
+      </div>
+      <div class="plain-language">
+        <span class="plain-icon" aria-hidden="true">?</span>
+        <div><strong>En clair, qu’est-ce que ça signifie ?</strong><p>Il s’agit d’un stock de dette mesuré à la fin du trimestre, pas du total des dépenses de l’année. La dette de Maastricht est brute et consolidée : les actifs financiers ne sont pas déduits et les dettes entre administrations publiques sont neutralisées.</p><a href="https://www.insee.fr/fr/metadonnees/definition/c1091" target="_blank" rel="noopener noreferrer">Lire la définition officielle de l’INSEE ↗</a></div>
+      </div>
+      <div class="data-actions">
+        <a id="raw-debt-link" class="button button-primary" href="https://www.insee.fr/fr/statistiques/fichier/2830301/econ-gen-dette-trim-adm-pub-2.xlsx" target="_blank" rel="noopener noreferrer">Ouvrir les données brutes officielles (XLSX) ↗</a>
+        <a href="https://www.insee.fr/fr/statistiques/2830301" target="_blank" rel="noopener noreferrer">Consulter la page INSEE</a>
+        <a href="data/indicators/dette-publique-france.json">Voir les données utilisées par ce prototype (JSON)</a>
+      </div>
+      <p class="data-disclaimer">Transparence : les valeurs visibles sont transcrites du tableau publié par l’INSEE. Le fichier XLSX source est accessible ci-dessus, mais le rapprochement automatique avec ce fichier reste à faire. Elles sont donc signalées comme données à contrôler, et non comme série déjà validée de bout en bout.</p>
+      <div class="table-wrap">
+        <table>
+          <caption>Extrait de la série officielle — données de référence à contrôler avec le fichier XLSX</caption>
+          <thead><tr><th scope="col">Période</th><th scope="col">Dette (milliards €)</th><th scope="col">Dette (% du PIB)</th></tr></thead>
+          <tbody id="debt-table-body"><tr><td colspan="3">Chargement des observations…</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="explorer" class="section">
+      <div class="section-heading">
+        <div><p class="eyebrow">Données ouvertes</p><h2>Les données brutes restent accessibles</h2></div>
+        <p class="muted">Chaque indicateur doit permettre de remonter au document d’origine.</p>
+      </div>
+      <div class="cards">
+        <article class="info-card">
+          <span class="card-kicker">Niveau national</span><h3>Dette et déficit publics</h3>
+          <p>Dette, déficit, répartition par sous-secteur et explications de méthode publiés par l’INSEE.</p>
+          <a href="https://www.insee.fr/fr/statistiques/8988843" target="_blank" rel="noopener noreferrer">Données détaillées et fichiers XLSX ↗</a>
+        </article>
+        <article class="info-card">
+          <span class="card-kicker">Budget de l’État</span><h3>Crédits et exécution budgétaire</h3>
+          <p>La comparaison des budgets de l’Éducation nationale exigera de distinguer crédits votés, crédits consommés, périmètres ministériels et exercices.</p>
+          <a href="https://www.budget.gouv.fr/" target="_blank" rel="noopener noreferrer">Portail officiel du budget de l’État ↗</a>
+        </article>
+        <article class="info-card">
+          <span class="card-kicker">Niveau communal</span><h3>Comptes des communes</h3>
+          <p>Les données locales sont préparées pour commencer par Fameck, puis s’étendre aux communes couvertes par les sources.</p>
+          <a href="https://data.ofgl.fr/explore/dataset/ofgl-base-communes/" target="_blank" rel="noopener noreferrer">Comptes des communes — OFGL ↗</a>
+        </article>
+      </div>
+      <div class="raw-principle"><strong>Notre règle : deux niveaux, toujours.</strong><span>La donnée officielle d’origine, puis les indicateurs calculés par le site. Chaque calcul doit expliquer sa formule et permettre de retrouver ses données d’entrée.</span></div>
+    </section>
+
+    <section id="methode" class="section method-section">
+      <p class="eyebrow">Une méthode lisible</p><h2>Compréhensible pour tous. Vérifiable par chacun.</h2>
+      <div class="method-grid">
+        <div><span class="step">01</span><h3>Le chiffre</h3><p>Une valeur, une unité et une période clairement affichées.</p></div>
+        <div><span class="step">02</span><h3>Ce qu’il signifie</h3><p>Une explication simple, sans remplacer la définition officielle.</p></div>
+        <div><span class="step">03</span><h3>La preuve</h3><p>Un lien vers la source officielle et, quand disponible, le fichier brut.</p></div>
+        <div><span class="step">04</span><h3>Le calcul</h3><p>La formule, les données d’entrée et les limites sont consultables.</p></div>
+      </div>
+    </section>
+
+    <section id="limites" class="section limitations">
+      <p class="eyebrow">État du prototype</p><h2>Ce qui reste à construire</h2>
+      <ul>
+        <li>Le contrôle automatique d’une affirmation n’est possible que si le jeu de données couvre le même indicateur, la même période et le même périmètre.</li>
+        <li>La recherche nationale multi-sujets n’est pas encore activée ; le moteur de recherche ci-dessus est une première interface guidée.</li>
+        <li>La série de dette est transcrite depuis la page INSEE et doit encore être rapprochée automatiquement du fichier XLSX officiel.</li>
+        <li>Les données du budget de l’Éducation nationale et les comptes de Fameck doivent être importés et validés avant de produire des verdicts.</li>
+      </ul>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <div><strong>Observatoire citoyen des finances publiques</strong><p>Gratuit · Sources officielles · Données brutes et calculs traçables.</p></div>
+    <a href="docs/ROADMAP.md">Feuille de route du projet</a>
+  </footer>
+</body>
+</html>
