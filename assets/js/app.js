@@ -625,19 +625,24 @@
     const wrap = document.createElement("div");
     wrap.className = "strata-table-wrap stack-on-mobile";
     const table = document.createElement("table");
+    // Rôles explicites : la sémantique de tableau reste annoncée quand le tableau s’empile sur mobile.
+    table.setAttribute("role", "table");
     const cap = document.createElement("caption");
     cap.textContent = typo(caption);
     table.appendChild(cap);
     const thead = document.createElement("thead");
     const htr = document.createElement("tr");
-    headers.forEach((h, i) => { const th = document.createElement("th"); th.scope = "col"; th.textContent = typo(h); if (i > 0) th.className = "numeric-cell"; htr.appendChild(th); });
+    htr.setAttribute("role", "row");
+    headers.forEach((h, i) => { const th = document.createElement("th"); th.scope = "col"; th.setAttribute("role", "columnheader"); th.textContent = typo(h); if (i > 0) th.className = "numeric-cell"; htr.appendChild(th); });
     thead.appendChild(htr);
     table.appendChild(thead);
     const tbody = document.createElement("tbody");
     rows.forEach((cells) => {
       const tr = document.createElement("tr");
+      tr.setAttribute("role", "row");
       cells.forEach((txt, i) => {
         const cell = document.createElement(i === 0 ? "th" : "td");
+        cell.setAttribute("role", i === 0 ? "rowheader" : "cell");
         // data-label : intitulé de colonne repris devant chaque valeur quand le tableau s’empile (mobile).
         if (i === 0) cell.scope = "row"; else { cell.className = "numeric-cell"; cell.dataset.label = typo(headers[i]); }
         cell.textContent = typo(txt);
@@ -1053,8 +1058,29 @@
     const count = document.getElementById("glossary-count");
     if (!input || !list || !count) return;
     const entries = Array.from(list.querySelectorAll(".glossary-entry"));
+    // Sur mobile (une colonne), seules les 12 premières définitions sont dépliées dans la page ;
+    // la recherche porte toujours sur toutes. Sur grand écran, le bouton est masqué par la feuille de style.
+    let more = null;
+    if (entries.length > 12) {
+      more = document.createElement("button");
+      more.type = "button";
+      more.className = "button button-secondary glossary-more";
+      more.textContent = "Afficher les " + entries.length + " définitions";
+      more.setAttribute("aria-controls", "glossary-list");
+      more.setAttribute("aria-expanded", "false");
+      list.classList.add("is-collapsed");
+      list.after(more);
+      more.addEventListener("click", () => {
+        list.classList.remove("is-collapsed");
+        more.setAttribute("aria-expanded", "true");
+        more.hidden = true;
+        const next = entries[12] && entries[12].querySelector("summary");
+        if (next) next.focus();
+      });
+    }
     const update = () => {
       const query = normalizeSearch(input.value);
+      list.classList.toggle("has-query", Boolean(query));
       let visible = 0;
       entries.forEach((entry) => {
         const matches = !query || normalizeSearch(entry.textContent).includes(query);
@@ -1074,6 +1100,8 @@
       let target = null;
       try { target = location.hash ? document.querySelector(location.hash) : null; } catch (error) { target = null; }
       if (target && target.classList.contains("glossary-entry")) {
+        list.classList.remove("is-collapsed");
+        if (more) more.hidden = true;
         target.hidden = false;
         target.open = true;
       }
