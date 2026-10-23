@@ -97,7 +97,7 @@ const TAUX = {
   empty: { status: 200, body: { total_count: 0, results: [] } }
 };
 
-async function newPage(browser, viewport, { geo = "fameck", ofgl = "ods_limit_error", dgfip = "fameck", geoFail = false, delayMs = 0 } = {}) {
+async function newPage(browser, viewport, { geo = "fameck", ofgl = "ods_limit_error", dgfip = "fameck", geoFail = false, geoHangMs = 0, delayMs = 0 } = {}) {
   const context = await browser.newContext({ viewport, deviceScaleFactor: 1 });
   const page = await context.newPage();
   const log = { console: [], pageErrors: [], failed: [], external: [], ofglUrls: [], geoUrls: [] };
@@ -112,6 +112,7 @@ async function newPage(browser, viewport, { geo = "fameck", ofgl = "ods_limit_er
     if (url.startsWith("https://geo.api.gouv.fr/")) {
       log.geoUrls.push(url);
       if (geoFail) return route.abort("internetdisconnected");
+      if (geoHangMs) { await new Promise((r) => setTimeout(r, geoHangMs)); return route.abort("timedout").catch(() => {}); }
       if (delayMs) await new Promise((r) => setTimeout(r, delayMs));
       const key = typeof geo === "function" ? geo(url) : geo;
       return route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(GEO[key]) });
@@ -133,6 +134,28 @@ async function newPage(browser, viewport, { geo = "fameck", ofgl = "ods_limit_er
     return route.abort("blockedbyclient");
   });
   return { context, page, log };
+}
+
+// Contraste WCAG réel : couleur calculée du texte contre le premier fond opaque de ses ancêtres.
+async function contrastIssues(page, selector, min = 4.5) {
+  return page.evaluate(({ selector, min }) => {
+    const parse = (c) => { const m = c.match(/rgba?\(([^)]+)\)/); if (!m) return null; const p = m[1].split(/[ ,\/]+/).filter(Boolean).map(Number); return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 }; };
+    const lum = ({ r, g, b }) => { const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }; return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b); };
+    const bgOf = (el) => { for (let e = el; e; e = e.parentElement) { const c = parse(getComputedStyle(e).backgroundColor); if (c && c.a >= 0.99) return c; } return { r: 255, g: 255, b: 255, a: 1 }; };
+    const out = [];
+    document.querySelectorAll(selector).forEach((root) => {
+      root.querySelectorAll("*").forEach((el) => {
+        const own = [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim());
+        const r = el.getBoundingClientRect();
+        if (!own || !r.width || !r.height || getComputedStyle(el).visibility === "hidden" || el.closest(".visually-hidden")) return;
+        const fg = parse(getComputedStyle(el).color), bg = bgOf(el);
+        const l1 = lum(fg), l2 = lum(bg);
+        const ratio = (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+        if (ratio < min) out.push(el.tagName.toLowerCase() + " « " + el.textContent.trim().slice(0, 30) + " » " + ratio.toFixed(2));
+      });
+    });
+    return out;
+  }, { selector, min });
 }
 
 async function overflow(page) {
@@ -180,7 +203,11 @@ async function overflow(page) {
       `scrollWidth=${ov.scrollWidth}, viewport=${ov.vw}, éléments débordants=${ov.offenders.join(", ") || "aucun"}`);
     const headerH = await page.$eval(".site-header", (e) => Math.round(e.getBoundingClientRect().height));
     const mobileHeader = vp.width < 680;
-    record("RESP-HEADER", "En-tête compact sur mobile (≤120 px)", vp.name, !mobileHeader || headerH <= 120 ? "VALIDÉ" : "ÉCHOUÉ", String(headerH) + "px" + (mobileHeader ? " (seuil 120 px)" : ""));
+    record("RESP-HEADER", "En-tête collant compact sur mobile, menu replié (≤ 64 px)", vp.name, !mobileHeader || headerH <= 64 ? "VALIDÉ" : "ÉCHOUÉ", String(headerH) + "px" + (mobileHeader ? " (seuil 64 px)" : ""));
+    const lowHeader = await contrastIssues(page, ".site-header, .site-bridge, .headline-ribbon");
+    record("A11Y-CONTRAST-HEADER", "En-tête, menu et bandeau de chiffres : contraste ≥ 4,5:1", vp.name, lowHeader.length ? "ÉCHOUÉ" : "VALIDÉ", lowHeader.join(" | ") || "aucun texte sous 4,5:1");
+    const firstScreen = await page.$eval("#commune-query", (i) => { const r = i.getBoundingClientRect(); return { top: Math.round(r.top), bottom: Math.round(r.bottom), vh: innerHeight }; });
+    record("ERGO-SEARCH-FOLD", "Champ de recherche de commune visible dans le premier écran", vp.name, firstScreen.bottom <= firstScreen.vh ? "VALIDÉ" : "ÉCHOUÉ", JSON.stringify(firstScreen));
     if (mobileHeader) {
       const menuState = await page.evaluate(() => ({
         toggleVisible: getComputedStyle(document.querySelector(".nav-toggle")).display !== "none",
@@ -191,7 +218,13 @@ async function overflow(page) {
       await page.click(".nav-toggle");
       const opened = await page.evaluate(() => document.querySelector(".nav-toggle").getAttribute("aria-expanded") === "true" && getComputedStyle(document.querySelector(".site-header nav")).display !== "none");
       record("RESP-MENU-OPEN", "Ouverture du menu mobile", vp.name, opened ? "VALIDÉ" : "ÉCHOUÉ", "expanded=" + opened);
+      const lowMenu = await contrastIssues(page, ".site-header nav");
+      record("A11Y-CONTRAST-MENU", "Menu mobile ouvert : contraste ≥ 4,5:1", vp.name, lowMenu.length ? "ÉCHOUÉ" : "VALIDÉ", lowMenu.join(" | ") || "aucun texte sous 4,5:1");
+      await page.keyboard.press("Escape");
+      const closed = await page.evaluate(() => ({ expanded: document.querySelector(".nav-toggle").getAttribute("aria-expanded"), hidden: getComputedStyle(document.querySelector(".site-header nav")).display === "none", focus: document.activeElement.classList.contains("nav-toggle") }));
+      record("RESP-MENU-ESC", "Échap referme le menu et rend le focus au bouton", vp.name, closed.expanded === "false" && closed.hidden && closed.focus ? "VALIDÉ" : "ÉCHOUÉ", JSON.stringify(closed));
     }
+    if (mobileHeader) await page.click(".nav-toggle");
     const small = await page.evaluate(() => [...document.querySelectorAll(".site-header nav a")].map((a) => { const r = a.getBoundingClientRect(); return Math.round(r.height); }));
     if (vp.width < 700) record("A11Y-TARGET", "Hauteur des liens de navigation ≥ 24px (WCAG 2.5.8)", vp.name, Math.min(...small) >= 24 ? "VALIDÉ" : "ÉCHOUÉ", "hauteurs=" + small.join(",") + "px");
     await context.close();
@@ -216,6 +249,16 @@ async function overflow(page) {
     const y = await fresh.evaluate(() => Math.round(document.getElementById("glossaire").getBoundingClientRect().top));
     await fresh.close();
     record("NAV-RELOAD", "Rechargement sur #glossaire conserve la position", "1280", Math.abs(y) < 120 ? "VALIDÉ" : "ÉCHOUÉ", `haut de #glossaire à ${y}px du haut de fenêtre`);
+    // Ancres sur mobile : la cible arrive sous l’en-tête collant, ni cachée dessous ni loin plus bas.
+    for (const anchor of ["#glossaire", "#analyse-communale", "#indicateur-dette"]) {
+      const mob = await browser.newPage({ viewport: { width: 360, height: 640 } });
+      await mob.route("**/*", (r) => (r.request().url().startsWith(BASE) ? r.continue() : r.abort()));
+      await mob.goto(BASE + anchor, { waitUntil: "networkidle" });
+      await mob.waitForTimeout(600);
+      const pos = await mob.evaluate((sel) => ({ top: Math.round(document.querySelector(sel).getBoundingClientRect().top), header: Math.round(document.querySelector(".site-header").getBoundingClientRect().bottom) }), anchor);
+      await mob.close();
+      record("NAV-ANCHOR-MOBILE", "Ancre " + anchor + " visible sous l’en-tête collant", "360", pos.top >= pos.header - 1 && pos.top < pos.header + 60 ? "VALIDÉ" : "ÉCHOUÉ", JSON.stringify(pos));
+    }
     const locals = await page.$$eval("a[href]:not([href^='#']):not([href^='http'])", (as) => as.map((a) => a.href));
     const broken = [];
     for (const u of locals) { const r = await page.request.get(u); if (r.status() !== 200) broken.push(u + " " + r.status()); }
@@ -294,9 +337,40 @@ async function overflow(page) {
   await communeCase("COM-MALFORMED", "Réponse OFGL mal formée (HTML) → message clair", "Fameck", { geo: "fameck", ofgl: "malformed" }, async ({ text, log }) => ({
     status: /format inattendu/.test(text) && !/Aucune ligne/.test(text) && !log.pageErrors.length ? "VALIDÉ" : "ÉCHOUÉ", proof: "Texte : " + text.replace(/\s+/g, " ").slice(-260) + " ; erreurs JS=" + log.pageErrors.length
   }));
-  await communeCase("COM-GEO-DOWN", "Indisponibilité geo.api.gouv.fr : relais par le socle commun", "Fameck", { geoFail: true }, async ({ text }) => ({
-    status: /ne répond pas/.test(text) && /socle commun/.test(text) && /57206/.test(text) ? "VALIDÉ" : "ÉCHOUÉ", proof: "Texte : " + text.replace(/\s+/g, " ").slice(0, 240)
+  await communeCase("COM-GEO-DOWN", "Indisponibilité geo.api.gouv.fr : relais par le référentiel local", "Fameck", { geoFail: true }, async ({ text }) => ({
+    status: /ne répond pas/.test(text) && /référentiel des communes publié avec ce site/.test(text) && /57206/.test(text) ? "VALIDÉ" : "ÉCHOUÉ", proof: "Texte : " + text.replace(/\s+/g, " ").slice(0, 240)
   }));
+  // geo.api.gouv.fr muet (aucune réponse) : bascule sur data/entities/recherche.json en 4 s environ.
+  {
+    const { context, page } = await newPage(browser, { width: 390, height: 844 }, { geoHangMs: 15000, ofgl: "fields_euros_par_habitant" });
+    await page.goto(BASE, { waitUntil: "networkidle" });
+    await page.fill("#commune-query", "Fameck");
+    const t0 = Date.now();
+    await page.click("#commune-form button[type=submit]");
+    const ok = await page.waitForFunction(() => /référentiel des communes publié avec ce site/.test(document.getElementById("commune-result").textContent), null, { timeout: 7000 }).then(() => true).catch(() => false);
+    const elapsed = Date.now() - t0;
+    record("COM-GEO-TIMEOUT", "geo.api.gouv.fr sans réponse : référentiel local utilisé en moins de 6 s", "390 (simulé)", ok && elapsed < 6000 ? "VALIDÉ" : "ÉCHOUÉ", `bascule en ${elapsed} ms`);
+    await context.close();
+  }
+  // Commune reflétée dans l’adresse et rechargement qui relance la recherche.
+  {
+    const { context, page, log } = await newPage(browser, { width: 390, height: 844 }, { geo: (u) => (/codePostal=/.test(u) ? "empty" : "fameck"), ofgl: "fields_euros_par_habitant" });
+    await page.goto(BASE, { waitUntil: "networkidle" });
+    await page.fill("#commune-query", "Fameck");
+    await page.click("#commune-form button[type=submit]");
+    await page.waitForTimeout(700);
+    const url = page.url();
+    record("COM-URL", "La commune recherchée est écrite dans l’adresse (?commune=57206)", "390", /[?&]commune=57206/.test(url) ? "VALIDÉ" : "ÉCHOUÉ", url);
+    log.geoUrls.length = 0;
+    await page.reload({ waitUntil: "networkidle" });
+    await page.waitForTimeout(700);
+    const text = (await page.textContent("#commune-result")).replace(/\s+/g, " ");
+    const input = await page.inputValue("#commune-query");
+    record("COM-URL-RELOAD", "Rechargement de ?commune=57206 : recherche relancée par code INSEE", "390", /Fameck/.test(text) && input === "57206" && log.geoUrls.length === 1 && /[?&]code=57206/.test(log.geoUrls[0]) ? "VALIDÉ" : "ÉCHOUÉ", `champ=${input} ; requêtes geo=${log.geoUrls.join(" ; ")} ; ${text.slice(0, 80)}`);
+    const title = await page.textContent("#municipal-title");
+    record("COM-URL-ANALYSE", "L’analyse communale est remplie après ouverture de l’adresse", "390", /Fameck/.test(title) ? "VALIDÉ" : "ÉCHOUÉ", title);
+    await context.close();
+  }
   await communeCase("COM-EMPTY-RESULT", "Recherche sans résultat", "Xyzabc", { geo: "empty" }, async ({ text }) => ({
     status: /Aucune commune trouvée/.test(text) ? "VALIDÉ" : "ÉCHOUÉ", proof: "Texte : " + text.replace(/\s+/g, " ").slice(0, 160)
   }));
@@ -408,7 +482,7 @@ async function overflow(page) {
       return (await page.textContent("#claim-result")).replace(/\s+/g, " ");
     };
     const a = await run("la dette publique est de 3 500 milliards", "2026-T2");
-    record("CLAIM-DEBT", "Affirmation dette 3 500 Md€ / T2 2026", "1280", /95,5 milliards/.test(a) ? "VALIDÉ" : "ÉCHOUÉ", a.slice(0, 220));
+    record("CLAIM-DEBT", "Affirmation dette 3 500 Md€ / T2 2026", "1280", /3 595,5 Md€/.test(a) && /2e trimestre 2026/.test(a) ? "VALIDÉ" : "ÉCHOUÉ", a.slice(0, 220));
     const b = await run("la dette publique est de 3 300 milliards", "2024");
     record("CLAIM-PERIOD", "Dette + « Année 2024 » : explication stock trimestriel", "1280", /4e trimestre/.test(b) ? "VALIDÉ" : "ÉCHOUÉ", b.slice(0, 160));
     const c = await run("la dette de Fameck est de 7 millions", "");
@@ -435,11 +509,16 @@ async function overflow(page) {
         && taux.includes("CA du Val de Fensch") && !/Syndicats de communes/.test(taux);
       record("TAUX-BENEFICIAIRES", "Avis de taxe foncière : taux par bénéficiaire, taux global publié, TEOM à part, lignes nulles masquées", "375", tauxOk ? "VALIDÉ" : "ÉCHOUÉ", taux.slice(0, 260));
       record("STRATA-MOBILE", "Tableaux de strate sans débordement de la page sur mobile", "375", sw <= 0 ? "VALIDÉ" : "ÉCHOUÉ", "débordement=" + sw + "px");
+      const badge = await page.$eval("#strata-status", (b) => ({ hidden: b.hidden, text: b.textContent }));
+      record("STRATA-BADGE", "Pastille « Données officielles DGFiP » affichée seulement après réponse de la DGFiP", "375", !badge.hidden && /2025/.test(badge.text) ? "VALIDÉ" : "ÉCHOUÉ", JSON.stringify(badge));
+      const hints = await page.$$eval("#strata-content .scroll-hint.is-visible", (h) => h.length);
+      record("TABLE-SCROLL-HINT", "Tableaux larges : indice de défilement affiché sur mobile", "375", hints > 0 ? "VALIDÉ" : "ÉCHOUÉ", hints + " indice(s) visible(s)");
       await page.locator("#comparaison-strate").screenshot({ path: path.join(OUT, "strate-375.png") });
     } else if (scenario === "error") {
-      record("STRATA-ERROR", "Erreur DGFiP distinguée d'une absence de données", "375", /code 503/.test(text) && /pas une absence de données/.test(text) && !/€/.test(text) ? "VALIDÉ" : "ÉCHOUÉ", text.slice(0, 200));
+      const badgeHidden = await page.$eval("#strata-status", (b) => b.hidden);
+      record("STRATA-ERROR", "Erreur DGFiP distinguée d'une absence de données, sans pastille « Données officielles »", "375", /code 503/.test(text) && /Les données existent peut-être/.test(text) && !/€/.test(text) && badgeHidden ? "VALIDÉ" : "ÉCHOUÉ", text.slice(0, 200) + " ; pastille masquée=" + badgeHidden);
     } else {
-      record("STRATA-EMPTY", "Aucune fiche DGFiP : message explicite, aucun montant", "375", /Aucune fiche DGFiP/.test(text) && /pas d’un montant nul/.test(text) ? "VALIDÉ" : "ÉCHOUÉ", text.slice(0, 200));
+      record("STRATA-EMPTY", "Aucune fiche DGFiP : message explicite, aucun montant", "375", /Aucune fiche DGFiP/.test(text) && /pas un montant nul/.test(text) ? "VALIDÉ" : "ÉCHOUÉ", text.slice(0, 200));
     }
     await context.close();
   }
@@ -454,14 +533,17 @@ async function overflow(page) {
     const analysis = (await page.textContent("#commune-analysis")).replace(/\s+/g, " ");
     fs.writeFileSync(path.join(OUT, "fameck-analyse.txt"), analysis);
     const ribbon = await page.$$eval(".headline-metric strong", (s) => s.map((x) => x.textContent));
-    record("DATA-RIBBON-JS", "Bandeau communal mis à jour après la recherche", "375", ribbon[0].replace(/\u202f/g, " ").includes("3 595,5") && ribbon[1] === "—" && ribbon[2].includes("M€") && ribbon[3] === "—" ? "VALIDÉ" : "ÉCHOUÉ", ribbon.join(" / "));
+    const tilesShown = await page.$$eval(".headline-commune", (t) => t.every((x) => !x.hidden));
+    record("DATA-RIBBON-JS", "Bandeau communal mis à jour après la recherche (donnée absente = « Non disponible »)", "375", ribbon[0].replace(/\u202f/g, " ").includes("3 595,5") && ribbon[1] === "Non disponible" && ribbon[2].includes("M€") && ribbon[3] === "Non disponible" && tilesShown ? "VALIDÉ" : "ÉCHOUÉ", ribbon.join(" / ") + " ; tuiles visibles=" + tilesShown);
+    const waiting = (await page.textContent("#analyse-communale")).replace(/\s+/g, " ");
+    record("ERGO-WAIT-TEXT", "Textes d’attente retirés après la recherche", "375", !/Choisissez d’abord une commune|Aucune commune choisie/.test(waiting) ? "VALIDÉ" : "ÉCHOUÉ", waiting.slice(0, 160));
     const ribbonDisplay = await page.$eval(".headline-ribbon", (e) => getComputedStyle(e).display);
     record("RESP-RIBBON", "Bandeau de chiffres clés mis en grille", "375", ribbonDisplay === "grid" ? "VALIDÉ" : "ÉCHOUÉ", "display=" + ribbonDisplay);
     record("TERRITORY-ANALYSIS", "La recherche remplit l’analyse détaillée de la commune", "375", /Recettes de fonctionnement/.test(analysis) && /Limites indispensables/.test(analysis) ? "VALIDÉ" : "ÉCHOUÉ", analysis.slice(0, 260));
     const rows = await page.$$eval("#commune-history-body tr", (r) => r.length);
     await page.locator("#analyse-communale").screenshot({ path: path.join(OUT, "commune-375.png") });
-    const wrap = await page.$eval(".municipal-history-wrap", (e) => ({ sw: e.scrollWidth, cw: e.clientWidth }));
-    record("FAM-TABLE-MOBILE", "Tableau annuel de la fiche standard sur mobile", "375", "À CONFIRMER", `${rows} lignes ; défilement horizontal interne ${wrap.sw}px pour ${wrap.cw}px visibles (le titre « Évolution annuelle » et le texte défilent avec le tableau)`);
+    const wrap = await page.$eval(".history-scroll", (e) => ({ sw: e.scrollWidth, cw: e.clientWidth }));
+    record("FAM-TABLE-MOBILE", "Tableau annuel de la fiche standard sur mobile", "375", "À CONFIRMER", `${rows} lignes ; défilement horizontal interne ${wrap.sw}px pour ${wrap.cw}px visibles (seul le tableau défile ; titre et texte restent en place)`);
     await context.close();
   }
 

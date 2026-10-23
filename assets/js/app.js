@@ -2,13 +2,40 @@
   "use strict";
   const lib = window.CitoyenLib;
   const REQUEST_TIMEOUT_MS = 10000;
+  // Au-delà de 4 s sans réponse de geo.api.gouv.fr, la recherche bascule sur le socle local (data/entities).
+  const GEO_TIMEOUT_MS = 4000;
+  // Menu replié sous cette largeur (même seuil que la feuille de style).
+  const NAV_COLLAPSED_QUERY = "(max-width: 1179px)";
+  const typo = lib.frenchTypo;
+  const NEW_TAB = " (nouvel onglet)";
   const DATA_URL = "data/indicators/dette-publique-france.json";
   const money = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1 });
   const ratio = new Intl.NumberFormat("fr-FR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   let debtData = null;
 
   function formatDebt(value) {
-    return money.format(value) + " milliards €";
+    return money.format(value) + " Md€";
+  }
+
+  // Signe moins typographique pour les évolutions affichées.
+  function signed(value, formatter) {
+    const text = formatter.format(Math.abs(value));
+    return (value > 0 ? "+" : value < 0 ? "\u2212" : "") + text;
+  }
+
+  // Lien externe : nouvel onglet signalé visuellement (↗) et pour les lecteurs d’écran.
+  function externalLink(label, href, className) {
+    const a = document.createElement("a");
+    if (className) a.className = className;
+    a.href = href;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    a.textContent = typo(label.endsWith("↗") ? label : label + " ↗");
+    const hidden = document.createElement("span");
+    hidden.className = "visually-hidden";
+    hidden.textContent = NEW_TAB;
+    a.appendChild(hidden);
+    return a;
   }
 
   function renderDebt(data) {
@@ -21,15 +48,16 @@
     if (!latest || !value || !period || !share || !body) return;
 
     value.textContent = formatDebt(latest.debt_eur_billion);
-    period.textContent = lib.formatQuarter(latest.period) + " · France entière";
-    share.textContent = ratio.format(latest.debt_gdp_percent) + " %";
+    period.textContent = "milliards d’euros · " + lib.formatQuarter(latest.period) + " · France entière";
+    share.textContent = typo(ratio.format(latest.debt_gdp_percent) + " %");
     body.replaceChildren();
 
     records.forEach((record) => {
       const tr = document.createElement("tr");
-      [record.period, money.format(record.debt_eur_billion), ratio.format(record.debt_gdp_percent) + " %"].forEach((text) => {
+      [lib.formatQuarter(record.period), money.format(record.debt_eur_billion), typo(ratio.format(record.debt_gdp_percent) + " %")].forEach((text, index) => {
         const td = document.createElement("td");
         td.textContent = text;
+        if (index > 0) td.className = "numeric-cell";
         tr.appendChild(td);
       });
       body.appendChild(tr);
@@ -41,25 +69,16 @@
     if (!result) return;
     result.replaceChildren();
     const heading = document.createElement("h3");
-    heading.textContent = title;
+    heading.textContent = typo(title);
     result.appendChild(heading);
     const badge = document.createElement("span");
     badge.className = "result-status";
-    badge.textContent = status;
+    badge.textContent = typo(status);
     result.appendChild(badge);
-    paragraphs.forEach((text) => {
-      const p = document.createElement("p");
-      p.textContent = text;
-      result.appendChild(p);
-    });
+    paragraphs.forEach((text) => result.appendChild(paragraph(text)));
     links.forEach((link) => {
       const p = document.createElement("p");
-      const a = document.createElement("a");
-      a.href = link.href;
-      a.textContent = link.label;
-      a.target = "_blank";
-      a.rel = "noopener noreferrer";
-      p.appendChild(a);
+      p.appendChild(link.href.startsWith("http") ? externalLink(link.label, link.href) : Object.assign(document.createElement("a"), { href: link.href, textContent: link.label }));
       result.appendChild(p);
     });
     result.hidden = false;
@@ -87,8 +106,8 @@
       const match = period ? debtData.records.find((record) => record.period === period) : debtData.records[0];
       if (!match) {
         showResult("Période non couverte par cette série", "Données insuffisantes", [
-          "La série actuellement intégrée ne contient pas la période sélectionnée. Aucune conclusion n'est produite.",
-          "La prochaine étape consiste à importer la série complète depuis le fichier officiel et à vérifier automatiquement chaque valeur."
+          "La série affichée sur ce site ne contient pas la période choisie. Aucune conclusion n'est produite.",
+          "Vous pouvez consulter la série complète dans le fichier officiel de l'INSEE (lien ci-dessous)."
         ], [
           { label: "Ouvrir les données brutes INSEE (XLSX)", href: debtData.source.raw_file_url },
           { label: "Voir la définition de la dette de Maastricht", href: "https://www.insee.fr/fr/metadonnees/definition/c1091" }
@@ -96,26 +115,26 @@
         return;
       }
       const amountMatch = text.match(/(\d[\d\s]*(?:[,.]\d+)?)\s*milliards?/i);
-      let comparison = "Le montant de l'affirmation n'a pas pu être extrait de façon fiable. Compare la valeur de référence avec le texte original et vérifie le périmètre.";
+      let comparison = "Le montant de l'affirmation n'a pas pu être lu de façon fiable. Comparez la valeur de référence avec le texte original et vérifiez le périmètre.";
       if (amountMatch) {
         const claimed = Number(amountMatch[1].replace(/\s/g, "").replace(",", "."));
         if (Number.isFinite(claimed)) {
           const delta = match.debt_eur_billion - claimed;
           const absDelta = Math.abs(delta);
-          comparison = "Le texte contient " + money.format(claimed) + " milliards €. L'écart avec la référence INSEE est de " + money.format(absDelta) + " milliards € (" + (delta >= 0 ? "la référence est supérieure" : "la référence est inférieure") + "). Cet écart arithmétique ne suffit pas à lui seul à qualifier l'affirmation : il faut vérifier l'arrondi, la période et le périmètre exacts.";
+          comparison = "Le texte contient " + formatDebt(claimed) + ". L'écart avec la référence de l'INSEE est de " + formatDebt(absDelta) + " (" + (delta >= 0 ? "la référence est supérieure" : "la référence est inférieure") + "). Cet écart ne suffit pas à qualifier l'affirmation : vérifiez l'arrondi, la période et le périmètre exacts.";
         }
       }
-      showResult("Référence officielle trouvée : dette publique", "Comparaison indicative — transcription à contrôler", [
-        "Période : " + match.period + ".",
-        "Valeur publiée par l'INSEE : " + formatDebt(match.debt_eur_billion) + ", soit " + ratio.format(match.debt_gdp_percent) + " % du PIB.",
+      showResult("Référence officielle trouvée : dette publique", "Comparaison indicative · source INSEE", [
+        "Période : " + lib.formatQuarter(match.period) + ".",
+        "Valeur publiée par l'INSEE : " + formatDebt(match.debt_eur_billion) + " (milliards d'euros), soit " + ratio.format(match.debt_gdp_percent) + " % du PIB.",
         comparison,
-        "Périmètre : ensemble des administrations publiques françaises, dette brute consolidée au sens de Maastricht. Il s'agit d'un stock en fin de trimestre, pas du budget annuel.",
-        "La série a été transcrite du tableau officiel ; son rapprochement automatisé avec le XLSX reste à effectuer. Aucun verdict automatique vrai/faux n'est émis."
+        "Périmètre : dette brute consolidée de toutes les administrations publiques françaises, au sens de Maastricht. C'est un stock en fin de trimestre, pas le budget de l'année.",
+        "Valeurs transcrites du tableau de l'INSEE et relues contre cette publication. Aucun verdict « vrai » ou « faux » n'est émis."
       ], [
         { label: "Ouvrir le fichier brut officiel (XLSX)", href: debtData.source.raw_file_url },
-        { label: "Ouvrir la page de référence INSEE", href: debtData.source.official_page_url },
-        { label: "Voir la publication INSEE de recoupement", href: debtData.extraction.cross_check.official_release_page_url },
-        { label: "Afficher le JSON utilisé par le prototype", href: DATA_URL }
+        { label: "Ouvrir la page de référence de l'INSEE", href: debtData.source.official_page_url },
+        { label: "Voir la publication de l'INSEE du 29 septembre 2026", href: debtData.extraction.cross_check.official_release_page_url },
+        { label: "Afficher les données utilisées par ce site (JSON)", href: DATA_URL }
       ]);
       return;
     }
@@ -125,53 +144,50 @@
         title: "Sujet identifié : budget de l'Éducation nationale",
         links: [{ label: "Consulter les données détaillées des comptes nationaux — INSEE", href: "https://www.insee.fr/fr/statistiques/8988843" }, { label: "Consulter le portail officiel du budget de l'État", href: "https://www.budget.gouv.fr/" }],
         paragraphs: [
-          "Aucun jeu de données comparables par année n'est encore intégré ici pour conclure sur ce montant.",
-          "Avant toute comparaison, il faudra préciser si l'affirmation porte sur les crédits votés, les crédits consommés, le budget du ministère ou une dépense plus large d'éducation, ainsi que sur les euros courants ou constants.",
-          "L'absence de données dans ce prototype ne signifie ni que l'affirmation est fausse ni qu'elle est vraie."
+          "Ce site ne propose pas encore de série annuelle comparable pour ce montant.",
+          "Pour comparer, précisez d'abord ce que vise l'affirmation : crédits votés, crédits consommés, budget du ministère ou dépense d'éducation plus large.",
+          "Précisez aussi s'il s'agit d'euros courants ou d'euros constants (corrigés de l'inflation).",
+          "Sans donnée ici, l'affirmation n'est ni confirmée ni contredite."
         ]
       },
       commune: {
         title: "Sujet identifié : finances communales",
         links: [{ label: "Ouvrir les comptes des communes — OFGL", href: "https://data.ofgl.fr/explore/dataset/ofgl-base-communes/" }, { label: "Ouvrir les comptes individuels DGFiP 2025", href: "https://www.data.gouv.fr/datasets/comptes-individuels-des-communes-fichier-global-2025" }],
         paragraphs: [
-          "Les comptes communaux sont chargés pour la commune recherchée ; les données restent indicatives tant que leurs agrégats et périmètres ne sont pas rapprochés de la documentation officielle.",
-          "Une comparaison communale devra distinguer budget principal, budgets annexes et données consolidées, ainsi que prévisions et exécution. Les chiffres communaux ne doivent pas être traités comme une série officiellement réconciliée tant que le contrôle brut n'est pas terminé.",
-          "Aucun verdict n'est produit sans série vérifiée correspondant exactement à la question."
+          "Recherchez la commune en haut de page : ses comptes publiés par l'OFGL et la DGFiP s'affichent avec leurs définitions.",
+          "Pour comparer, distinguez le budget principal, les budgets annexes et les comptes consolidés. Distinguez aussi les prévisions et les comptes exécutés.",
+          "Aucun verdict n'est produit sans donnée correspondant exactement à la question."
         ]
       },
       "budget-etat": {
         title: "Sujet identifié : budget de l'État",
         links: [{ label: "Portail officiel du budget de l'État", href: "https://www.budget.gouv.fr/" }, { label: "Données détaillées des comptes nationaux — INSEE", href: "https://www.insee.fr/fr/statistiques/8988843" }],
         paragraphs: [
-          "Les crédits du budget de l'État et les dépenses exécutées ne sont pas interchangeables.",
-          "Aucune série annuelle comparable n'est encore intégrée dans ce prototype pour le sujet saisi.",
-          "Le site doit importer les documents bruts, documenter les changements de périmètre et vérifier la série avant de conclure."
+          "Les crédits votés au budget de l'État et les dépenses réellement exécutées ne sont pas la même chose.",
+          "Ce site ne propose pas encore de série annuelle comparable pour ce sujet.",
+          "Vous pouvez consulter les documents officiels du budget de l'État (liens ci-dessous)."
         ]
       },
       unknown: {
-        title: "Précise le sujet à vérifier",
+        title: "Précisez le sujet à vérifier",
         links: [{ label: "Parcourir les données officielles de l'INSEE", href: "https://www.insee.fr/fr/statistiques" }],
         paragraphs: [
-          "Le prototype ne reconnaît pas encore ce sujet ou ne possède pas de série correspondante.",
-          "Essaie « dette publique », « budget de l'Éducation nationale » ou « finances d'une commune ». Aucun résultat ne sera inventé si les données ne sont pas disponibles."
+          "Ce sujet n'est pas reconnu, ou le site n'a pas de série correspondante.",
+          "Essayez « dette publique », « budget de l'Éducation nationale » ou « finances d'une commune ». Aucun résultat n'est inventé quand les données manquent."
         ]
       }
     };
     const result = guidance[topic] || guidance.unknown;
-    const paragraphs = period ? ["Période demandée : " + period + ".", ...result.paragraphs] : result.paragraphs;
-    showResult(result.title, "Pas encore de données validées pour conclure", paragraphs, result.links);
+    const periodLabel = /^\d{4}-T[1-4]$/.test(period) ? lib.formatQuarter(period) : period;
+    const paragraphs = period ? ["Période demandée : " + periodLabel + ".", ...result.paragraphs] : result.paragraphs;
+    showResult(result.title, "Pas de donnée comparable sur ce site", paragraphs, result.links);
   }
 
   const normalizeSearch = (value) => lib.normalizeText(value);
 
   function addResultLink(container, label, href) {
     const p = document.createElement("p");
-    const a = document.createElement("a");
-    a.href = href;
-    a.textContent = label;
-    a.target = "_blank";
-    a.rel = "noopener noreferrer";
-    p.appendChild(a);
+    p.appendChild(externalLink(label, href));
     container.appendChild(p);
   }
 
@@ -180,25 +196,26 @@
   }
 
   class ServiceError extends Error {
-    constructor(service, reason) {
+    constructor(service, reason, timeoutMs) {
       super(service + " : " + reason);
       this.service = service;
       this.reason = reason;
+      this.timeoutMs = timeoutMs || REQUEST_TIMEOUT_MS;
     }
   }
 
   // fetch avec délai maximal et annulation liée à la recherche en cours.
-  async function fetchJson(url, service, signal) {
+  async function fetchJson(url, service, signal, timeoutMs = REQUEST_TIMEOUT_MS) {
     const controller = new AbortController();
     const onAbort = () => controller.abort();
     if (signal) signal.addEventListener("abort", onAbort, { once: true });
-    const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
     let response;
     try {
       response = await fetch(url, { headers: { Accept: "application/json" }, signal: controller.signal });
     } catch (error) {
       if (signal && signal.aborted) throw error;
-      throw new ServiceError(service, controller.signal.aborted ? "timeout" : "network");
+      throw new ServiceError(service, controller.signal.aborted ? "timeout" : "network", timeoutMs);
     } finally {
       clearTimeout(timer);
       if (signal) signal.removeEventListener("abort", onAbort);
@@ -252,7 +269,7 @@
 
   function serviceErrorText(error, serviceLabel) {
     const reason = error && error.reason ? error.reason : "network";
-    if (reason === "timeout") return serviceLabel + " n’a pas répondu dans le délai de " + REQUEST_TIMEOUT_MS / 1000 + " secondes.";
+    if (reason === "timeout") return serviceLabel + " n’a pas répondu dans le délai de " + Math.round((error.timeoutMs || REQUEST_TIMEOUT_MS) / 1000) + " secondes.";
     if (reason === "format") return serviceLabel + " a renvoyé une réponse dans un format inattendu.";
     if (reason.startsWith("http-")) return serviceLabel + " a refusé ou n’a pas pu traiter la demande (code " + reason.slice(5) + ").";
     return serviceLabel + " est injoignable (réseau ou blocage du navigateur).";
@@ -261,25 +278,24 @@
   function statusBadge(text, tone) {
     const status = document.createElement("span");
     status.className = "result-status" + (tone ? " result-status-" + tone : "");
-    status.textContent = text;
+    status.textContent = typo(text);
     return status;
   }
 
   function paragraph(text, className) {
     const p = document.createElement("p");
     if (className) p.className = className;
-    p.textContent = text;
+    p.textContent = typo(text);
     return p;
   }
 
+  // Message de panne d’un service : sans double négation, avec ce que le lecteur peut faire.
+  function unavailableText(error, serviceLabel, what) {
+    return serviceErrorText(error, serviceLabel) + " " + what + " Les données existent peut-être : réessayez dans quelques minutes ou consultez directement la source officielle.";
+  }
+
   function sourceLink(commune) {
-    const link = document.createElement("a");
-    link.className = "button button-primary";
-    link.href = lib.ofglDatasetLink(commune.code);
-    link.target = "_blank";
-    link.rel = "noopener noreferrer";
-    link.textContent = "Ouvrir la source officielle OFGL ↗";
-    return link;
+    return externalLink("Ouvrir la source officielle (OFGL)", lib.ofglDatasetLink(commune.code), "button button-primary");
   }
 
   function communeHeader(card, commune) {
@@ -299,14 +315,14 @@
     if (!summary.received) {
       card.append(
         statusBadge("Aucune ligne financière reçue", "warning"),
-        paragraph("L’OFGL n’a renvoyé aucune ligne pour le code INSEE " + commune.code + " avec le filtre « budget principal ». Une absence de ligne ne signifie pas un montant nul : aucun zéro n’est affiché. Consultez la source officielle pour vérifier.")
+        paragraph("L’OFGL n’a renvoyé aucune ligne pour le code INSEE " + commune.code + " (budget principal). Une ligne absente ne vaut pas zéro : aucun montant n’est affiché. Consultez la source officielle pour vérifier.")
       );
       return;
     }
     if (!summary.complete) {
       card.append(
         statusBadge("Réponse incomplète · aucun montant affiché", "warning"),
-        paragraph("L’OFGL annonce " + summary.totalCount + " lignes, mais seulement " + summary.received + " ont pu être récupérées. L’exercice le plus récent ne peut pas être déterminé de façon fiable : les montants ne sont pas affichés.")
+        paragraph("L’OFGL annonce " + summary.totalCount + " lignes, mais seulement " + summary.received + " ont été reçues. L’exercice le plus récent ne peut pas être déterminé de façon fiable : les montants ne sont pas affichés.")
       );
       return;
     }
@@ -317,8 +333,8 @@
       return;
     }
     card.append(
-      statusBadge("Données OFGL reçues · exercice " + summary.latestYear + " · budget principal · non rapprochées", "warning"),
-      paragraph("Montants lus automatiquement dans l’API officielle OFGL pour le dernier exercice présent dans la réponse complète (" + summary.received + " lignes). Ce sont les agrégats de l’OFGL, en opérations réelles : ils peuvent différer des totaux de la fiche DGFiP de la commune, qui n’ont pas le même périmètre. Une ligne absente ne signifie pas un montant nul.")
+      statusBadge("Données OFGL · exercice " + summary.latestYear + " · budget principal · lecture automatique", "warning"),
+      paragraph("Montants lus automatiquement dans la base de données de l’OFGL, pour le dernier exercice reçu (" + summary.received + " lignes). Ce sont les totaux publiés par l’OFGL, hors écritures comptables internes (opérations d’ordre). Ils peuvent différer de la fiche DGFiP de la commune, dont le périmètre n’est pas le même. Une ligne absente ne vaut pas zéro.")
     );
     if (summary.foreignCount) card.appendChild(paragraph(summary.foreignCount + " ligne(s) concernant un autre code INSEE ont été écartées.", "commune-method-note"));
     const list = document.createElement("dl");
@@ -327,7 +343,7 @@
     const shown = selected.length ? selected : summary.latestRecords.slice().sort((a, b) => String(a[lib.OFGL.fields.aggregate]).localeCompare(String(b[lib.OFGL.fields.aggregate]), "fr")).slice(0, 8);
     shown.forEach((row) => {
       const dt = document.createElement("dt");
-      dt.textContent = row[lib.OFGL.fields.aggregate] || "Agrégat financier non nommé";
+      dt.textContent = row[lib.OFGL.fields.aggregate] || "Poste comptable non nommé";
       const dd = document.createElement("dd");
       const amount = lib.pickAmount(row);
       const perCapita = lib.pickPerCapita(row);
@@ -337,28 +353,29 @@
     });
     card.appendChild(list);
     card.appendChild(paragraph(
-      (selected.length ? "" : "Aucun des agrégats de référence n’a été reconnu : les premiers agrégats reçus sont affichés par ordre alphabétique. ") +
-      "Exercices présents dans la réponse : " + summary.years.join(", ") + ". Montants nominaux, non corrigés de l’inflation. Les budgets annexes ne sont pas inclus.", "commune-method-note"));
+      (selected.length ? "" : "Les postes comptables habituels n’ont pas été reconnus : les premiers postes reçus sont affichés par ordre alphabétique. ") +
+      "Exercices reçus : " + summary.years.join(", ") + ". Montants en euros courants, non corrigés de l’inflation. Budgets annexes non inclus.", "commune-method-note"));
   }
 
   function renderFinanceError(card, error) {
     card.append(
       statusBadge("Comptes momentanément indisponibles", "error"),
-      paragraph(serviceErrorText(error, "Le service de l’OFGL") + " Il ne s’agit pas d’une absence de données. Réessayez plus tard ou consultez directement la source officielle.")
+      paragraph(unavailableText(error, "Le service de l’OFGL", "Aucun montant n’est affiché."))
     );
   }
 
+  // Définitions courtes (phrases de 25 mots au plus) ; la définition complète est celle du glossaire, commune aux deux sites.
   const MUNICIPAL_DEFINITIONS = [
-    { key: "Recettes de fonctionnement", aliases: ["recettes de fonctionnement"], label: "Recettes de fonctionnement", definition: "Les ressources courantes de la commune sur l’exercice : fiscalité, dotations, participations et produits des services selon les catégories comptables. Ce n’est ni le budget total ni une somme nécessairement disponible librement.", formula: "Somme des recettes classées en fonctionnement dans l’agrégat OFGL." },
-    { key: "Dépenses de fonctionnement", aliases: ["depenses de fonctionnement"], label: "Dépenses de fonctionnement", definition: "Le coût courant des services : personnel, énergie, achats, entretien, prestations et autres charges. La composition exacte dépend de la nomenclature et du périmètre de l’agrégat.", formula: "Somme des dépenses classées en fonctionnement dans l’agrégat OFGL." },
-    { key: "Épargne brute", aliases: ["epargne brute", "capacite d'autofinancement brute"], label: "Épargne brute", definition: "La marge annuelle dégagée par le fonctionnement avant remboursement du capital de la dette et financement des investissements. Elle aide à apprécier la capacité de la commune à financer ses projets sans recourir uniquement à l’emprunt.", formula: "À titre de contrôle : recettes de fonctionnement − dépenses de fonctionnement. La définition comptable exacte de l’agrégat source prévaut." },
-    { key: "Épargne nette", aliases: ["epargne nette"], label: "Épargne nette", definition: "La marge restant après prise en compte du remboursement du capital de la dette selon la définition de la source. Elle est généralement plus proche de la capacité à contribuer aux investissements, mais ne constitue pas à elle seule le financement total disponible.", formula: "Souvent épargne brute − remboursement du capital de la dette ; vérifier la définition OFGL utilisée." },
-    { key: "Encours de dette", aliases: ["encours de dette", "dette"], label: "Encours de dette", definition: "Le capital restant dû à une date donnée, généralement en fin d’exercice. C’est un stock, à distinguer des emprunts nouveaux, des remboursements annuels et des intérêts.", formula: "Montant d’encours déclaré pour l’exercice ; la date de référence doit être confirmée dans la fiche de l’indicateur." },
-    { key: "Annuité de la dette", aliases: ["annuite de la dette"], label: "Annuité de la dette", definition: "Le montant payé au titre de la dette pendant l’année. Selon la source, il peut regrouper remboursement du capital et intérêts ; il ne faut pas le confondre avec l’encours total restant dû.", formula: "Utiliser l’agrégat OFGL correspondant et vérifier les composantes retenues." },
-    { key: "Dépenses d’équipement", aliases: ["depenses d'equipement"], label: "Dépenses d’équipement", definition: "Les dépenses qui servent à acquérir, construire ou améliorer durablement des équipements : bâtiments, écoles, voirie, matériels ou rénovations. Elles forment une partie des dépenses d’investissement.", formula: "Montant de l’agrégat d’équipement publié par la source." },
-    { key: "Dépenses d’investissement", aliases: ["depenses d'investissement"], label: "Dépenses d’investissement", definition: "Les dépenses relevant de l’investissement selon le périmètre comptable retenu. Elles peuvent comprendre des opérations autres que les seuls équipements ; comparer uniquement des séries définies de la même façon.", formula: "Montant de l’agrégat d’investissement publié par la source." },
-    { key: "Recettes d’investissement", aliases: ["recettes d'investissement"], label: "Recettes d’investissement", definition: "Les ressources affectées au financement de l’investissement. Selon l’agrégat, elles peuvent inclure subventions, fonds, cessions et emprunts : une recette d’emprunt finance une dépense mais augmente la dette.", formula: "Montant de l’agrégat de recettes d’investissement publié par la source." },
-    { key: "Frais de personnel", aliases: ["frais de personnel", "charges de personnel"], label: "Frais de personnel", definition: "Les dépenses liées aux agents et à la rémunération du personnel selon le classement comptable. Le ratio par rapport aux dépenses de fonctionnement est informatif, mais il ne mesure pas à lui seul l’efficacité des services.", formula: "Frais de personnel ÷ dépenses de fonctionnement × 100, si les deux agrégats sont disponibles et comparables." }
+    { key: "Recettes de fonctionnement", aliases: ["recettes de fonctionnement"], label: "Recettes de fonctionnement", glossary: "recettes-de-fonctionnement", definition: "Les ressources courantes de l’année : impôts, dotations, participations et produits des services. Ce n’est pas une somme librement disponible.", formula: "Total des recettes de fonctionnement publié par l’OFGL." },
+    { key: "Dépenses de fonctionnement", aliases: ["depenses de fonctionnement"], label: "Dépenses de fonctionnement", glossary: "charges-depenses-de-fonctionnement", definition: "Le coût courant des services : personnel, énergie, achats, entretien, prestations. Le contenu exact dépend du classement comptable.", formula: "Total des dépenses de fonctionnement publié par l’OFGL." },
+    { key: "Épargne brute", aliases: ["epargne brute", "capacite d'autofinancement brute"], label: "Épargne brute", glossary: "epargne-brute", definition: "La marge de l’année sur le fonctionnement. Elle vient avant le remboursement du capital des emprunts et le financement des investissements.", formula: "Contrôle : recettes − dépenses de fonctionnement. La définition comptable de la source prévaut." },
+    { key: "Épargne nette", aliases: ["epargne nette"], label: "Épargne nette", glossary: "epargne-nette", definition: "La marge qui reste après le remboursement du capital de la dette. Elle ne représente pas, à elle seule, tout le financement disponible.", formula: "Souvent : épargne brute − remboursement du capital. Vérifiez la définition de l’OFGL." },
+    { key: "Encours de dette", aliases: ["encours de dette", "dette"], label: "Encours de dette", glossary: "encours-de-dette", definition: "Le capital restant dû à une date, en général en fin d’année. C’est un stock, différent des emprunts, remboursements et intérêts de l’année.", formula: "Encours déclaré pour l’exercice. La date de référence figure dans la fiche de l’indicateur." },
+    { key: "Annuité de la dette", aliases: ["annuite de la dette"], label: "Annuité de la dette", glossary: "annuite-de-la-dette", definition: "La somme payée sur l’année au titre de la dette. Selon la source, elle regroupe capital et intérêts. Ce n’est pas la dette restante.", formula: "Total publié par l’OFGL : vérifiez ce qu’il comprend." },
+    { key: "Dépenses d’équipement", aliases: ["depenses d'equipement"], label: "Dépenses d’équipement", glossary: "depenses-d-equipement", definition: "Ce qui sert à construire, acheter ou rénover durablement : bâtiments, écoles, voirie, matériels. C’est une partie des dépenses d’investissement.", formula: "Total des dépenses d’équipement publié par l’OFGL." },
+    { key: "Dépenses d’investissement", aliases: ["depenses d'investissement"], label: "Dépenses d’investissement", glossary: "depenses-d-investissement", definition: "Les dépenses classées en investissement. Elles dépassent parfois les seuls équipements. Comparez seulement des séries définies de la même façon.", formula: "Total des dépenses d’investissement publié par l’OFGL." },
+    { key: "Recettes d’investissement", aliases: ["recettes d'investissement"], label: "Recettes d’investissement", glossary: "recettes-d-investissement", definition: "Les ressources qui financent l’investissement : subventions, fonds, cessions, emprunts selon le total. Un emprunt finance une dépense, mais il augmente la dette.", formula: "Total des recettes d’investissement publié par l’OFGL." },
+    { key: "Frais de personnel", aliases: ["frais de personnel", "charges de personnel"], label: "Frais de personnel", glossary: null, definition: "Les dépenses liées aux agents et à leur rémunération. Leur part dans les dépenses informe, mais ne mesure pas l’efficacité des services.", formula: "Frais de personnel ÷ dépenses de fonctionnement × 100, si les deux totaux sont disponibles." }
   ];
 
   function municipalNumber(value) {
@@ -387,8 +404,17 @@
     const amount = paragraph(value === null ? "Non disponible" : formatFinancialAmount(value), "municipal-metric-value");
     const context = paragraph(perCapita === null ? "Montant par habitant non disponible" : formatFinancialAmount(perCapita) + " par habitant · " + year, "municipal-metric-context");
     const meaning = paragraph(definition.definition, "municipal-metric-definition");
-    const formula = paragraph("Lecture / calcul : " + definition.formula, "municipal-metric-definition");
+    const formula = paragraph("Calcul : " + definition.formula, "municipal-metric-definition");
     card.append(label, amount, context, meaning, formula);
+    if (definition.glossary && document.getElementById(definition.glossary)) {
+      const more = document.createElement("p");
+      more.className = "municipal-metric-definition";
+      const link = document.createElement("a");
+      link.href = "#" + definition.glossary;
+      link.textContent = "Définition complète dans le glossaire";
+      more.appendChild(link);
+      card.appendChild(more);
+    }
     container.appendChild(card);
   }
 
@@ -404,32 +430,31 @@
     if (!metrics || !analysis) return;
 
     const summary = lib.summarizeOfglRecords(data.rows, data.total, commune.code);
-    const f = lib.OFGL.fields;
     if (title) title.textContent = "Les finances de " + commune.nom + " (" + commune.code + ")";
-    if (status) status.textContent = !summary.complete ? "Données incomplètes" : "Données OFGL · à interpréter avec prudence";
-    if (intro) intro.textContent = "Commune : " + commune.nom + " · code INSEE " + commune.code + " · département " + (commune.codeDepartement || "non précisé") + ". Périmètre demandé : budget principal. La série ci-dessous provient de l’API OFGL et doit être lue avec ses définitions comptables ; une donnée absente n’équivaut jamais à zéro. Les résultats sont descriptifs : ils ne prouvent pas, à eux seuls, la qualité ou la mauvaise gestion d’une municipalité.";
+    if (status) status.textContent = !summary.complete ? "Données incomplètes" : "Données OFGL · lecture automatique";
+    if (intro) intro.textContent = typo("Commune : " + commune.nom + " · code INSEE " + commune.code + " · département " + (commune.codeDepartement || "non précisé") + ". Budget principal seulement. Les chiffres viennent de la base de données de l’OFGL. Une donnée absente ne vaut jamais zéro. Les résultats décrivent la situation : ils ne disent pas, à eux seuls, si la commune est bien ou mal gérée.");
     metrics.replaceChildren();
     calculations.replaceChildren();
     analysis.replaceChildren();
+    analysis.hidden = false;
     if (history) history.replaceChildren();
 
     if (!summary.complete || summary.latestYear === null) {
       if (status) status.textContent = "Impossible de valider la série";
-      metrics.appendChild(paragraph("Aucun montant de synthèse n’est affiché : la réponse de l’OFGL est incomplète ou l’exercice ne peut pas être identifié de façon fiable. " + summary.received + " ligne(s) reçue(s), " + (summary.totalCount === null ? "total non communiqué" : summary.totalCount + " ligne(s) annoncée(s)") + ".", "commune-method-note"));
-      analysis.append(paragraph("Pourquoi aucun chiffre n’est présenté : choisir le dernier exercice à partir d’un extrait tronqué pourrait mélanger des années ou masquer des agrégats. Réessayez plus tard ou ouvrez la fiche OFGL de cette commune."));
+      metrics.appendChild(paragraph("Aucun montant de synthèse n’est affiché : la réponse de l’OFGL est incomplète, ou l’exercice ne peut pas être identifié de façon fiable. " + summary.received + " ligne(s) reçue(s), " + (summary.totalCount === null ? "total non communiqué" : summary.totalCount + " ligne(s) annoncée(s)") + ".", "commune-method-note"));
+      analysis.append(paragraph("Pourquoi aucun chiffre n’est présenté : choisir le dernier exercice à partir d’une réponse tronquée pourrait mélanger des années ou oublier des postes. Réessayez plus tard ou ouvrez la fiche OFGL de cette commune."));
       if (historyWrap) historyWrap.hidden = true;
       renderDatasetTools(commune, null);
       return;
     }
 
     const latestYear = summary.latestYear;
-    const available = MUNICIPAL_DEFINITIONS.filter((d) => municipalRow(summary.latestRecords, d, latestYear));
-    const shown = available.length ? available : [];
+    const shown = MUNICIPAL_DEFINITIONS.filter((d) => municipalRow(summary.latestRecords, d, latestYear));
     shown.forEach((d) => {
       const row = municipalRow(summary.latestRecords, d, latestYear);
       appendMunicipalMetric(metrics, d, lib.pickAmount(row), lib.pickPerCapita(row), latestYear);
     });
-    if (!shown.length) metrics.appendChild(paragraph("L’API a renvoyé des lignes, mais aucun des agrégats de référence n’a été reconnu avec les libellés attendus. Aucun montant n’est interprété automatiquement. Consultez la source officielle et les libellés bruts.", "commune-method-note"));
+    if (!shown.length) metrics.appendChild(paragraph("L’OFGL a renvoyé des lignes, mais aucun des postes comptables habituels n’a été reconnu. Aucun montant n’est interprété automatiquement. Consultez la source officielle et ses libellés.", "commune-method-note"));
 
     const revenue = municipalValue(data.rows, MUNICIPAL_DEFINITIONS[0], latestYear);
     const expense = municipalValue(data.rows, MUNICIPAL_DEFINITIONS[1], latestYear);
@@ -448,63 +473,77 @@
       const h = document.createElement("strong");
       h.textContent = label;
       const v = document.createElement("span");
-      v.textContent = value === null || !Number.isFinite(value) ? "Non calculable" : ratio.format(value) + (label.includes("durée") ? " ans" : " %");
-      const p = paragraph(explanation);
-      article.append(h, v, p);
+      v.textContent = value === null || !Number.isFinite(value) ? "Non calculable" : typo(ratio.format(value) + (label.includes("désendettement") ? " ans" : " %"));
+      article.append(h, v, paragraph(explanation));
       calculations.appendChild(article);
     };
     const savingsRate = revenue !== null && revenue > 0 && savings !== null ? savings / revenue * 100 : null;
     const staffRate = expense !== null && expense > 0 && staff !== null ? staff / expense * 100 : null;
     const debtYears = savings !== null && savings > 0 && debt !== null ? debt / savings : null;
-    addCalculation("Taux d’épargne brute", savingsRate, "Épargne brute ÷ recettes de fonctionnement × 100. Il indique la part des recettes courantes qui reste sous forme d’épargne brute. Ce ratio ne dit pas si les services sont suffisants ni si les investissements sont pertinents.");
-    addCalculation("Dépenses de personnel / fonctionnement", staffRate, "Frais de personnel ÷ dépenses de fonctionnement × 100. Le ratio n’est affiché que si les deux agrégats sont présents et positifs ; il ne mesure pas à lui seul la productivité ni la qualité du service public.");
-    addCalculation("Capacité de désendettement théorique", debtYears, "Encours de dette ÷ épargne brute. Le résultat est exprimé en années théoriques, sous l’hypothèse irréaliste que toute l’épargne brute sert à rembourser la dette. Si l’épargne brute est nulle ou négative, ce ratio n’est pas interprétable normalement.");
+    addCalculation("Taux d’épargne brute", savingsRate, "Épargne brute ÷ recettes de fonctionnement × 100. C’est la part des recettes courantes mise de côté. Il ne dit pas si les services sont suffisants ni si les investissements sont utiles.");
+    addCalculation("Dépenses de personnel / fonctionnement", staffRate, "Frais de personnel ÷ dépenses de fonctionnement × 100. Affiché seulement si les deux totaux sont présents et positifs. Il ne mesure, à lui seul, ni la productivité ni la qualité du service.");
+    addCalculation("Capacité de désendettement théorique", debtYears, "Encours de dette ÷ épargne brute, en années. Le calcul suppose que toute l’épargne brute rembourse la dette, ce qui n’arrive jamais en pratique. Non interprétable si l’épargne brute est nulle ou négative.");
     if (revenue !== null && expense !== null) {
-      const balance = revenue - expense;
       const article = document.createElement("article");
       article.className = "municipal-calculation";
       const h = document.createElement("strong"); h.textContent = "Écart recettes − dépenses de fonctionnement";
-      const v = document.createElement("span"); v.textContent = formatFinancialAmount(balance);
-      const p = paragraph("Calcul arithmétique effectué à partir des deux agrégats OFGL. Cet écart peut différer de l’épargne brute officielle si les agrégats ont des retraitements ou périmètres distincts : il faut vérifier la définition comptable avant de les assimiler.");
-      article.append(h, v, p); calculations.appendChild(article);
+      const v = document.createElement("span"); v.textContent = formatFinancialAmount(revenue - expense);
+      article.append(h, v, paragraph("Simple soustraction des deux totaux de l’OFGL. Le résultat peut différer de l’épargne brute officielle, dont la définition comptable est plus précise. Vérifiez cette définition avant de les assimiler."));
+      calculations.appendChild(article);
     }
 
-    const makeP = (txt, cls) => paragraph(txt, cls);
     const firstYear = summary.years.length ? Math.min(...summary.years) : latestYear;
-    const yearList = summary.years.slice().sort((a,b) => a-b);
+    const yearList = summary.years.slice().sort((a, b) => a - b);
     const firstRevenue = municipalValue(data.rows, MUNICIPAL_DEFINITIONS[0], firstYear);
     const firstExpense = municipalValue(data.rows, MUNICIPAL_DEFINITIONS[1], firstYear);
     const firstSavings = municipalValue(data.rows, MUNICIPAL_DEFINITIONS[2], firstYear);
     const firstDebt = municipalValue(data.rows, MUNICIPAL_DEFINITIONS[4], firstYear);
     const changeText = (label, first, last) => {
+      if (firstYear === latestYear) return label + " : évolution non calculable (une seule année reçue).";
       const pct = lib.percentChange(last, first);
       if (pct === null) return label + " : évolution non calculable (valeur de départ absente, nulle ou négative).";
-      return label + " : " + (pct > 0.05 ? "hausse" : pct < -0.05 ? "baisse" : "stabilité") + " de " + ratio.format(Math.abs(pct)) + " % entre " + firstYear + " et " + latestYear + " en euros courants.";
+      if (Math.abs(pct) < 0.05) return label + " : quasi stable entre " + firstYear + " et " + latestYear + " (variation inférieure à 0,1 %, en euros courants).";
+      return label + " : " + (pct > 0 ? "hausse" : "baisse") + " de " + ratio.format(Math.abs(pct)) + " % entre " + firstYear + " et " + latestYear + " (en euros courants).";
     };
-    const lead = document.createElement("strong"); lead.textContent = "Analyse vulgarisée détaillée · exercice " + latestYear;
+    // Gabarit par indicateur : le chiffre, ce que c'est, ce que ça ne dit pas (phrases courtes).
+    const block = (lines) => analysis.appendChild(paragraph(lines.filter(Boolean).join(" ")));
+    const lead = document.createElement("strong");
+    lead.textContent = "Lire les comptes de " + commune.nom + " : exercice " + latestYear;
     analysis.appendChild(lead);
-    analysis.appendChild(makeP("Lecture générale : cette photographie porte sur le budget principal et le dernier exercice identifiable dans la réponse complète. Les recettes et dépenses décrivent des flux de l’année ; la dette décrit un stock à une date. Il faut donc éviter de comparer directement le total annuel des dépenses à l’encours de dette comme s’il s’agissait de la même chose."));
-    if (revenue !== null) analysis.appendChild(makeP("Recettes de fonctionnement : " + formatFinancialAmount(revenue) + ". Elles financent les services courants et comprennent plusieurs catégories de ressources. Leur hausse peut venir des taux, des bases fiscales, des dotations, des tarifs ou d’autres facteurs ; les seuls agrégats ne permettent pas d’identifier la cause."));
-    if (expense !== null) analysis.appendChild(makeP("Dépenses de fonctionnement : " + formatFinancialAmount(expense) + ". Elles correspondent au coût courant des services. Une hausse ne signifie pas automatiquement une dérive : elle peut aussi refléter l’inflation, l’énergie, les rémunérations, l’évolution des besoins ou du périmètre. Pour conclure, il faudrait décomposer les postes et comparer avec des communes comparables."));
-    if (savings !== null) analysis.appendChild(makeP("Épargne brute : " + formatFinancialAmount(savings) + (savingsRate === null ? "." : ", soit " + ratio.format(savingsRate) + " % des recettes de fonctionnement selon le calcul indicatif ci-dessus.") + " Elle constitue une marge avant remboursement du capital et financement des investissements. Une épargne positive donne une capacité de financement, mais ne signifie pas que l’argent est entièrement libre ou qu’un projet est automatiquement finançable."));
-    if (netSavings !== null) analysis.appendChild(makeP("Épargne nette : " + formatFinancialAmount(netSavings) + ". Elle cherche à mesurer ce qui reste après le remboursement du capital selon la définition de la source. Il faut vérifier les retraitements exacts avant de l’assimiler à une trésorerie disponible."));
-    if (debt !== null) analysis.appendChild(makeP("Encours de dette : " + formatFinancialAmount(debt) + ". C’est le capital restant dû à la date de référence, pas le montant payé dans l’année. Pour l’interpréter, on examine aussi l’épargne brute, les annuités, les taux, les échéances et les investissements financés."));
-    if (debtYears !== null) analysis.appendChild(makeP("Désendettement théorique : " + ratio.format(debtYears) + " ans, calculé par encours de dette ÷ épargne brute. Ce n’est pas une prévision de remboursement : la commune doit aussi continuer à faire fonctionner ses services et investir."));
-    if (annuity !== null) analysis.appendChild(makeP("Annuité de dette : " + formatFinancialAmount(annuity) + ". Vérifiez dans la fiche OFGL si cet agrégat regroupe capital et intérêts ; l’annuité mesure un effort annuel, contrairement à l’encours qui mesure une dette restante."));
-    if (equipment !== null || investment !== null) analysis.appendChild(makeP("Investissement : " + (equipment === null ? "dépenses d’équipement non disponibles" : formatFinancialAmount(equipment) + " de dépenses d’équipement") + (investment === null ? "" : " ; " + formatFinancialAmount(investment) + " de dépenses d’investissement") + ". Les équipements sont généralement une composante de l’investissement, pas nécessairement son total. Pour juger l’effort d’investissement, il faut regarder les recettes dédiées, les subventions, l’emprunt, l’état du patrimoine et les besoins du territoire."));
-    if (investmentRevenue !== null) analysis.appendChild(makeP("Recettes d’investissement : " + formatFinancialAmount(investmentRevenue) + ". Elles peuvent inclure des subventions, des fonds, des cessions ou des emprunts selon l’agrégat. Une recette issue d’un nouvel emprunt améliore le financement immédiat mais accroît la dette : la composition de cette recette est essentielle."));
-    if (staff !== null) analysis.appendChild(makeP("Frais de personnel : " + formatFinancialAmount(staff) + (staffRate === null ? "." : ", soit " + ratio.format(staffRate) + " % des dépenses de fonctionnement.") + " Ce poste doit être mis en regard des compétences exercées, des effectifs, des services rendus et des choix d’organisation ; le ratio seul ne permet pas de qualifier une commune de dépensière ou d’économe."));
-    analysis.appendChild(makeP(changeText("Recettes de fonctionnement", firstRevenue, revenue)));
-    analysis.appendChild(makeP(changeText("Dépenses de fonctionnement", firstExpense, expense)));
-    analysis.appendChild(makeP(changeText("Épargne brute", firstSavings, savings)));
-    analysis.appendChild(makeP(changeText("Encours de dette", firstDebt, debt)));
-    analysis.appendChild(makeP("Limites indispensables : montants nominaux, non corrigés de l’inflation ; comparaison entre première et dernière année seulement ; la comparaison avec les communes de même strate figure dans la section suivante (fiche DGFiP) ; les libellés et périmètres doivent être vérifiés dans la documentation OFGL. Ces chiffres ne démontrent aucune causalité et ne constituent pas un jugement politique.", "municipal-analysis-note"));
+    block(["Ces chiffres portent sur le budget principal et sur le dernier exercice reçu.", "Les recettes et les dépenses sont des flux : elles se mesurent sur l’année.", "La dette est un stock : elle se mesure à une date.", "Ne comparez donc pas directement les dépenses de l’année et la dette."]);
+    if (revenue !== null) block(["Recettes de fonctionnement : " + formatFinancialAmount(revenue) + ".", "Ce sont les ressources courantes qui financent les services.", "Leur hausse peut venir des impôts, des dotations, des tarifs ou d’autres causes ; les totaux seuls ne disent pas laquelle."]);
+    if (expense !== null) block(["Dépenses de fonctionnement : " + formatFinancialAmount(expense) + ".", "C’est le coût courant des services.", "Une hausse peut refléter les prix, l’énergie, les salaires, les besoins ou le périmètre.", "Pour conclure, il faut détailler les postes et comparer avec des communes comparables."]);
+    if (savings !== null) block(["Épargne brute : " + formatFinancialAmount(savings) + (savingsRate === null ? "." : " (" + ratio.format(savingsRate) + " % des recettes de fonctionnement)."), "C’est ce qui reste des recettes courantes après les dépenses courantes.", "Cette somme n’est pas forcément libre : elle sert d’abord à rembourser le capital des emprunts."]);
+    if (netSavings !== null) block(["Épargne nette : " + formatFinancialAmount(netSavings) + ".", "C’est l’épargne brute après remboursement du capital de la dette, selon la définition de la source.", "Ce n’est pas l’argent disponible sur le compte bancaire de la commune."]);
+    if (debt !== null) block(["Encours de dette : " + formatFinancialAmount(debt) + ".", "C’est le capital restant dû à la date de référence, pas la somme payée dans l’année.", "Pour l’interpréter, regardez aussi l’épargne brute, les annuités et les investissements financés."]);
+    if (debtYears !== null) block(["Désendettement théorique : " + ratio.format(debtYears) + " ans (encours de dette ÷ épargne brute).", "Ce n’est pas une prévision : la commune doit aussi faire fonctionner ses services et investir."]);
+    if (annuity !== null) block(["Annuité de la dette : " + formatFinancialAmount(annuity) + ".", "C’est l’effort payé dans l’année ; l’encours, lui, mesure la dette restante.", "Vérifiez dans la fiche de l’OFGL si ce total regroupe capital et intérêts."]);
+    if (equipment !== null || investment !== null) block(["Investissement : " + (equipment === null ? "dépenses d’équipement non disponibles" : formatFinancialAmount(equipment) + " de dépenses d’équipement") + (investment === null ? "." : " ; " + formatFinancialAmount(investment) + " de dépenses d’investissement."), "L’équipement est en général une partie de l’investissement, pas son total.", "Pour juger l’effort, regardez aussi les subventions, l’emprunt, l’état du patrimoine et les besoins."]);
+    if (investmentRevenue !== null) block(["Recettes d’investissement : " + formatFinancialAmount(investmentRevenue) + ".", "Selon le total, elles comprennent subventions, fonds, ventes de biens ou emprunts.", "Un nouvel emprunt finance l’investissement mais augmente la dette : sa part compte."]);
+    if (staff !== null) block(["Frais de personnel : " + formatFinancialAmount(staff) + (staffRate === null ? "." : " (" + ratio.format(staffRate) + " % des dépenses de fonctionnement)."), "Ce poste dépend des compétences exercées, des effectifs et des services rendus.", "Ce ratio seul ne permet pas de dire qu’une commune dépense trop ou trop peu."]);
+    const changes = document.createElement("ul");
+    [changeText("Recettes de fonctionnement", firstRevenue, revenue), changeText("Dépenses de fonctionnement", firstExpense, expense), changeText("Épargne brute", firstSavings, savings), changeText("Encours de dette", firstDebt, debt)].forEach((t) => {
+      const li = document.createElement("li");
+      li.textContent = typo(t);
+      changes.appendChild(li);
+    });
+    analysis.appendChild(paragraph("Évolution entre la première et la dernière année reçues :"));
+    analysis.appendChild(changes);
+    analysis.appendChild(paragraph("Limites indispensables :", "municipal-analysis-note"));
+    const limits = document.createElement("ul");
+    limits.className = "municipal-analysis-note";
+    ["Montants en euros courants, non corrigés de l’inflation.", "Seules la première et la dernière année sont comparées.", "La comparaison avec les communes de même taille figure dans la section suivante (fiche DGFiP).", "Vérifiez les libellés et le périmètre dans la documentation de l’OFGL. Ces chiffres ne prouvent aucune cause et ne sont pas un jugement politique."].forEach((t) => {
+      const li = document.createElement("li");
+      li.textContent = typo(t);
+      limits.appendChild(li);
+    });
+    analysis.appendChild(limits);
     if (historyWrap) historyWrap.hidden = false;
     const cap = document.getElementById("municipal-history-caption");
-    if (cap) cap.textContent = commune.nom + " · budget principal · données OFGL à contrôler";
+    if (cap) cap.textContent = commune.nom + " · budget principal · source : OFGL (lecture automatique)";
     const historyIntro = document.getElementById("municipal-history-intro");
-    if (historyIntro) historyIntro.textContent = "Exercices reçus : " + yearList.join(", ") + ". Les montants sont en euros courants. « Non disponible » signifie que l’agrégat n’a pas été trouvé ; il ne signifie pas zéro.";
-    // Tableau annuel : fiche standard (même structure pour toutes les communes, modèle de la fiche Fameck).
+    if (historyIntro) historyIntro.textContent = typo("Exercices reçus : " + yearList.join(", ") + ". Montants en euros courants. « Non disponible » signifie que le poste n’a pas été trouvé ; cela ne veut pas dire zéro.");
+    // Tableau annuel : fiche standard, même structure pour toutes les communes.
     const dataset = lib.buildCommuneDataset(commune, data.rows, data.total, new Date().toISOString());
     if (history && dataset) {
       const euros0 = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 });
@@ -515,10 +554,10 @@
           String(y.year),
           y.population === null ? "Non disponible" : euros0.format(y.population),
           amount(y.revenue), amount(y.expense), amount(y.gross_savings), amount(y.net_savings),
-          amount(y.debt), y.debt_per_capita === null ? "Non calculable" : euros0.format(y.debt_per_capita) + " €",
+          amount(y.debt), y.debt_per_capita === null ? "Non calculable" : euros0.format(y.debt_per_capita) + " €",
           amount(y.local_taxes), amount(y.dgf), amount(y.investment_expense), amount(y.working_capital),
-          y.savings_rate === null ? "Non calculable" : ratio.format(y.savings_rate) + " %",
-          y.debt_years === null ? "Non calculable" : ratio.format(y.debt_years) + " ans"
+          y.savings_rate === null ? "Non calculable" : ratio.format(y.savings_rate) + " %",
+          y.debt_years === null ? "Non calculable" : ratio.format(y.debt_years) + " ans"
         ];
         cells.forEach((txt, i) => { const td = document.createElement("td"); td.textContent = txt; if (i > 0) td.className = "numeric-cell"; tr.appendChild(td); });
         if (y.year === latestYear) tr.className = "current-year-row";
@@ -526,14 +565,23 @@
       });
     }
     renderDatasetTools(commune, dataset);
+    updateRibbon(commune, latestYear, savings, debt, savingsRate);
+  }
+
+  // Bandeau : les tuiles communales n’apparaissent qu’une fois une commune chargée ; donnée absente = « Non disponible ».
+  function updateRibbon(commune, latestYear, savings, debt, savingsRate) {
     const millions = new Intl.NumberFormat("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    const set = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
-    set("ribbon-commune-savings", savings === null ? "—" : millions.format(savings / 1e6) + " M€");
-    set("ribbon-commune-debt", debt === null ? "—" : millions.format(debt / 1e6) + " M€");
-    set("ribbon-commune-rate", savingsRate === null ? "—" : ratio.format(savingsRate) + " %");
-    set("ribbon-local-savings-context", "Exercice " + latestYear + " · " + commune.nom);
+    const ratio = new Intl.NumberFormat("fr-FR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const set = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = typo(value); };
+    set("ribbon-commune-savings", savings === null ? "Non disponible" : millions.format(savings / 1e6) + " M€");
+    set("ribbon-commune-debt", debt === null ? "Non disponible" : millions.format(debt / 1e6) + " M€");
+    set("ribbon-commune-rate", savingsRate === null ? "Non disponible" : ratio.format(savingsRate) + " %");
+    set("ribbon-local-savings-context", "Exercice " + latestYear + " · " + commune.nom + " (M€ : millions d’euros)");
     set("ribbon-local-debt-context", "Exercice " + latestYear + " · " + commune.nom);
     set("ribbon-local-rate-context", "Calcul indicatif · " + commune.nom);
+    document.querySelectorAll(".headline-commune").forEach((tile) => { tile.hidden = false; });
+    const call = document.getElementById("ribbon-call");
+    if (call) call.hidden = true;
   }
 
   // Identité issue du socle commun (INSEE, DGCL) et fiche standard téléchargeable.
@@ -543,11 +591,11 @@
     box.replaceChildren();
     const entity = await loadSocleCommune(commune).catch(() => null);
     if (entity) {
-      const epci = entity.parent_epci ? entity.parent_epci.official_name + " (" + entity.parent_epci.entity_id + ")" : "aucune (commune isolée)";
+      const epci = entity.parent_epci ? entity.parent_epci.official_name + " (" + entity.parent_epci.entity_id + ")" : "aucune (la commune n’appartient à aucune intercommunalité)";
       const pop = entity.population && Number.isFinite(entity.population.municipale)
         ? new Intl.NumberFormat("fr-FR").format(entity.population.municipale) + " habitants (population municipale en vigueur au 1er janvier 2026)"
         : "non disponible";
-      box.appendChild(paragraph("Socle commun : " + entity.official_name + " · " + entity.department_name + " · " + entity.region_name + " · intercommunalité : " + epci + " · population : " + pop + ". Sources : INSEE (Code officiel géographique 2026) et DGCL (composition des intercommunalités au 1er janvier 2026).", "commune-meta"));
+      box.appendChild(paragraph("Identité de la commune : " + entity.official_name + " · " + entity.department_name + " · " + entity.region_name + " · intercommunalité : " + epci + " · population : " + pop + ". Sources : INSEE (Code officiel géographique 2026) et DGCL (composition des intercommunalités au 1er janvier 2026).", "commune-meta"));
     }
     if (!dataset) return;
     if (entity) dataset.entity = { ...dataset.entity, department_name: entity.department_name, region_code: entity.region_code, region_name: entity.region_name, parent_epci: entity.parent_epci, population_legale: entity.population };
@@ -556,9 +604,9 @@
     link.className = "button button-secondary";
     link.href = URL.createObjectURL(blob);
     link.download = "fiche-" + dataset.entity.insee_code + "-finances.json";
-    link.textContent = "Télécharger la fiche standard de " + (commune.nom || dataset.entity.insee_code) + " (JSON)";
+    link.textContent = "Télécharger la fiche de " + (commune.nom || dataset.entity.insee_code) + " (JSON)";
     box.appendChild(link);
-    box.appendChild(paragraph("Même structure pour toutes les communes (modèle de la fiche pilote de Fameck) : indicateurs du dernier exercice, ratios calculés, série annuelle et provenance OFGL.", "commune-meta"));
+    box.appendChild(paragraph("Même structure pour toutes les communes : indicateurs du dernier exercice, ratios calculés, série annuelle et provenance des données (OFGL).", "commune-meta"));
   }
 
   // Comparaison avec la strate et impôts locaux : fiche officielle DGFiP de la commune (aucun calcul).
@@ -573,11 +621,11 @@
     wrap.className = "strata-table-wrap";
     const table = document.createElement("table");
     const cap = document.createElement("caption");
-    cap.textContent = caption;
+    cap.textContent = typo(caption);
     table.appendChild(cap);
     const thead = document.createElement("thead");
     const htr = document.createElement("tr");
-    headers.forEach((h) => { const th = document.createElement("th"); th.scope = "col"; th.textContent = h; htr.appendChild(th); });
+    headers.forEach((h, i) => { const th = document.createElement("th"); th.scope = "col"; th.textContent = typo(h); if (i > 0) th.className = "numeric-cell"; htr.appendChild(th); });
     thead.appendChild(htr);
     table.appendChild(thead);
     const tbody = document.createElement("tbody");
@@ -586,7 +634,7 @@
       cells.forEach((txt, i) => {
         const cell = document.createElement(i === 0 ? "th" : "td");
         if (i === 0) cell.scope = "row"; else cell.className = "numeric-cell";
-        cell.textContent = txt;
+        cell.textContent = typo(txt);
         tr.appendChild(cell);
       });
       tbody.appendChild(tr);
@@ -612,7 +660,7 @@
       strataTable("Impôts perçus par la commune : produit, montant par habitant et taux votés (DGFiP, " + year + ")",
         ["Impôt", "Produit (milliers d’euros)", "Commune (€ par habitant)", "Moyenne de la strate (€ par habitant)", "Taux voté par la commune", "Taux moyen de la strate"],
         d.taxes.map((r) => [r.label, cellText(r.thousands, 2), cellText(r.commune, 2), cellText(r.strate, 2), cellText(r.rate, 2, " %"), cellText(r.strateRate, 2, " %")])),
-      paragraph("Ces tableaux reprennent les valeurs publiées par la DGFiP, sans calcul du site. Une valeur absente est indiquée « Non disponible » ; un zéro publié reste un zéro. Les impôts ci-dessus ne concernent que la part revenant à la commune : les impôts directs locaux sont aussi perçus au profit d’autres collectivités et organismes (intercommunalité, syndicats…), qui votent leurs propres taux.", "commune-method-note")
+      paragraph("Ces tableaux reprennent les valeurs publiées par la DGFiP, sans calcul du site. Une valeur absente est indiquée « Non disponible » ; un zéro publié reste un zéro. Les impôts ci-dessus ne concernent que la part de la commune. D’autres collectivités et organismes (intercommunalité, syndicats…) perçoivent aussi ces impôts et votent leurs propres taux.", "commune-method-note")
     ];
     container.replaceChildren(...nodes);
   }
@@ -620,7 +668,10 @@
   async function loadStrataComparison(commune, signal) {
     const container = document.getElementById("strata-content");
     const title = document.getElementById("strata-title");
+    const badge = document.getElementById("strata-status");
     if (!container) return;
+    // La pastille « Données officielles DGFiP » n’apparaît que si la DGFiP a effectivement répondu.
+    if (badge) badge.hidden = true;
     if (title) title.textContent = "Comparer " + commune.nom + " avec les communes de même taille";
     if (!lib.dgfipKey(commune.code)) {
       container.replaceChildren(paragraph("Les comptes individuels de la DGFiP ne couvrent pas cette commune (code INSEE " + commune.code + ").", "commune-method-note"));
@@ -633,14 +684,19 @@
       if (!payload || !Array.isArray(payload.results)) throw new ServiceError("dgfip", "format");
       if (payload.results.length !== 1) {
         container.replaceChildren(paragraph(payload.results.length === 0
-          ? "Aucune fiche DGFiP 2025 n’est publiée pour cette commune. Il ne s’agit pas d’un montant nul."
+          ? "Aucune fiche DGFiP 2025 n’est publiée pour cette commune. Ce n’est pas un montant nul : la fiche n’existe pas."
           : "La DGFiP renvoie plusieurs fiches pour ce code : aucune n’est affichée pour éviter une confusion.", "commune-method-note"));
         return;
       }
-      renderStrata(container, commune, lib.readDgfip(payload.results[0]));
+      const fiche = lib.readDgfip(payload.results[0]);
+      renderStrata(container, commune, fiche);
+      if (badge) {
+        badge.textContent = "Données officielles DGFiP" + (fiche && fiche.year ? " · exercice " + fiche.year : "");
+        badge.hidden = false;
+      }
     } catch (error) {
       if (signal && signal.aborted) return;
-      container.replaceChildren(paragraph(serviceErrorText(error, "Le service de la DGFiP") + " Aucun montant n’est affiché. Ce n’est pas une absence de données.", "commune-method-note"));
+      container.replaceChildren(paragraph(unavailableText(error, "Le service de la DGFiP", "Aucun montant n’est affiché."), "commune-method-note"));
     }
   }
 
@@ -653,8 +709,8 @@
       strataTable("Sur l’avis d’imposition : qui reçoit quoi (taux votés ou applicables, DGFiP, " + (d.year || "") + ")",
         ["Bénéficiaire", "Taxe foncière sur les propriétés bâties", "Taxe foncière sur les propriétés non bâties", "Taxe d’habitation (résidences secondaires, logements vacants)"],
         rows.map((r) => [r.label, pct(r.tfb), pct(r.tfnb), pct(r.th)]).concat([["Taux global publié par la DGFiP", pct(d.global.tfb), pct(d.global.tfnb), pct(d.global.th)]])),
-      paragraph("Taxe d’enlèvement des ordures ménagères (affichée à part par la DGFiP, taux plein hors zones spécifiques) : " + (d.teom === null ? "non renseignée (la collecte peut être financée par une redevance)" : pct(d.teom)) + "." + (d.thMajoration !== undefined ? " Majoration de la taxe d’habitation sur les résidences secondaires : " + pct(d.thMajoration) + "." : ""), "strata-context"),
-      paragraph("Le taux global additionne, selon la DGFiP, les taux communal, intercommunal, des syndicats et des taxes spéciales ; il exclut les chambres consulaires et d’agriculture. En cas de convergence progressive des taux (commune nouvelle, fusion d’intercommunalités), le taux appliqué sur l’avis peut différer temporairement du taux voté.", "commune-method-note")
+      paragraph("Taxe d’enlèvement des ordures ménagères (affichée à part par la DGFiP ; taux plein, hors zones à taux particulier) : " + (d.teom === null ? "non renseignée (la collecte peut être financée par une redevance)" : pct(d.teom)) + "." + (d.thMajoration !== undefined ? " Majoration de la taxe d’habitation sur les résidences secondaires : " + pct(d.thMajoration) + "." : ""), "strata-context"),
+      paragraph("Selon la DGFiP, le taux global additionne les taux de la commune, de l’intercommunalité, des syndicats et des taxes spéciales. Il exclut les chambres de commerce, de métiers et d’agriculture. Quand des communes ou des intercommunalités fusionnent, leurs taux se rapprochent sur plusieurs années. Le taux de votre avis peut alors différer un temps du taux voté.", "commune-method-note")
     ];
     container.replaceChildren(...nodes);
   }
@@ -668,13 +724,13 @@
       if (signal && signal.aborted) return;
       if (!payload || !Array.isArray(payload.results)) throw new ServiceError("dgfip", "format");
       if (!payload.results.length) {
-        container.replaceChildren(paragraph("La DGFiP ne publie pas de taux pour cette commune. Il ne s’agit pas d’un taux nul.", "commune-method-note"));
+        container.replaceChildren(paragraph("La DGFiP ne publie pas de taux pour cette commune. Ce n’est pas un taux nul : la donnée n’existe pas.", "commune-method-note"));
         return;
       }
       renderTaux(container, commune, lib.readTaux(payload.results[0]));
     } catch (error) {
       if (signal && signal.aborted) return;
-      container.replaceChildren(paragraph(serviceErrorText(error, "Le service de la DGFiP") + " Aucun taux n’est affiché. Ce n’est pas une absence de données.", "commune-method-note"));
+      container.replaceChildren(paragraph(unavailableText(error, "Le service de la DGFiP", "Aucun taux n’est affiché."), "commune-method-note"));
     }
   }
 
@@ -682,12 +738,17 @@
     // Fiche DGFiP chargée en parallèle : sa disponibilité ne dépend pas de celle de l'OFGL.
     loadStrataComparison(commune, signal);
     loadTaux(commune, signal);
-    const loading = paragraph("Chargement des comptes OFGL pour " + commune.nom + "…", "commune-loading");
+    const loading = paragraph("Comptes de l’OFGL pour " + commune.nom + " : chargement…", "commune-loading");
     card.appendChild(loading);
     const selectedStatus = document.getElementById("municipal-status");
     const selectedTitle = document.getElementById("municipal-title");
-    if (selectedTitle) selectedTitle.textContent = "Chargement de l’analyse de " + commune.nom + "…";
-    if (selectedStatus) selectedStatus.textContent = "Chargement des données";
+    const selectedIntro = document.getElementById("municipal-intro");
+    const selectedAnalysis = document.getElementById("commune-analysis");
+    if (selectedTitle) selectedTitle.textContent = "Les finances de " + commune.nom + " (" + commune.code + ")";
+    if (selectedStatus) selectedStatus.textContent = "Chargement des données…";
+    // Le texte d’attente est retiré dès qu’une commune est choisie.
+    if (selectedIntro) selectedIntro.textContent = typo("Commune : " + commune.nom + " · code INSEE " + commune.code + ". Les comptes de l’OFGL sont en cours de chargement.");
+    if (selectedAnalysis) { selectedAnalysis.replaceChildren(); selectedAnalysis.hidden = true; }
     try {
       const data = await fetchCommuneFinances(commune, signal);
       if (signal.aborted) return;
@@ -703,10 +764,14 @@
       if (signal.aborted) return;
       loading.remove();
       renderFinanceError(card, error);
-      if (selectedTitle) selectedTitle.textContent = "Analyse de " + commune.nom;
       if (selectedStatus) selectedStatus.textContent = "Données indisponibles";
+      if (selectedIntro) selectedIntro.textContent = typo("Commune : " + commune.nom + " · code INSEE " + commune.code + ". Les comptes de l’OFGL n’ont pas pu être chargés.");
       const metrics = document.getElementById("commune-metrics");
-      if (metrics) metrics.replaceChildren(paragraph(serviceErrorText(error, "L’OFGL") + " Aucun montant n’est affiché. Réessayez ou ouvrez la source officielle.", "commune-method-note"));
+      if (metrics) metrics.replaceChildren(paragraph(unavailableText(error, "Le service de l’OFGL", "Aucun montant n’est affiché."), "commune-method-note"));
+      const calculations = document.getElementById("commune-calculs");
+      if (calculations) calculations.replaceChildren();
+      const historyWrap = document.getElementById("municipal-history-wrap");
+      if (historyWrap) historyWrap.hidden = true;
     }
     card.appendChild(sourceLink(commune));
   }
@@ -714,7 +779,7 @@
   function showSearchMessage(result, title, text, withOfglLink) {
     result.replaceChildren();
     const heading = document.createElement("h3");
-    heading.textContent = title;
+    heading.textContent = typo(title);
     result.append(heading, paragraph(text));
     if (withOfglLink) addResultLink(result, "Ouvrir la base des comptes communaux — OFGL", lib.OFGL.datasetPage);
     result.hidden = false;
@@ -722,7 +787,7 @@
 
   async function searchCommunes(kind, signal) {
     const base = { fields: "nom,code,codeDepartement,codesPostaux", limit: "10" };
-    const query = (extra) => fetchJson("https://geo.api.gouv.fr/communes?" + new URLSearchParams({ ...base, ...extra }).toString(), "geo", signal);
+    const query = (extra) => fetchJson("https://geo.api.gouv.fr/communes?" + new URLSearchParams({ ...base, ...extra }).toString(), "geo", signal, GEO_TIMEOUT_MS);
     if (kind.type === "postal-or-insee") {
       // Un nombre à 5 chiffres peut être un code postal ou un code INSEE : les deux sont interrogés.
       const [byPostal, byCode] = await Promise.all([query({ codePostal: kind.value }), query({ code: kind.value })]);
@@ -746,33 +811,121 @@
     }
   }
 
+  // Menu replié (bouton « Menu », aria-expanded, Échap, retour du focus, fermeture au clic extérieur).
   function initMobileNavigation() {
     const toggle = document.querySelector(".nav-toggle");
     const nav = document.getElementById("navigation-principale");
     if (!toggle || !nav) return;
-    const close = () => {
-      toggle.setAttribute("aria-expanded", "false");
-      nav.classList.remove("is-open");
-      toggle.querySelector(".nav-toggle-icon").textContent = "+";
+    const collapsed = () => window.matchMedia(NAV_COLLAPSED_QUERY).matches;
+    const icon = toggle.querySelector(".nav-toggle-icon");
+    const setOpen = (open) => {
+      toggle.setAttribute("aria-expanded", String(open));
+      nav.classList.toggle("is-open", open);
+      if (icon) icon.textContent = open ? "−" : "+";
     };
     toggle.addEventListener("click", () => {
-      const expanded = toggle.getAttribute("aria-expanded") === "true";
-      toggle.setAttribute("aria-expanded", String(!expanded));
-      nav.classList.toggle("is-open", !expanded);
-      toggle.querySelector(".nav-toggle-icon").textContent = expanded ? "+" : "−";
+      const open = toggle.getAttribute("aria-expanded") !== "true";
+      setOpen(open);
+      if (open) {
+        const first = nav.querySelector("a");
+        if (first) first.focus();
+      }
     });
     nav.addEventListener("click", (event) => {
-      if (event.target.closest("a") && window.matchMedia("(max-width: 679px)").matches) close();
+      if (event.target.closest("a") && collapsed()) setOpen(false);
     });
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") {
-        close();
+        setOpen(false);
         toggle.focus();
       }
     });
-    window.addEventListener("resize", () => {
-      if (!window.matchMedia("(max-width: 679px)").matches) close();
+    document.addEventListener("click", (event) => {
+      if (toggle.getAttribute("aria-expanded") === "true" && !event.target.closest(".site-header")) setOpen(false);
     });
+    // Le focus qui quitte le menu ouvert (Tab après le dernier lien) le referme.
+    nav.addEventListener("focusout", (event) => {
+      if (collapsed() && toggle.getAttribute("aria-expanded") === "true" && event.relatedTarget && !event.relatedTarget.closest(".site-header")) setOpen(false);
+    });
+    window.addEventListener("resize", () => {
+      if (!collapsed()) setOpen(false);
+    });
+  }
+
+  // Section visible signalée dans le menu (aria-current="location").
+  function initCurrentSection() {
+    const links = Array.from(document.querySelectorAll("#navigation-principale a[href^='#']"));
+    if (!links.length || !("IntersectionObserver" in window)) return;
+    const byId = new Map(links.map((a) => [a.getAttribute("href").slice(1), a]));
+    const visible = new Map();
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => visible.set(entry.target.id, entry.isIntersecting ? entry.boundingClientRect.top : null));
+      let current = null;
+      let best = Infinity;
+      visible.forEach((top, id) => { if (top !== null && Math.abs(top) < best) { best = Math.abs(top); current = id; } });
+      links.forEach((a) => a.removeAttribute("aria-current"));
+      if (current && byId.has(current)) byId.get(current).setAttribute("aria-current", "location");
+    }, { rootMargin: "-20% 0px -60% 0px" });
+    byId.forEach((_, id) => { const section = document.getElementById(id); if (section) observer.observe(section); });
+  }
+
+  // Bouton « Haut de page », affiché après le premier écran.
+  function initBackToTop() {
+    const button = document.querySelector(".back-to-top");
+    if (!button) return;
+    let ticking = false;
+    const update = () => {
+      button.hidden = window.scrollY < window.innerHeight;
+      ticking = false;
+    };
+    window.addEventListener("scroll", () => {
+      if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    }, { passive: true });
+    button.addEventListener("click", () => {
+      const target = document.getElementById("contenu");
+      if (target) setTimeout(() => target.focus({ preventScroll: true }), 0);
+    });
+    update();
+  }
+
+  // Tableaux larges : zone défilante focalisable au clavier et indice visible quand le tableau dépasse.
+  function initScrollHints() {
+    const selector = ".table-wrap, .composition-table-wrap, .strata-table-wrap, .history-scroll";
+    const prepare = (wrap) => {
+      if (wrap.dataset.scrollReady) return;
+      wrap.dataset.scrollReady = "1";
+      const caption = wrap.querySelector("caption");
+      wrap.setAttribute("role", "region");
+      wrap.setAttribute("tabindex", "0");
+      wrap.setAttribute("aria-label", caption ? caption.textContent.trim() : "Tableau");
+      const hint = document.createElement("p");
+      hint.className = "scroll-hint";
+      hint.textContent = "Tableau large : faites-le défiler horizontalement →";
+      hint.setAttribute("aria-hidden", "true");
+      wrap.parentNode.insertBefore(hint, wrap);
+      const check = () => hint.classList.toggle("is-visible", wrap.scrollWidth > wrap.clientWidth + 2);
+      if ("ResizeObserver" in window) new ResizeObserver(check).observe(wrap);
+      check();
+    };
+    const scan = () => document.querySelectorAll(selector).forEach(prepare);
+    scan();
+    if ("MutationObserver" in window) {
+      const main = document.getElementById("contenu");
+      if (main) new MutationObserver(scan).observe(main, { childList: true, subtree: true });
+    }
+  }
+
+  // Commune reflétée dans l’adresse : ?commune=<code INSEE>. Recharger ou partager l’adresse relance la recherche.
+  function communeFromUrl() {
+    const code = (new URLSearchParams(window.location.search).get("commune") || "").trim().toUpperCase();
+    return lib.isInseeCode(code) ? code : null;
+  }
+  function writeCommuneToUrl(code, replace) {
+    if (!window.history || !window.history.pushState) return;
+    const url = new URL(window.location.href);
+    if (url.searchParams.get("commune") === code) return;
+    url.searchParams.set("commune", code);
+    window.history[replace ? "replaceState" : "pushState"]({ commune: code }, "", url.toString());
   }
 
   async function initMunicipalitySearch() {
@@ -783,18 +936,18 @@
     const button = form.querySelector("button[type=submit]");
     let current = null;
     const setBusy = (busy) => {
-      result.setAttribute("aria-busy", busy ? "true" : "false");
       // Le bouton reste actif : une nouvelle recherche annule la précédente.
       if (button) button.textContent = busy ? "Recherche…" : "Rechercher";
     };
+    const setResultBusy = (busy) => result.setAttribute("aria-busy", busy ? "true" : "false");
 
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      const kind = lib.classifyCommuneQuery(input.value);
+    // kind : résultat de lib.classifyCommuneQuery ; fromUrl : recherche relancée depuis l’adresse.
+    const search = async (kind, fromUrl) => {
       if (current) {
         current.abort();
         current = null;
         setBusy(false);
+        setResultBusy(false);
       }
       if (kind.type === "empty") {
         showSearchMessage(result, "Saisissez une commune", "Indiquez un nom de commune, un code postal ou un code INSEE (5 caractères, par exemple 57206 ou 2A004).", false);
@@ -807,29 +960,36 @@
       const controller = new AbortController();
       current = controller;
       setBusy(true);
-      result.replaceChildren(paragraph("Recherche dans le référentiel national des communes…"));
+      setResultBusy(true);
+      result.replaceChildren(paragraph("Recherche de la commune…", "commune-loading"));
       result.hidden = false;
       try {
         const { communes, fallback } = await searchCommunesWithFallback(kind, controller.signal);
         if (controller.signal.aborted) return;
+        // Commune identifiée : le bouton retrouve son libellé, les comptes se chargent bloc par bloc.
+        setBusy(false);
         result.replaceChildren();
         if (!communes.length) {
-          showSearchMessage(result, "Aucune commune trouvée", "Vérifiez l’orthographe, le code postal ou le code INSEE. Vous pouvez aussi lancer la recherche directement dans la base financière officielle.", true);
+          showSearchMessage(result, "Aucune commune trouvée", "Vérifiez l’orthographe, le code postal ou le code INSEE. Vous pouvez aussi chercher directement dans la base financière officielle.", true);
           return;
         }
         const heading = document.createElement("h3");
         heading.textContent = communes.length === 1 ? "Commune trouvée" : communes.length + " communes correspondent : choisissez la bonne";
         result.append(heading, paragraph(fallback
-          ? "Le service geo.api.gouv.fr ne répond pas : les communes proviennent du socle commun publié avec ce site (Code officiel géographique de l’INSEE au 1er janvier 2026). Chaque commune est identifiée par son code INSEE."
-          : "L’identité géographique est fournie par le service public geo.api.gouv.fr ; chaque commune est identifiée par son code INSEE. Les chiffres financiers de l’OFGL restent soumis à leur propre périmètre, exercice et disponibilité.", "commune-meta"));
+          ? "Le service geo.api.gouv.fr ne répond pas : la liste vient du référentiel des communes publié avec ce site (Code officiel géographique de l’INSEE au 1er janvier 2026). Chaque commune est identifiée par son code INSEE."
+          : "La commune est identifiée par le service public geo.api.gouv.fr, avec son code INSEE. Les comptes de l’OFGL ont leur propre périmètre, exercice et disponibilité.", "commune-meta"));
         const loads = [];
+        const open = (card, commune) => {
+          writeCommuneToUrl(commune.code, fromUrl);
+          return loadCommuneCard(card, commune, controller.signal);
+        };
         communes.forEach((commune) => {
           const card = document.createElement("article");
           card.className = "commune-result-card";
           communeHeader(card, commune);
           result.appendChild(card);
           if (communes.length === 1) {
-            loads.push(loadCommuneCard(card, commune, controller.signal));
+            loads.push(open(card, commune));
           } else {
             const choose = document.createElement("button");
             choose.type = "button";
@@ -837,7 +997,7 @@
             choose.textContent = "Afficher les comptes de " + commune.nom + " (" + commune.code + ")";
             choose.addEventListener("click", () => {
               choose.remove();
-              loadCommuneCard(card, commune, controller.signal);
+              open(card, commune);
             }, { once: true });
             card.appendChild(choose);
           }
@@ -845,13 +1005,28 @@
         await Promise.all(loads);
       } catch (error) {
         if (controller.signal.aborted) return;
-        showSearchMessage(result, "Recherche momentanément indisponible", serviceErrorText(error, "Le référentiel géographique geo.api.gouv.fr") + " Vous pouvez quand même rechercher les comptes dans la base officielle de l’OFGL.", true);
+        showSearchMessage(result, "Recherche momentanément indisponible", serviceErrorText(error, "Le référentiel géographique geo.api.gouv.fr") + " Vous pouvez quand même chercher les comptes dans la base officielle de l’OFGL.", true);
       } finally {
         if (current === controller) {
           setBusy(false);
+          setResultBusy(false);
         }
       }
+    };
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      search(lib.classifyCommuneQuery(input.value), false);
     });
+
+    const fromUrl = () => {
+      const code = communeFromUrl();
+      if (!code) return;
+      input.value = code;
+      search({ type: "insee", value: code }, true);
+    };
+    window.addEventListener("popstate", fromUrl);
+    fromUrl();
   }
 
   function initGlossary() {
@@ -868,103 +1043,111 @@
         entry.hidden = !matches;
         if (matches) visible += 1;
       });
-      count.textContent = visible + " définition" + (visible > 1 ? "s" : "") + " affichée" + (visible > 1 ? "s" : "") + (query ? " pour « " + input.value.trim() + " »." : " dans le glossaire.");
+      if (!visible) {
+        count.textContent = typo("Aucune définition pour « " + input.value.trim() + " ». Essayez un mot plus court.");
+        return;
+      }
+      count.textContent = typo(visible + " définition" + (visible > 1 ? "s" : "") + (query ? " pour « " + input.value.trim() + " »." : " dans le glossaire."));
     };
     input.addEventListener("input", update);
     update();
+    // Une ancre vers un terme (#encours-de-dette) ouvre sa définition.
+    const openTarget = () => {
+      let target = null;
+      try { target = location.hash ? document.querySelector(location.hash) : null; } catch (error) { target = null; }
+      if (target && target.classList.contains("glossary-entry")) {
+        target.hidden = false;
+        target.open = true;
+      }
+    };
+    window.addEventListener("hashchange", openTarget);
+    openTarget();
   }
 
   async function initDebtComposition() {
     const table = document.getElementById("composition-table-body");
     if (!table) return;
     try {
-      const response = await fetch("data/indicators/dette-publique-composition-2026-T2.json", { cache: "no-store" });
+      const response = await fetch("data/indicators/dette-publique-composition-2026-T2.json");
       if (!response.ok) throw new Error("HTTP " + response.status);
       const data = await response.json();
       const total = data.headline.gross_debt;
       const netValue = document.getElementById("net-debt-value");
       const netContext = document.getElementById("net-debt-context");
-      if (netValue) netValue.textContent = money.format(data.headline.net_debt) + " Md€";
-      if (netContext) netContext.textContent = money.format(data.headline.net_debt_gdp_percent) + " % du PIB · variation trimestrielle : " + (data.headline.net_debt_change_qoq > 0 ? "+" : "") + money.format(data.headline.net_debt_change_qoq) + " Md€";
+      if (netValue) netValue.textContent = typo(money.format(data.headline.net_debt) + " Md€");
+      if (netContext) netContext.textContent = typo(money.format(data.headline.net_debt_gdp_percent) + " % du PIB · variation sur le trimestre : " + signed(data.headline.net_debt_change_qoq, money) + " Md€");
       table.replaceChildren();
-      data.subsectors.forEach((item) => {
+      const addRow = (cells, className) => {
         const tr = document.createElement("tr");
-        const share = item.debt / total * 100;
-        const variation = (item.change_qoq > 0 ? "+" : "") + money.format(item.change_qoq) + " Md€";
-        const cells = [
-          item.label,
-          money.format(item.debt) + " Md€",
-          variation,
-          ratio.format(share) + " %"
-        ];
+        if (className) tr.className = className;
         cells.forEach((text, index) => {
           const td = document.createElement("td");
-          td.textContent = text;
+          td.textContent = typo(text);
           if (index > 0) td.className = "numeric-cell";
           tr.appendChild(td);
         });
         table.appendChild(tr);
+      };
+      data.subsectors.forEach((item) => {
+        addRow([item.label, money.format(item.debt) + " Md€", signed(item.change_qoq, money) + " Md€", ratio.format(item.debt / total * 100) + " %"]);
       });
-      const totalRow = document.createElement("tr");
-      totalRow.className = "composition-total-row";
-      ["Total des administrations publiques", money.format(total) + " Md€", (data.headline.gross_debt_change_qoq > 0 ? "+" : "") + money.format(data.headline.gross_debt_change_qoq) + " Md€", "100,0 %"].forEach((text, index) => {
-        const td = document.createElement("td");
-        td.textContent = text;
-        if (index > 0) td.className = "numeric-cell";
-        totalRow.appendChild(td);
-      });
-      table.appendChild(totalRow);
+      addRow(["Total des administrations publiques", money.format(total) + " Md€", signed(data.headline.gross_debt_change_qoq, money) + " Md€", "100,0 %"], "composition-total-row");
     } catch (error) {
       table.replaceChildren();
       const row = document.createElement("tr");
       const cell = document.createElement("td");
       cell.colSpan = 4;
-      cell.textContent = "Données de composition momentanément indisponibles. Consultez la publication INSEE liée sous le tableau.";
+      cell.textContent = "Données de composition momentanément indisponibles. Consultez la publication de l’INSEE liée sous le tableau.";
       row.appendChild(cell);
       table.appendChild(row);
     }
   }
 
 
-  // Les tableaux chargés après coup déplacent les sections : on revient sur l’ancre demandée.
-  function restoreAnchor(initialScroll) {
-    if (!location.hash || window.scrollY !== initialScroll) return;
+  // Les tableaux chargés après coup déplacent les sections : on revient sur l’ancre demandée,
+  // sauf si le lecteur a déjà fait défiler la page lui-même.
+  let userScrolled = false;
+  ["wheel", "touchstart", "keydown", "mousedown"].forEach((type) => window.addEventListener(type, () => { userScrolled = true; }, { once: true, passive: true }));
+  function restoreAnchor() {
+    if (!location.hash || userScrolled) return;
     let target = null;
     try { target = document.querySelector(location.hash); } catch (error) { return; }
-    if (target) target.scrollIntoView({ block: "start" });
+    if (target) target.scrollIntoView({ block: "start", behavior: "instant" });
   }
 
   async function init() {
     initMunicipalitySearch();
     initGlossary();
+    initCurrentSection();
+    initBackToTop();
+    initScrollHints();
     const pending = [initDebtComposition()];
     const form = document.getElementById("claim-form");
     if (form) {
       form.addEventListener("submit", handleClaim);
-      // Liste des communes du socle commun préchargée dès la saisie (reconnaissance de toutes les communes).
+      // Liste des communes préchargée dès la saisie (reconnaissance de toutes les communes).
       form.addEventListener("focusin", () => { loadSearchIndex().catch(() => null); }, { once: true });
     }
     try {
-      const response = await fetch(DATA_URL, { cache: "no-store" });
+      const response = await fetch(DATA_URL);
       if (!response.ok) throw new Error("HTTP " + response.status);
       debtData = await response.json();
       renderDebt(debtData);
       const latest = debtData.records && debtData.records[0];
       const ribbonDebt = document.getElementById("ribbon-debt");
       const ribbonDebtContext = document.getElementById("ribbon-debt-context");
-      if (latest && ribbonDebt) ribbonDebt.textContent = money.format(latest.debt_eur_billion) + " Md€";
-      if (latest && ribbonDebtContext) ribbonDebtContext.textContent = ratio.format(latest.debt_gdp_percent) + " % du PIB · " + latest.period.replace(/^(\d{4})-(T\d)$/, "$2 $1");
+      if (latest && ribbonDebt) ribbonDebt.textContent = typo(formatDebt(latest.debt_eur_billion));
+      if (latest && ribbonDebtContext) ribbonDebtContext.textContent = typo(ratio.format(latest.debt_gdp_percent) + " % du PIB · " + lib.formatQuarter(latest.period));
     } catch (error) {
       const value = document.getElementById("latest-debt");
       if (value) value.textContent = "Données indisponibles";
       const period = document.getElementById("latest-period");
-      if (period) period.textContent = "Ouvrir le fichier source officiel pour consulter la dernière publication.";
+      if (period) period.textContent = "Ouvrez le fichier source officiel pour consulter la dernière publication.";
       const body = document.getElementById("debt-table-body");
-      if (body) body.textContent = "Impossible de charger le fichier JSON. Consultez directement la source INSEE.";
+      if (body) body.textContent = "Impossible de charger les données. Consultez directement la source de l’INSEE.";
     }
-    const scrollBefore = window.scrollY;
     await Promise.allSettled(pending);
-    requestAnimationFrame(() => restoreAnchor(scrollBefore));
+    requestAnimationFrame(restoreAnchor);
   }
 
   document.addEventListener("DOMContentLoaded", initMobileNavigation);

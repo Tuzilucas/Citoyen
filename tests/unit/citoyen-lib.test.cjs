@@ -205,17 +205,35 @@ test("Recherche de secours dans le socle et reconnaissance de toute commune", ()
 test("Analyse communale dynamique : aucune commune n'est imposée par défaut", () => {
   const html = fs.readFileSync(path.join(__dirname, "../../index.html"), "utf8");
   const debt = JSON.parse(fs.readFileSync(path.join(__dirname, "../../data/indicators/dette-publique-france.json"), "utf8"));
-  const text = html.replace(/ /g, " ");
+  const text = html.replace(/[\u00a0\u202f]/g, " ");
   assert.ok(text.includes('id="municipal-title">Les finances de la commune recherchée'));
   assert.ok(text.includes('id="municipal-status">En attente d’une commune'));
-  assert.ok(text.includes('id="ribbon-commune-savings">—'));
-  assert.ok(text.includes('id="ribbon-commune-debt">—'));
-  assert.ok(text.includes('id="ribbon-commune-rate">—'));
+  // Donnée absente = « Non disponible » (jamais un tiret ni un zéro), tuiles communales masquées avant la recherche.
+  assert.ok(text.includes('id="ribbon-commune-savings">Non disponible'));
+  assert.ok(text.includes('id="ribbon-commune-debt">Non disponible'));
+  assert.ok(text.includes('id="ribbon-commune-rate">Non disponible'));
+  assert.equal((text.match(/class="headline-metric headline-commune" hidden/g) || []).length, 3);
   assert.ok(!/fameck/.test(text.replace(/Ex\. : Fameck/, "")), "aucun identifiant propre à Fameck");
   assert.ok(text.includes('id="municipal-history-wrap" hidden'));
   assert.ok(!/Épargne brute · Fameck|Encours de dette · Fameck|Taux d’épargne brute · Fameck/.test(text));
-  const d = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1 }).format(debt.records[0].debt_eur_billion).replace(/ /g, " ");
+  const d = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1 }).format(debt.records[0].debt_eur_billion).replace(/[\u00a0\u202f]/g, " ");
   assert.ok(text.includes('id="ribbon-debt">' + d + " Md€"));
+});
+
+test("Glossaire : les définitions partagées reprennent mot pour mot celles de Pièces à l’appui quand elles sont disponibles", () => {
+  const html = fs.readFileSync(path.join(__dirname, "../../index.html"), "utf8");
+  const palFile = path.join(__dirname, "../../../france_2027-code-source/data/pages/pratique.json");
+  if (!fs.existsSync(palFile)) return; // dépôt voisin absent : contrôle ignoré
+  const norm = (t) => t.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/[\u00a0\u202f]/g, " ").replace(/\u2019/g, "'").replace(/\s+/g, " ").trim();
+  const pal = JSON.parse(fs.readFileSync(palFile, "utf8")).glossaire.filter((e) => e.theme === "finances");
+  const entries = new Map([...html.matchAll(/<summary>(.*?)<\/summary><p>(.*?)<\/p>/g)].map((m) => [m[1], norm(m[2])]));
+  let shared = 0;
+  pal.forEach((e) => {
+    if (!entries.has(e.term)) return;
+    shared += 1;
+    assert.equal(entries.get(e.term), norm(e.definition), e.term);
+  });
+  assert.ok(shared >= 40, shared + " termes partagés");
 });
 
 test("Glossaire : toutes les définitions sont dans la liste filtrable, triées", () => {
@@ -274,4 +292,19 @@ test("readTaux distingue taux publié, taux absent et composante sans objet", ()
   assert.equal(d.rows.find((r) => r.label === "Syndicats de communes").tfb, 0, "un zéro publié reste un zéro");
   assert.deepEqual(d.global, { tfb: 33.4, tfnb: null, th: null });
   assert.equal(d.thMajoration, undefined);
+});
+
+test("frenchTypo pose les espaces insécables et l’apostrophe typographique sans changer le texte", () => {
+  const out = lib.frenchTypo("Qu'est-ce que c'est ? Taux : 37,44 % « strate » ; 3 595,5 Md€ !");
+  assert.equal(out, "Qu’est-ce que c’est ? Taux : 37,44 % « strate » ; 3 595,5 Md€ !");
+  // Seuls les espaces et les apostrophes changent : le texte normalisé est identique.
+  const norm = (t) => t.replace(/[  ]/g, " ").replace(/’/g, "'");
+  assert.equal(norm(out), "Qu'est-ce que c'est ? Taux : 37,44 % « strate » ; 3 595,5 Md€ !");
+  assert.equal(lib.frenchTypo("https://exemple.fr/a?b=1"), "https://exemple.fr/a?b=1");
+  assert.equal(lib.frenchTypo(null), "");
+});
+
+test("formatQuarter écrit les trimestres en toutes lettres", () => {
+  assert.equal(lib.formatQuarter("2026-T2"), "2e trimestre 2026");
+  assert.equal(lib.formatQuarter("2026-T1"), "1er trimestre 2026");
 });

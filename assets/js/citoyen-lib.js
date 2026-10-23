@@ -386,6 +386,21 @@
     };
   }
 
+  // Typographie française des textes d’interface : apostrophe typographique, espace fine insécable
+  // avant ; ! ? %, insécable avant : et à l’intérieur des guillemets, chiffres groupés insécables.
+  // N’altère ni les lettres ni les chiffres : seul le type d’espace ou d’apostrophe change.
+  function frenchTypo(text) {
+    if (text === null || text === undefined) return "";
+    return String(text)
+      .replace(/([A-Za-zÀ-ÿ])'(?=[A-Za-zÀ-ÿ])/g, "$1\u2019")
+      .replace(/ ([;!?%])/g, "\u202f$1")
+      .replace(/ :/g, "\u00a0:")
+      .replace(/« /g, "«\u00a0")
+      .replace(/ »/g, "\u00a0»")
+      .replace(/(\d) (?=\d{3}(?!\d))/g, "$1\u202f")
+      .replace(/(\d) (?=(?:Md€|M€|€|ans\b|habitants\b))/g, "$1\u00a0");
+  }
+
   function formatQuarter(period) {
     const match = /^(\d{4})-T([1-4])$/.exec(String(period ?? ""));
     if (!match) return String(period ?? "");
@@ -421,5 +436,5 @@
     return "unknown";
   }
 
-  return { OFGL, DGFIP, TAUX, COMMUNE_INDICATORS, COMMUNE_DATASET_VERSION, buildCommuneDataset, searchSocleIndex, communeNameSet, dgfipKey, buildDgfipParams, readDgfip, buildTauxParams, readTaux, normalizeText, isInseeCode, classifyCommuneQuery, mergeCommunes, buildOfglParams, ofglDatasetLink, pickAmount, pickPerCapita, summarizeOfglRecords, selectPriorityAggregates, PRIORITY_AGGREGATES, formatQuarter, percentChange, directionWord, detectTopic };
+  return { OFGL, DGFIP, TAUX, COMMUNE_INDICATORS, COMMUNE_DATASET_VERSION, buildCommuneDataset, searchSocleIndex, communeNameSet, dgfipKey, buildDgfipParams, readDgfip, buildTauxParams, readTaux, normalizeText, isInseeCode, classifyCommuneQuery, mergeCommunes, buildOfglParams, ofglDatasetLink, pickAmount, pickPerCapita, summarizeOfglRecords, selectPriorityAggregates, PRIORITY_AGGREGATES, formatQuarter, frenchTypo, percentChange, directionWord, detectTopic };
 });

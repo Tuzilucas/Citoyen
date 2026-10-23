@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Vérifier les chiffres des finances publiques avec des sources officielles, les données brutes et les calculs transparents.">
-  <meta name="theme-color" content="#082746">
+  <meta name="description" content="Les finances de votre commune et de la France, avec les sources officielles, les données brutes et des calculs expliqués.">
+  <meta name="theme-color" content="#102f49">
   <link rel="icon" type="image/svg+xml" href="assets/img/logo-information-citoyenne.svg">
   <title>Information citoyenne — Finances publiques, sources à l’appui</title>
   <link rel="canonical" href="https://tuzilucas.github.io/Citoyen/">
@@ -12,7 +12,7 @@
   <meta property="og:locale" content="fr_FR">
   <meta property="og:site_name" content="Information citoyenne">
   <meta property="og:title" content="Information citoyenne — Finances publiques, sources à l’appui">
-  <meta property="og:description" content="Vérifier les chiffres des finances publiques avec des sources officielles, les données brutes et les calculs transparents.">
+  <meta property="og:description" content="Les finances de votre commune et de la France, avec les sources officielles, les données brutes et des calculs expliqués.">
   <meta property="og:url" content="https://tuzilucas.github.io/Citoyen/">
   <link rel="stylesheet" href="assets/css/app.css">
   <script src="assets/js/citoyen-lib.js" defer></script>
@@ -20,327 +20,314 @@
 </head>
 <body>
   <a class="skip-link" href="#contenu">Aller au contenu</a>
+  <p class="site-bridge"><span class="site-bridge-label">Site associé : </span><a href="https://tuzilucas.github.io/FRANCE_2027/" target="_blank" rel="noopener noreferrer">Présidentielle 2027 — Pièces à l’appui ↗<span class="visually-hidden"> (nouvel onglet)</span></a></p>
   <header class="site-header">
-    <a class="brand" href="./" aria-label="Accueil Information citoyenne">
-      <img class="brand-logo" src="assets/img/logo-information-citoyenne.svg" alt="" width="52" height="52">
-      <span><strong>Information citoyenne</strong><small>DES DONNÉES POUR UNE DÉMOCRATIE PLUS FORTE</small></span>
+    <a class="brand" href="./" aria-label="Information citoyenne, accueil">
+      <img class="brand-logo" src="assets/img/logo-information-citoyenne.svg" alt="" width="44" height="44">
+      <span><strong>Information citoyenne</strong><small>Finances publiques, sources à l’appui</small></span>
     </a>
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="navigation-principale"><span class="nav-toggle-label">Menu</span><span class="nav-toggle-icon" aria-hidden="true">+</span></button>
     <nav id="navigation-principale" aria-label="Navigation principale">
-      <a href="#contenu">Accueil</a>
-      <a href="#territoires">France</a>
-      <a href="#communes">Communes</a>
-      <a href="#analyse-communale">Analyse communale</a>
-      <a href="#comparaison-strate">Communes équivalentes</a>
-      <a href="#verifier">Vérifier un chiffre</a>
-      <a href="#explorer">Explorer les données</a>
-      <a href="#composition-dette">Répartition de la dette</a>
+      <a href="#communes">Ma commune</a>
+      <a href="#analyse-communale">Analyse</a>
+      <a href="#comparaison-strate">Comparaison</a>
+      <a href="#verifier">Vérifier</a>
+      <a href="#indicateur-dette">Dette</a>
+      <a href="#composition-dette">Répartition</a>
+      <a href="#explorer">Données</a>
       <a href="#glossaire">Glossaire</a>
-      <a href="#methode">Notre méthode</a>
-      <a class="presidentielle-link" href="https://tuzilucas.github.io/FRANCE_2027/carte/">Présidentielle 2027</a>
+      <a href="#methode">Méthode</a>
+      <a class="nav-external" href="https://tuzilucas.github.io/FRANCE_2027/" target="_blank" rel="noopener noreferrer">Présidentielle 2027 — Pièces à l’appui ↗<span class="visually-hidden"> (nouvel onglet)</span></a>
     </nav>
   </header>
 
   <main id="contenu">
-    <section class="hero hero-redesigned" aria-labelledby="hero-title">
-      <div class="hero-brand-lockup">
-        <img src="assets/img/logo-information-citoyenne.svg" alt="" class="hero-logo" width="144" height="144">
-        <div>
-          <p class="eyebrow">Observatoire indépendant des finances publiques</p>
-          <h1 id="hero-title">Information<br><span>citoyenne.</span></h1>
-          <p class="hero-signature">COMPRENDRE · VÉRIFIER · DOCUMENTER</p>
+    <section id="communes" class="hero" aria-labelledby="hero-title">
+      <p class="eyebrow">Finances publiques · sources officielles</p>
+      <h1 id="hero-title">Les finances de votre commune et de la France, sources à l’appui</h1>
+      <p class="hero-copy">Saisissez une commune pour voir ses comptes officiels, expliqués simplement. La recherche couvre les 34 875 communes.</p>
+      <form id="commune-form" class="commune-form">
+        <label for="commune-query">Nom, code postal ou code INSEE</label>
+        <div class="commune-search-row">
+          <input id="commune-query" name="commune" type="search" placeholder="Ex. : Fameck, 57290 ou 57206" autocomplete="off" required>
+          <button class="button button-primary" type="submit">Rechercher</button>
         </div>
-      </div>
-      <div class="hero-message">
-        <p class="eyebrow">Les chiffres, les sources, la méthode</p>
-        <h2>Comprendre les comptes.<br>Pas seulement les commenter.</h2>
-        <p class="hero-copy">Des données publiques, des calculs explicites et des sources accessibles pour décrypter les finances de la France et de ses territoires.</p>
-        <div class="hero-actions">
-          <a class="button button-primary" href="#verifier">Vérifier une affirmation</a>
-          <a class="button button-secondary" href="#territoires">Explorer les territoires</a>
-        </div>
-      </div>
-      <p class="hero-note"><span class="live-dot" aria-hidden="true"></span> Les données dont la vérification n’est pas terminée sont signalées comme telles.</p>
+        <p class="form-hint">Pour chaque commune, le site affiche les comptes publiés par l’<abbr title="Observatoire des finances et de la gestion publique locales">OFGL</abbr> et la <abbr title="Direction générale des finances publiques">DGFiP</abbr> quand ils existent. Sinon, il l’indique.</p>
+      </form>
+      <div id="commune-result" class="commune-result" aria-live="polite" hidden></div>
+      <ul class="hero-links">
+        <li><a href="#verifier">Vérifier un chiffre entendu</a></li>
+        <li><a href="#indicateur-dette">La dette publique de la France</a></li>
+      </ul>
     </section>
 
-
     <section class="headline-ribbon" aria-label="Quelques chiffres clés">
-      <a href="#indicateur-dette" class="headline-metric"><span class="headline-icon" aria-hidden="true">⌂</span><span><small>Dette publique brute · France</small><strong id="ribbon-debt">3 595,5 Md€</strong><em id="ribbon-debt-context">119,0 % du PIB · T2 2026</em></span></a>
-      <a href="#analyse-communale" class="headline-metric"><span class="headline-icon" aria-hidden="true">▥</span><span><small>Épargne brute · commune recherchée</small><strong id="ribbon-commune-savings">—</strong><em id="ribbon-local-savings-context">Choisissez une commune</em></span></a>
-      <a href="#analyse-communale" class="headline-metric"><span class="headline-icon" aria-hidden="true">▤</span><span><small>Encours de dette · commune recherchée</small><strong id="ribbon-commune-debt">—</strong><em id="ribbon-local-debt-context">En fin d’exercice</em></span></a>
-      <a href="#analyse-communale" class="headline-metric"><span class="headline-icon" aria-hidden="true">↗</span><span><small>Taux d’épargne brute · commune recherchée</small><strong id="ribbon-commune-rate">—</strong><em id="ribbon-local-rate-context">Calculé si les données sont disponibles</em></span></a>
+      <a href="#indicateur-dette" class="headline-metric"><span class="headline-icon" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 9.5 10 4l7 5.5V17H3z"/><path d="M8 17v-4.5h4V17"/></svg></span><span><small>Dette publique (au sens de Maastricht), en milliards d’euros (Md€)</small><strong id="ribbon-debt">3 595,5 Md€</strong><em id="ribbon-debt-context">119,0 % du PIB · 2e trimestre 2026</em></span></a>
+      <a href="#communes" class="headline-call" id="ribbon-call">Choisissez une commune pour afficher son épargne brute, sa dette et son taux d’épargne →</a>
+      <a href="#analyse-communale" class="headline-metric headline-commune" hidden><span class="headline-icon" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 16V9M8 16V5M12 16v-6M16 16V7"/></svg></span><span><small>Épargne brute · commune recherchée</small><strong id="ribbon-commune-savings">Non disponible</strong><em id="ribbon-local-savings-context">Aucune commune choisie</em></span></a>
+      <a href="#analyse-communale" class="headline-metric headline-commune" hidden><span class="headline-icon" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 5h14M3 10h14M3 15h9"/></svg></span><span><small>Encours de dette · commune recherchée</small><strong id="ribbon-commune-debt">Non disponible</strong><em id="ribbon-local-debt-context">En fin d’exercice</em></span></a>
+      <a href="#analyse-communale" class="headline-metric headline-commune" hidden><span class="headline-icon" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 16 16 4M11 4h5v5"/></svg></span><span><small>Taux d’épargne brute · commune recherchée</small><strong id="ribbon-commune-rate">Non disponible</strong><em id="ribbon-local-rate-context">Calculé si les données sont disponibles</em></span></a>
     </section>
 
     <section id="territoires" class="section territory-section">
       <div class="section-heading">
-        <div><p class="eyebrow">Un observatoire, plusieurs échelles</p><h2>Commencer par un territoire</h2></div>
-        <p class="muted">Le site s’élargira progressivement. Chaque territoire n’affichera des chiffres qu’une fois les sources et les périmètres contrôlés.</p>
+        <div><p class="eyebrow">Deux échelles, une même méthode</p><h2>Par où commencer ?</h2></div>
+        <p class="muted">Chaque chiffre affiché indique sa source, sa période et son périmètre.</p>
       </div>
       <div class="territory-grid">
-        <article class="territory-card territory-card-featured">
-          <span class="territory-status territory-status-review">Prototype disponible · données à contrôler</span>
+        <article class="territory-card">
+          <span class="territory-status">Recherche en direct · 34 875 communes</span>
+          <p class="territory-kicker">Échelle locale</p>
+          <h3>Votre commune</h3>
+          <p>Ses comptes publiés par l’OFGL et la DGFiP, expliqués et comparés aux communes de même taille.</p>
+          <a class="button button-primary" href="#communes">Choisir une commune</a>
+        </article>
+        <article class="territory-card">
+          <span class="territory-status">Source : INSEE</span>
           <p class="territory-kicker">Échelle nationale</p>
           <h3>France</h3>
-          <p>Explorer la série trimestrielle de dette publique, comprendre ce qu’elle mesure et retrouver les publications de l’INSEE.</p>
-          <a class="button button-primary" href="#indicateur-dette">Explorer la dette publique</a>
+          <p>La dette publique trimestrielle, ce qu’elle mesure, qui la porte, et les publications de l’INSEE.</p>
+          <a class="button button-secondary" href="#indicateur-dette">Voir la dette publique</a>
         </article>
         <article class="territory-card">
-          <span class="territory-status">Recherche en direct</span>
-          <p class="territory-kicker">Échelle locale</p>
-          <h3>La commune de votre choix</h3>
-          <p>Recherchez une commune pour remplacer automatiquement l’analyse locale. Les données, les indicateurs, les comparaisons annuelles et les explications s’adaptent à la commune sélectionnée.</p>
-          <a class="button button-secondary" href="#communes">Choisir une commune</a>
-        </article>
-        <article class="territory-card">
-          <span class="territory-status">Étape ultérieure</span>
-          <p class="territory-kicker">Généralisation</p>
-          <h3>Toutes les communes</h3>
-          <p>L’objectif est de permettre une recherche par commune, puis d’appliquer les mêmes règles de calcul, avec les exceptions et les données manquantes clairement signalées.</p>
-          <span class="territory-note">Aucune couverture nationale des communes n’est revendiquée à ce stade.</span>
+          <span class="territory-status">Sans verdict</span>
+          <p class="territory-kicker">Vérification</p>
+          <h3>Un chiffre entendu</h3>
+          <p>Comparez-le à la donnée officielle de même sujet, même période et même périmètre.</p>
+          <a class="button button-secondary" href="#verifier">Vérifier un chiffre</a>
         </article>
       </div>
     </section>
 
-  <section id="communes" class="section commune-search-section">
+    <section id="analyse-communale" class="section municipal-finance-section">
       <div class="section-heading">
-        <div><p class="eyebrow">Recherche territoriale · première version</p><h2>Rechercher une commune</h2></div>
-        <p class="muted">Cette recherche couvre les communes du référentiel national. Elle identifie la commune puis donne accès à la base financière officielle ; les comptes ne sont pas encore tous présentés directement sur ce site.</p>
-      </div>
-      <form id="commune-form" class="commune-form">
-        <label for="commune-query">Nom, code postal ou code INSEE</label>
-        <div class="commune-search-row">
-          <input id="commune-query" name="commune" type="search" placeholder="Ex. : Fameck, 57290 ou 57206" autocomplete="off" required>
-          <button class="button button-primary" type="submit">Rechercher</button>
-        </div>
-        <p class="form-hint">Recherche par nom, code postal ou code INSEE dans le référentiel national. Les comptes financiers officiels sont ensuite accessibles via l’OFGL ; leur intégration complète dans l’observatoire se fera progressivement.</p>
-      </form>
-      <div id="commune-result" class="commune-result" aria-live="polite" hidden></div>
-    </section>
-
-  <section id="analyse-communale" class="section municipal-finance-section">
-      <div class="section-heading">
-        <div><p class="eyebrow">Analyse territoriale détaillée</p><h2 id="municipal-title">Les finances de la commune recherchée</h2></div>
+        <div><p class="eyebrow">Analyse détaillée</p><h2 id="municipal-title">Les finances de la commune recherchée</h2></div>
         <span class="status status-review" id="municipal-status">En attente d’une commune</span>
       </div>
-      <p class="municipal-intro" id="municipal-intro">Recherchez une commune dans la section « Rechercher une commune », puis sélectionnez-la si plusieurs résultats sont proposés. Cette partie sera remplacée par son analyse : données disponibles, explication de chaque indicateur, calculs, évolution dans le temps et limites méthodologiques. La même analyse s’applique à chacune des 34 875 communes de France, sans commune imposée par défaut.</p>
-      <div class="municipal-metrics" id="commune-metrics"><p>Choisissez une commune pour charger ses données.</p></div>
+      <p class="municipal-intro" id="municipal-intro">Choisissez d’abord une commune dans la recherche en haut de page. Cette partie affiche alors ses comptes : chiffres clés, calculs, évolution dans le temps et limites.</p>
+      <div class="municipal-metrics" id="commune-metrics"><p>Aucune commune choisie pour l’instant.</p></div>
       <div class="municipal-calculs" id="commune-calculs"></div>
-      <div class="municipal-readout" id="commune-analysis"><strong>Comment lire les comptes de cette commune</strong><p>Les indicateurs apparaîtront ici après la recherche.</p></div>
+      <div class="municipal-readout" id="commune-analysis" hidden></div>
       <div class="municipal-dataset" id="commune-dataset"></div>
-      <div class="municipal-history-wrap" id="municipal-history-wrap" hidden><h3>Évolution annuelle</h3><p id="municipal-history-intro">Les années ne sont comparées que lorsque les agrégats et les périmètres sont disponibles.</p><table><caption id="municipal-history-caption">Commune sélectionnée · budget principal · données OFGL à contrôler</caption><thead><tr><th scope="col">Année</th><th scope="col">Population</th><th scope="col">Recettes de fonctionnement</th><th scope="col">Dépenses de fonctionnement</th><th scope="col">Épargne brute</th><th scope="col">Épargne nette</th><th scope="col">Dette en fin d’année</th><th scope="col">Dette par habitant</th><th scope="col">Impôts locaux</th><th scope="col">Dotation globale de fonctionnement</th><th scope="col">Dépenses d’investissement</th><th scope="col">Fonds de roulement</th><th scope="col">Taux d’épargne</th><th scope="col">Désendettement théorique</th></tr></thead><tbody id="commune-history-body"><tr><td colspan="14">Aucune commune sélectionnée.</td></tr></tbody></table></div>
+      <div class="municipal-history-wrap" id="municipal-history-wrap" hidden><h3>Évolution annuelle</h3><p id="municipal-history-intro">Les années sont comparées seulement quand les mêmes postes comptables sont publiés.</p><div class="history-scroll"><table><caption id="municipal-history-caption">Commune sélectionnée · budget principal · source : OFGL</caption><thead><tr><th scope="col">Année</th><th scope="col">Population</th><th scope="col">Recettes de fonctionnement</th><th scope="col">Dépenses de fonctionnement</th><th scope="col">Épargne brute</th><th scope="col">Épargne nette</th><th scope="col">Dette en fin d’année</th><th scope="col">Dette par habitant</th><th scope="col">Impôts locaux</th><th scope="col">Dotation globale de fonctionnement</th><th scope="col">Dépenses d’investissement</th><th scope="col">Fonds de roulement</th><th scope="col">Taux d’épargne</th><th scope="col">Désendettement théorique</th></tr></thead><tbody id="commune-history-body"><tr><td colspan="14">Aucune commune sélectionnée.</td></tr></tbody></table></div></div>
       <div class="municipal-source-note" id="municipal-method">
         <strong>La méthode d’analyse</strong>
-        <p>Le budget principal est séparé des budgets annexes. Une valeur absente n’est jamais remplacée par zéro. L’encours de dette est un stock à une date donnée ; les recettes et dépenses sont des flux sur l’exercice. Le taux d’épargne brute est calculé comme épargne brute ÷ recettes de fonctionnement × 100, uniquement si les deux données sont disponibles et comparables. La capacité de désendettement est encours de dette ÷ épargne brute, uniquement si l’épargne brute est positive.</p>
-        <p>Source financière : <a href="https://data.ofgl.fr/explore/dataset/ofgl-base-communes/" target="_blank" rel="noopener noreferrer">OFGL — comptes des communes ↗</a>. Les données chargées automatiquement doivent être rapprochées des fiches méthodologiques officielles ; les calculs sont descriptifs et ne suffisent pas à conclure qu’une gestion est bonne ou mauvaise.</p>
+        <p>Le budget principal est présenté seul, sans les budgets annexes. Une valeur absente n’est jamais remplacée par zéro. L’encours de dette est un stock, mesuré à une date. Les recettes et les dépenses sont des flux, mesurés sur l’année.</p>
+        <p>Taux d’épargne brute = épargne brute ÷ recettes de fonctionnement × 100, si les deux données sont disponibles. Capacité de désendettement = encours de dette ÷ épargne brute, seulement si l’épargne brute est positive.</p>
+        <p>Source financière : <a href="https://data.ofgl.fr/explore/dataset/ofgl-base-communes/" target="_blank" rel="noopener noreferrer">OFGL — comptes des communes ↗<span class="visually-hidden"> (nouvel onglet)</span></a>. Les montants sont lus automatiquement dans cette base. Les calculs décrivent la situation ; ils ne disent pas si une gestion est bonne ou mauvaise.</p>
       </div>
     </section>
 
-  <section id="comparaison-strate" class="section strata-section">
+    <section id="comparaison-strate" class="section strata-section">
       <div class="section-heading">
-        <div><p class="eyebrow">Communes équivalentes</p><h2 id="strata-title">Comparer la commune avec les communes de même taille</h2></div>
-        <span class="status status-review">Données officielles DGFiP</span>
+        <div><p class="eyebrow">Communes comparables</p><h2 id="strata-title">Comparer la commune avec les communes de même taille</h2></div>
+        <span class="status status-source" id="strata-status" hidden>Données officielles DGFiP</span>
       </div>
-      <p class="municipal-intro">La DGFiP publie, pour chaque commune, ses comptes en euros par habitant à côté de la moyenne des communes de la même « strate » : même tranche de population et même type de rattachement à une intercommunalité. On y lit aussi où va l’argent de fonctionnement, d’où il vient, et le produit de chaque impôt local (taxe foncière, taxe d’habitation sur les résidences secondaires, cotisation foncière des entreprises, fraction de TVA…) avec le taux voté.</p>
-      <div id="strata-content" aria-live="polite"><p>Choisissez une commune pour charger sa fiche officielle.</p></div>
-      <h3 class="strata-subtitle">Sur l’avis de taxe foncière : qui reçoit quoi</h3>
+      <p class="municipal-intro">La DGFiP publie les comptes de chaque commune en euros par habitant. Elle les place à côté de la moyenne des communes de la même « strate » : même tranche de population et même type de rattachement à une intercommunalité. On y lit aussi d’où vient et où va l’argent de fonctionnement. Enfin, on y trouve le produit de chaque impôt local et le taux voté (taxe foncière, taxe d’habitation sur les résidences secondaires, cotisation foncière des entreprises, fraction de TVA…).</p>
+      <div id="strata-content" aria-live="polite"><p>Choisissez une commune pour afficher sa fiche officielle.</p></div>
+      <h3 class="strata-subtitle">Sur l’avis de taxe foncière : qui reçoit quoi</h3>
       <div id="taux-content" aria-live="polite"><p>Choisissez une commune pour afficher les taux de chaque bénéficiaire.</p></div>
       <div class="municipal-source-note">
         <strong>Lire une moyenne de strate</strong>
-        <p>Selon la DGFiP, « les valeurs moyennes des groupes de référence doivent toujours être relativisées par le lecteur. En effet, elles recouvrent des situations et des modes de gestion très divers. » Un écart avec la moyenne invite à en chercher la raison (compétences transférées à l’intercommunalité, équipements, budgets annexes) ; il ne dit pas, à lui seul, si une gestion est bonne ou mauvaise.</p>
-        <p>Sources : <a href="https://data.economie.gouv.fr/explore/dataset/comptes-individuels-des-communes-fichier-global-2025/" target="_blank" rel="noopener noreferrer">DGFiP — comptes individuels des communes 2025 ↗</a> · <a href="https://www.impots.gouv.fr/cll/application/pdf/methodo_commune.pdf" target="_blank" rel="noopener noreferrer">note méthodologique de la DGFiP ↗</a> · <a href="https://www.collectivites-locales.gouv.fr/gerer-les-finances-publiques-locales/fiscalite-locale/fiscalite-directe-locale/principes-generaux-de-la-fiscalite-directe-locale" target="_blank" rel="noopener noreferrer">principes de la fiscalité directe locale ↗</a> · <a href="https://data.economie.gouv.fr/explore/dataset/fiscalite-locale-des-particuliers/" target="_blank" rel="noopener noreferrer">DGFiP — taux de fiscalité locale des particuliers ↗</a></p>
+        <p>Selon la DGFiP, « les valeurs moyennes des groupes de référence doivent toujours être relativisées par le lecteur. En effet, elles recouvrent des situations et des modes de gestion très divers. »</p>
+        <p>Un écart avec la moyenne invite à en chercher la raison : compétences transférées à l’intercommunalité, équipements, budgets annexes. Il ne dit pas, à lui seul, si une gestion est bonne ou mauvaise.</p>
+        <p>Sources : <a href="https://data.economie.gouv.fr/explore/dataset/comptes-individuels-des-communes-fichier-global-2025/" target="_blank" rel="noopener noreferrer">DGFiP — comptes individuels des communes 2025 ↗<span class="visually-hidden"> (nouvel onglet)</span></a> · <a href="https://www.impots.gouv.fr/cll/application/pdf/methodo_commune.pdf" target="_blank" rel="noopener noreferrer">note méthodologique de la DGFiP (PDF) ↗<span class="visually-hidden"> (nouvel onglet)</span></a> · <a href="https://www.collectivites-locales.gouv.fr/gerer-les-finances-publiques-locales/fiscalite-locale/fiscalite-directe-locale/principes-generaux-de-la-fiscalite-directe-locale" target="_blank" rel="noopener noreferrer">principes de la fiscalité directe locale ↗<span class="visually-hidden"> (nouvel onglet)</span></a> · <a href="https://data.economie.gouv.fr/explore/dataset/fiscalite-locale-des-particuliers/" target="_blank" rel="noopener noreferrer">DGFiP — taux de fiscalité locale des particuliers ↗<span class="visually-hidden"> (nouvel onglet)</span></a></p>
       </div>
     </section>
 
-  <section id="verifier" class="section verification-section">
+    <section id="verifier" class="section verification-section">
       <div class="section-heading">
-        <div><p class="eyebrow">Vérification rapide</p><h2>Qu’est-ce que tu veux vérifier ?</h2></div>
-        <p class="muted">Cherche un sujet ou saisis une affirmation entendue dans un débat.</p>
+        <div><p class="eyebrow">Vérification rapide</p><h2>Que voulez-vous vérifier ?</h2></div>
+        <p class="muted">Indiquez un sujet ou recopiez une affirmation entendue dans un débat.</p>
       </div>
       <form id="claim-form" class="claim-form">
         <label for="claim-text">Le chiffre ou l’affirmation</label>
-        <input id="claim-text" name="claim" type="search" placeholder="Ex. : la dette publique est de 3 500 milliards" autocomplete="off" required>
+        <input id="claim-text" name="claim" type="search" placeholder="Ex. : la dette publique est de 3 500 milliards" autocomplete="off" required>
         <div class="form-grid">
-          <div><label for="claim-period">Période concernée (si connue)</label><select id="claim-period" name="period"><option value="">Je ne sais pas</option><option value="2026-T2">2e trimestre 2026</option><option value="2026-T1">1er trimestre 2026</option><option value="2025-T4">4e trimestre 2025</option><option value="2025">Année 2025</option><option value="2024">Année 2024</option><option value="2014-2015">2014–2015 (deux exercices)</option><option value="2014">Année 2014</option><option value="2015">Année 2015</option></select></div>
+          <div><label for="claim-period">Période concernée (si connue)</label><select id="claim-period" name="period"><option value="">Je ne sais pas</option><option value="2026-T2">2e trimestre 2026</option><option value="2026-T1">1er trimestre 2026</option><option value="2025-T4">4e trimestre 2025</option><option value="2025">Année 2025</option><option value="2024">Année 2024</option><option value="2015">Année 2015</option><option value="2014">Année 2014</option><option value="2014-2015">2014–2015 (deux exercices)</option></select></div>
           <div><label for="claim-scope">Sujet</label><select id="claim-scope" name="scope"><option value="auto">Détecter automatiquement</option><option value="dette">Dette publique</option><option value="education">Budget de l’Éducation nationale</option><option value="commune">Finances d’une commune</option><option value="budget-etat">Budget de l’État</option></select></div>
         </div>
         <button class="button button-primary" type="submit">Rechercher les données officielles</button>
-        <p class="form-hint">Le site ne juge pas une personne et ne qualifie pas une affirmation de « vraie » ou « fausse » sans données correspondant exactement au sujet, à la période et au périmètre.</p>
+        <p class="form-hint">Le site ne juge personne. Il ne qualifie pas une affirmation de « vraie » ou « fausse » sans donnée de même sujet, même période et même périmètre.</p>
       </form>
       <div id="claim-result" class="claim-result" aria-live="polite" hidden></div>
     </section>
 
     <section id="indicateur-dette" class="section debt-section">
       <div class="section-heading">
-        <div><p class="eyebrow">Indicateur national disponible</p><h2>La dette publique en un coup d’œil</h2></div>
-        <span class="status status-review">Source officielle · rapprochement du fichier brut à terminer</span>
+        <div><p class="eyebrow">Indicateur national</p><h2>La dette publique en un coup d’œil</h2></div>
+        <span class="status status-source">Source : INSEE · valeurs relues le 22 octobre 2026</span>
       </div>
       <div class="debt-card">
         <div class="debt-main">
-          <p class="metric-label">Dette publique au sens de Maastricht</p>
-          <p class="metric-value" id="latest-debt">—</p>
-          <p class="metric-context" id="latest-period">Chargement des données de référence…</p>
+          <p class="metric-label">Dette publique (au sens de Maastricht)</p>
+          <p class="metric-value" id="latest-debt">Chargement…</p>
+          <p class="metric-context" id="latest-period">Chargement des données…</p>
         </div>
         <div class="debt-ratio">
           <p class="metric-label">En proportion du PIB</p>
-          <p class="ratio-value" id="latest-ratio">—</p>
+          <p class="ratio-value" id="latest-ratio">Chargement…</p>
           <p class="metric-context">Valeur publiée par l’INSEE pour la même période</p>
         </div>
       </div>
       <div class="plain-language">
         <span class="plain-icon" aria-hidden="true">?</span>
-        <div><strong>En clair, qu’est-ce que ça signifie ?</strong><p>Il s’agit d’un stock de dette mesuré à la fin du trimestre, pas du total des dépenses de l’année. La dette de Maastricht est brute et consolidée : les actifs financiers ne sont pas déduits et les dettes entre administrations publiques sont neutralisées.</p><a href="https://www.insee.fr/fr/metadonnees/definition/c1091" target="_blank" rel="noopener noreferrer">Lire la définition officielle de l’INSEE ↗</a></div>
+        <div><strong>En clair, qu’est-ce que ça signifie ?</strong><p>C’est un stock de dette, mesuré à la fin du trimestre. Ce n’est pas le total des dépenses de l’année. La dette de Maastricht est brute : les actifs financiers ne sont pas déduits. Elle est consolidée : les dettes entre administrations publiques sont neutralisées.</p><a href="https://www.insee.fr/fr/metadonnees/definition/c1091" target="_blank" rel="noopener noreferrer">Lire la définition officielle de l’INSEE ↗<span class="visually-hidden"> (nouvel onglet)</span></a></div>
       </div>
       <div class="data-actions">
-        <a id="raw-debt-link" class="button button-primary" href="https://www.insee.fr/fr/statistiques/fichier/2830301/econ-gen-dette-trim-adm-pub-2.xlsx" target="_blank" rel="noopener noreferrer">Ouvrir les données brutes officielles (XLSX) ↗</a>
-        <a href="https://www.insee.fr/fr/statistiques/2830301" target="_blank" rel="noopener noreferrer">Consulter la page INSEE</a>
-        <a href="data/indicators/dette-publique-france.json">Voir les données utilisées par ce prototype (JSON)</a>
+        <a id="raw-debt-link" class="button button-primary" href="https://www.insee.fr/fr/statistiques/fichier/2830301/econ-gen-dette-trim-adm-pub-2.xlsx" target="_blank" rel="noopener noreferrer">Ouvrir les données brutes officielles (XLSX) ↗<span class="visually-hidden"> (nouvel onglet)</span></a>
+        <a href="https://www.insee.fr/fr/statistiques/2830301" target="_blank" rel="noopener noreferrer">Consulter la page de l’INSEE ↗<span class="visually-hidden"> (nouvel onglet)</span></a>
+        <a href="data/indicators/dette-publique-france.json">Voir les données utilisées par ce site (JSON)</a>
       </div>
-      <p class="data-disclaimer">Transparence : les valeurs visibles sont transcrites du tableau publié par l’INSEE. Le fichier XLSX source est accessible ci-dessus, mais le rapprochement automatique avec ce fichier reste à faire. Elles sont donc signalées comme données à contrôler, et non comme série déjà validée de bout en bout.</p>
+      <p class="data-disclaimer">Transparence : ces valeurs sont transcrites du tableau publié par l’INSEE le 29 septembre 2026. Elles ont été relues contre cette publication le 22 octobre 2026, comme sur Pièces à l’appui. Le rapprochement automatique avec le fichier XLSX reste à faire.</p>
       <div class="table-wrap">
         <table>
-          <caption>Extrait de la série officielle — données de référence à contrôler avec le fichier XLSX</caption>
-          <thead><tr><th scope="col">Période</th><th scope="col">Dette (milliards €)</th><th scope="col">Dette (% du PIB)</th></tr></thead>
+          <caption>Série trimestrielle publiée par l’INSEE (Md€ : milliards d’euros)</caption>
+          <thead><tr><th scope="col">Période</th><th scope="col" class="numeric-cell">Dette (Md€)</th><th scope="col" class="numeric-cell">Dette (% du PIB)</th></tr></thead>
           <tbody id="debt-table-body"><tr><td colspan="3">Chargement des observations…</td></tr></tbody>
         </table>
       </div>
     </section>
 
-
     <section id="composition-dette" class="section composition-section">
       <div class="section-heading">
-        <div><p class="eyebrow">Décryptage · T2 2026</p><h2>Qui porte la dette publique ?</h2></div>
-        <p class="muted">Répartition de l’encours et variation sur le trimestre, d’après la publication INSEE du 29 septembre 2026.</p>
+        <div><p class="eyebrow">Décryptage · 2e trimestre 2026</p><h2>Qui porte la dette publique ?</h2></div>
+        <p class="muted">Répartition de l’encours et variation sur le trimestre, d’après la publication de l’INSEE du 29 septembre 2026.</p>
       </div>
       <div class="composition-lead">
-        <p class="composition-number" id="net-debt-value">—</p>
+        <p class="composition-number" id="net-debt-value">Chargement…</p>
         <div><strong>Dette publique nette</strong><p id="net-debt-context">Après prise en compte de certains actifs financiers.</p></div>
       </div>
       <div class="composition-table-wrap">
         <table>
-          <caption>Dette brute consolidée par sous-secteur, fin T2 2026</caption>
-          <thead><tr><th scope="col">Administration</th><th scope="col">Encours</th><th scope="col">Variation sur le trimestre</th><th scope="col">Part de la dette brute</th></tr></thead>
+          <caption>Dette brute consolidée par sous-secteur, fin du 2e trimestre 2026 (Md€)</caption>
+          <thead><tr><th scope="col">Administration</th><th scope="col" class="numeric-cell">Encours</th><th scope="col" class="numeric-cell">Variation sur le trimestre</th><th scope="col" class="numeric-cell">Part de la dette brute</th></tr></thead>
           <tbody id="composition-table-body"><tr><td colspan="4">Chargement des données…</td></tr></tbody>
         </table>
       </div>
       <div class="composition-notes">
-        <article><span class="composition-tag">Le principal moteur</span><strong>État</strong><p>La contribution de l’État augmente de <b>53,0 Md€</b>, sur une hausse totale de dette brute de 59,6 Md€.</p></article>
-        <article><span class="composition-tag">À contre-courant</span><strong>Administrations locales</strong><p>Leur contribution à la dette publique diminue de <b>1,7 Md€</b> au deuxième trimestre.</p></article>
-        <article><span class="composition-tag">À ne pas confondre</span><strong>Dette nette ≠ dette brute</strong><p>La dette nette atteint 3 366,8 Md€ et augmente de 68,2 Md€, notamment avec la baisse de trésorerie publique.</p></article>
+        <article><span class="composition-tag">Plus forte hausse</span><strong>État</strong><p>La contribution de l’État augmente de <b>53,0 Md€</b>, sur une hausse totale de dette brute de 59,6 Md€.</p></article>
+        <article><span class="composition-tag">En baisse</span><strong>Administrations locales</strong><p>Leur contribution à la dette publique diminue de <b>1,7 Md€</b> au 2e trimestre.</p></article>
+        <article><span class="composition-tag">À ne pas confondre</span><strong>Dette nette ≠ dette brute</strong><p>La dette nette atteint 3 366,8 Md€ et augmente de 68,2 Md€, notamment avec la baisse de trésorerie publique.</p></article>
       </div>
-      <p class="composition-source">Note de calcul : les montants par sous-secteur étant publiés arrondis au dixième, leur somme (3 595,6 Md€) diffère de 0,1 Md€ du total publié (3 595,5 Md€). Il s’agit d’un écart d’arrondi, pas d’un montant ajouté. Source : <a href="https://www.insee.fr/fr/statistiques/9053525" target="_blank" rel="noopener noreferrer">INSEE, Informations rapides n° 239, 29 septembre 2026 ↗</a>. Les chiffres sont transcrits de la publication officielle ; le rapprochement automatisé avec le fichier XLSX reste à effectuer. <a href="data/indicators/dette-publique-composition-2026-T2.json">Données utilisées (JSON)</a>.</p>
+      <p class="composition-source">Note de calcul : les montants par sous-secteur sont publiés arrondis au dixième. Leur somme (3 595,6 Md€) diffère donc de 0,1 Md€ du total publié (3 595,5 Md€). C’est un écart d’arrondi, pas un montant ajouté. Source : <a href="https://www.insee.fr/fr/statistiques/9053525" target="_blank" rel="noopener noreferrer">INSEE, Informations rapides n° 239, 29 septembre 2026 ↗<span class="visually-hidden"> (nouvel onglet)</span></a>. Encours et variations par sous-secteur relus contre cette publication le 22 octobre 2026. <a href="data/indicators/dette-publique-composition-2026-T2.json">Données utilisées (JSON)</a>.</p>
     </section>
 
     <section id="explorer" class="section">
       <div class="section-heading">
         <div><p class="eyebrow">Données ouvertes</p><h2>Les données brutes restent accessibles</h2></div>
-        <p class="muted">Chaque indicateur doit permettre de remonter au document d’origine.</p>
+        <p class="muted">Chaque indicateur permet de remonter au document d’origine.</p>
       </div>
       <div class="cards">
         <article class="info-card">
           <span class="card-kicker">Niveau national</span><h3>Dette et déficit publics</h3>
           <p>Dette, déficit, répartition par sous-secteur et explications de méthode publiés par l’INSEE.</p>
-          <a href="https://www.insee.fr/fr/statistiques/8988843" target="_blank" rel="noopener noreferrer">Données détaillées et fichiers XLSX ↗</a>
+          <a href="https://www.insee.fr/fr/statistiques/8988843" target="_blank" rel="noopener noreferrer">Données détaillées et fichiers XLSX ↗<span class="visually-hidden"> (nouvel onglet)</span></a>
         </article>
         <article class="info-card">
           <span class="card-kicker">Budget de l’État</span><h3>Crédits et exécution budgétaire</h3>
-          <p>La comparaison des budgets de l’Éducation nationale exigera de distinguer crédits votés, crédits consommés, périmètres ministériels et exercices.</p>
-          <a href="https://www.budget.gouv.fr/" target="_blank" rel="noopener noreferrer">Portail officiel du budget de l’État ↗</a>
+          <p>Pour comparer des budgets, il faut distinguer crédits votés et crédits consommés, périmètres ministériels et exercices.</p>
+          <a href="https://www.budget.gouv.fr/" target="_blank" rel="noopener noreferrer">Portail officiel du budget de l’État ↗<span class="visually-hidden"> (nouvel onglet)</span></a>
         </article>
         <article class="info-card">
           <span class="card-kicker">Niveau communal</span><h3>Comptes des communes</h3>
-          <p>L’analyse locale se met à jour à partir de la commune recherchée. Les agrégats et les comparaisons dépendent des données réellement disponibles dans l’OFGL.</p>
-          <a href="https://data.ofgl.fr/explore/dataset/ofgl-base-communes/" target="_blank" rel="noopener noreferrer">Comptes des communes — OFGL ↗</a>
+          <p>L’analyse locale suit la commune recherchée. Les postes comptables affichés dépendent de ce que publie l’OFGL.</p>
+          <a href="https://data.ofgl.fr/explore/dataset/ofgl-base-communes/" target="_blank" rel="noopener noreferrer">Comptes des communes — OFGL ↗<span class="visually-hidden"> (nouvel onglet)</span></a>
         </article>
       </div>
-      <div class="raw-principle"><strong>Notre règle : deux niveaux, toujours.</strong><span>La donnée officielle d’origine, puis les indicateurs calculés par le site. Chaque calcul doit expliquer sa formule et permettre de retrouver ses données d’entrée.</span></div>
+      <div class="raw-principle"><strong>Notre règle : deux niveaux, toujours.</strong><span>D’abord la donnée officielle d’origine, puis les indicateurs calculés par le site. Chaque calcul donne sa formule et ses données d’entrée.</span></div>
     </section>
-
 
     <section id="glossaire" class="section glossary-section">
       <div class="section-heading">
         <div><p class="eyebrow">Comprendre les finances publiques</p><h2>Glossaire en langage simple</h2></div>
-        <p class="muted">Les termes comptables officiels sont conservés. Chaque définition explique ce qu’ils veulent dire concrètement, sans remplacer la définition technique.</p>
+        <p class="muted">Les termes officiels sont conservés et expliqués simplement. Les définitions communes aux deux sites sont celles du <a href="https://tuzilucas.github.io/FRANCE_2027/glossaire/" target="_blank" rel="noopener noreferrer">glossaire de Pièces à l’appui ↗<span class="visually-hidden"> (nouvel onglet)</span></a>.</p>
       </div>
       <label class="glossary-search-label" for="glossary-search">Rechercher un mot ou une notion</label>
-      <input id="glossary-search" class="glossary-search" type="search" placeholder="Ex. : dette, épargne, impôts, investissement…" autocomplete="off">
+      <input id="glossary-search" class="glossary-search" type="search" placeholder="Ex. : dette, épargne, impôts, investissement…" autocomplete="off">
       <p id="glossary-count" class="form-hint" aria-live="polite">48 définitions dans le glossaire.</p>
       <div id="glossary-list" class="glossary-list">
-        <details class="glossary-entry"><summary>Annuité de la dette</summary><p>Somme à payer sur une année pour rembourser un emprunt : une partie du capital emprunté et les intérêts. Ce n’est pas la même chose que le montant total de la dette restante.</p><p class="glossary-official">À distinguer de : encours de dette, intérêts, remboursement du capital.</p></details>
-        <details class="glossary-entry"><summary>Autofinancement</summary><p>Argent que la collectivité peut consacrer à ses projets grâce aux ressources dégagées par son activité courante, plutôt que par un nouvel emprunt ou une subvention.</p><p class="glossary-official">Le terme est souvent employé au sens large. Vérifier si l’indicateur concerne l’épargne brute ou l’épargne nette.</p></details>
-        <details class="glossary-entry"><summary>Budget annexe</summary><p>Budget séparé du budget principal, utilisé pour suivre une activité particulière, par exemple un service ou un équipement. Il ne faut pas l’additionner sans vérifier les règles de consolidation : certains flux peuvent se compenser.</p></details>
-        <details class="glossary-entry"><summary>Budget principal</summary><p>Le budget central de la commune. Il retrace ses principales recettes et dépenses, mais certaines activités peuvent être suivies dans des budgets annexes.</p></details>
-        <details class="glossary-entry"><summary>Capacité d’autofinancement (CAF)</summary><p>Ressource dégagée par l’activité de l’année qui peut aider à financer les investissements ou à rembourser des emprunts. Selon le contexte, la CAF peut être définie selon des règles comptables précises : vérifier la formule utilisée par la source.</p></details>
-        <details class="glossary-entry"><summary>Capacité de désendettement</summary><p>Nombre d’années théoriques nécessaires pour rembourser toute la dette si la collectivité y consacrait toute son épargne brute annuelle. C’est un indicateur simplifié, pas une date réelle de remboursement.</p><p class="glossary-formula">Formule courante : encours de dette ÷ épargne brute. Si l’épargne brute est nulle ou négative, cet indicateur n’est pas interprétable normalement.</p></details>
-        <details class="glossary-entry"><summary>Charges / dépenses de fonctionnement</summary><p>Ce que la collectivité dépense pour faire fonctionner ses services au quotidien : personnel, énergie, entretien, achats, prestations et autres dépenses courantes. Le contenu exact dépend de l’agrégat comptable choisi.</p></details>
-        <details class="glossary-entry"><summary>Charges financières</summary><p>Principalement les intérêts et frais liés aux emprunts. Le remboursement du capital est généralement présenté séparément.</p></details>
-        <details class="glossary-entry"><summary>Compte administratif / compte financier unique</summary><p>Documents qui rendent compte de ce qui a réellement été encaissé et dépensé. Le nom et le format varient selon l’exercice et le cadre comptable ; ils ne doivent pas être confondus avec le budget prévisionnel.</p></details>
-        <details class="glossary-entry"><summary>Comptes consolidés</summary><p>Vue qui regroupe le budget principal et les budgets annexes en neutralisant certains échanges entre eux. Cela évite, autant que possible, de compter deux fois le même flux.</p></details>
-        <details class="glossary-entry"><summary>Crédits votés</summary><p>Montants autorisés par le budget pour une dépense. Ils indiquent ce qui peut être dépensé, pas nécessairement ce qui a effectivement été payé.</p></details>
-        <details class="glossary-entry"><summary>Déficit public</summary><p>Pour une période donnée, les dépenses publiques dépassent les recettes publiques selon le périmètre et les règles statistiques retenus. Le déficit est un flux annuel ; la dette est un stock accumulé.</p></details>
-        <details class="glossary-entry"><summary>Dépenses d’équipement</summary><p>Dépenses pour créer, acheter ou améliorer durablement des équipements : bâtiments, écoles, routes, matériels ou rénovations. Elles font partie de l’investissement, mais ne représentent pas toujours toutes les dépenses d’investissement.</p></details>
-        <details class="glossary-entry"><summary>Dépenses d’investissement</summary><p>Dépenses liées à des biens ou projets qui servent au-delà de l’année : construction, rénovation importante, achat d’équipement ou certains remboursements et opérations financières selon le total utilisé.</p></details>
-        <details class="glossary-entry"><summary>Dette brute</summary><p>Montant des dettes retenues par la définition statistique, sans déduire les actifs financiers que l’administration possède. C’est la mesure utilisée notamment pour la dette publique au sens de Maastricht.</p></details>
-        <details class="glossary-entry"><summary>Dette nette</summary><p>Dette brute diminuée de certains actifs financiers. Elle donne une autre vue de la situation financière, mais ne signifie pas que tous ces actifs peuvent être utilisés immédiatement pour payer la dette.</p></details>
-        <details class="glossary-entry"><summary>Dette publique au sens de Maastricht</summary><p>Indicateur européen harmonisé de dette brute des administrations publiques, calculé à une date précise et après neutralisation des dettes entre administrations publiques. Il ne correspond pas à toutes les dettes possibles d’un pays ou d’une collectivité.</p></details>
-        <details class="glossary-entry"><summary>Dotation globale de fonctionnement (DGF)</summary><p>Somme versée chaque année par l’État aux collectivités selon des règles nationales. Elle contribue au financement de leurs dépenses, mais son montant varie selon la collectivité et les critères appliqués.</p></details>
-        <details class="glossary-entry"><summary>Encours de dette</summary><p>Capital qu’il reste à rembourser à une date donnée. C’est une photographie de la dette restante, pas la somme des remboursements effectués pendant l’année.</p></details>
-        <details class="glossary-entry"><summary>Épargne brute</summary><p>Différence entre les recettes et les dépenses de fonctionnement selon le périmètre retenu. Elle indique la marge dégagée avant remboursement du capital des emprunts et avant le financement des investissements.</p><p class="glossary-formula">Lecture simple : recettes courantes − dépenses courantes. Vérifier les libellés et les retraitements de la source.</p></details>
-        <details class="glossary-entry"><summary>Épargne de gestion</summary><p>Épargne issue du fonctionnement avant prise en compte de certains frais financiers, selon la définition de l’agrégat. Comparer uniquement des séries calculées selon la même méthode.</p></details>
-        <details class="glossary-entry"><summary>Épargne nette</summary><p>Épargne brute après retrait du remboursement du capital de la dette. Elle donne une idée de ce qui reste pour contribuer au financement des investissements, avant les autres ressources et dépenses concernées.</p></details>
-        <details class="glossary-entry"><summary>Établissement public de coopération intercommunale (EPCI)</summary><p>Structure qui regroupe plusieurs communes pour gérer certains services ou projets ensemble, par exemple les déchets, les transports ou le développement économique. Toutes les recettes et dépenses intercommunales ne figurent pas dans le budget de chaque commune.</p></details>
-        <details class="glossary-entry"><summary>Excédent</summary><p>Situation où les recettes dépassent les dépenses pour le périmètre et la période considérés. Un excédent de fonctionnement ne signifie pas que toutes les dépenses d’investissement sont financées ni que la collectivité n’a pas de dette.</p></details>
-        <details class="glossary-entry"><summary>Exercice budgétaire</summary><p>Période comptable de référence, généralement une année civile pour les collectivités françaises. Un chiffre 2024 doit être comparé à un chiffre 2024 de même périmètre, pas à une donnée trimestrielle ou prévisionnelle.</p></details>
-        <details class="glossary-entry"><summary>Fiscalité directe locale</summary><p>Impôts locaux dont le produit est attribué aux collectivités selon les règles en vigueur. Les contribuables, les taux, les bases et la répartition entre commune, intercommunalité et autres niveaux doivent être distingués.</p></details>
-        <details class="glossary-entry"><summary>Fonds de compensation pour la TVA (FCTVA)</summary><p>Mécanisme par lequel certaines collectivités reçoivent une compensation forfaitaire d’une partie de la TVA payée sur des dépenses d’investissement éligibles. Ce n’est pas le remboursement intégral de toute TVA.</p></details>
-        <details class="glossary-entry"><summary>Fonds de roulement</summary><p>Indicateur comptable qui renseigne sur les ressources stables disponibles pour financer le cycle d’activité. Il ne correspond pas automatiquement à l’argent disponible sur le compte bancaire.</p></details>
-        <details class="glossary-entry"><summary>Impôts locaux</summary><p>Recettes fiscales liées à la fiscalité locale, selon le champ exact de la donnée. Le montant encaissé par une commune ne correspond pas forcément à tout ce que paient les habitants : certaines recettes reviennent à d’autres niveaux publics.</p></details>
-        <details class="glossary-entry"><summary>Inflation</summary><p>Hausse générale des prix. Si une dépense passe de 100 à 110 euros en quelques années, cela ne signifie pas forcément que la collectivité achète 10 % de choses en plus : une partie de la hausse peut venir des prix.</p></details>
-        <details class="glossary-entry"><summary>Intérêts d’emprunt</summary><p>Coût payé au prêteur pour avoir emprunté de l’argent. Les intérêts sont une dépense ; le remboursement du capital réduit le montant restant dû.</p></details>
-        <details class="glossary-entry"><summary>Investissement</summary><p>Dépenses destinées à créer, acquérir ou améliorer des biens durables. Une hausse des investissements n’est pas automatiquement bonne ou mauvaise : il faut examiner le projet, son financement et ses effets.</p></details>
-        <details class="glossary-entry"><summary>Mandat de paiement</summary><p>Ordre émis par la collectivité pour qu’une dépense soit payée. Dans les comptes, les notions d’engagement, de mandat et de paiement effectif peuvent correspondre à des étapes différentes.</p></details>
-        <details class="glossary-entry"><summary>Montant par habitant</summary><p>Montant total divisé par la population retenue. Cela facilite certaines comparaisons, mais ne signifie pas que chaque habitant paie ou reçoit exactement cette somme. Il faut vérifier l’année de population et le périmètre.</p></details>
-        <details class="glossary-entry"><summary>Nomenclature comptable (M14, M57…)</summary><p>Règles et catégories qui organisent la comptabilité des collectivités. Une évolution de nomenclature peut changer la présentation des données : une comparaison historique doit vérifier que les chiffres sont comparables.</p></details>
-        <details class="glossary-entry"><summary>Population de référence</summary><p>Nombre d’habitants utilisé pour calculer les indicateurs par habitant. Il peut s’agir d’une population légale publiée pour une année précise, qui n’est pas forcément égale au nombre d’habitants présents au moment du calcul.</p></details>
-        <details class="glossary-entry"><summary>Produit intérieur brut (PIB)</summary><p>Valeur de la richesse produite sur un territoire pendant une période. Le ratio dette/PIB compare un stock de dette à la taille annuelle de l’économie ; ce n’est pas une part de la dette qui serait remboursée en une année.</p></details>
-        <details class="glossary-entry"><summary>Recettes d’investissement</summary><p>Ressources destinées au financement des investissements : subventions, cessions, fonds dédiés, emprunts et autres recettes selon le total étudié. Un emprunt est une ressource de financement, mais il augmente la dette.</p></details>
-        <details class="glossary-entry"><summary>Recettes de fonctionnement</summary><p>Ressources courantes servant à financer les services : impôts, dotations, participations, produits de services et autres recettes selon le périmètre. Elles ne sont pas synonymes de toutes les ressources de la collectivité.</p></details>
-        <details class="glossary-entry"><summary>Recettes fiscales</summary><p>Recettes provenant des impôts et taxes. Le périmètre peut inclure des impôts différents selon la source : il faut lire le libellé plutôt que supposer qu’il s’agit uniquement des impôts payés directement par les habitants.</p></details>
-        <details class="glossary-entry"><summary>Remboursement du capital</summary><p>Part du remboursement d’un emprunt qui réduit réellement le montant emprunté restant dû. À distinguer des intérêts, qui rémunèrent le prêteur.</p></details>
-        <details class="glossary-entry"><summary>Solde budgétaire</summary><p>Différence entre recettes et dépenses pour un périmètre donné. Il faut préciser s’il s’agit du fonctionnement, de l’investissement, du budget total, d’une prévision ou de l’exécution réelle.</p></details>
-        <details class="glossary-entry"><summary>Stock et flux</summary><p>Un stock se mesure à une date (par exemple la dette au 31 décembre). Un flux se mesure pendant une période (par exemple les dépenses de l’année). Les mélanger conduit à des comparaisons trompeuses.</p></details>
-        <details class="glossary-entry"><summary>Strate démographique</summary><p>Groupe de communes de taille comparable. Les comparaisons « par strate » peuvent être plus pertinentes que comparer directement une petite commune à une grande ville, mais elles doivent aussi tenir compte des caractéristiques locales et des compétences exercées.</p></details>
-        <details class="glossary-entry"><summary>Subvention</summary><p>Somme versée pour soutenir un organisme, un projet ou une dépense. Une subvention reçue est une recette pour son bénéficiaire ; une subvention versée est une dépense pour l’organisme qui la verse.</p></details>
-        <details class="glossary-entry"><summary>Taux d’épargne brute</summary><p>Part des recettes de fonctionnement qui reste sous forme d’épargne brute. Il aide à comprendre la marge financière courante, mais ne suffit pas à juger la qualité de gestion d’une commune.</p><p class="glossary-formula">Formule courante : épargne brute ÷ recettes de fonctionnement × 100.</p></details>
-        <details class="glossary-entry"><summary>Transfert entre administrations</summary><p>Somme versée par une administration à une autre. Pour le total des administrations publiques, certains transferts sont neutralisés afin de ne pas compter deux fois le même argent.</p></details>
-        <details class="glossary-entry"><summary>Valeur nominale / euros courants</summary><p>Montant exprimé dans les euros de l’année concernée, sans correction de l’inflation. Pour savoir si une dépense a réellement augmenté en pouvoir d’achat, il faut aussi regarder l’évolution des prix.</p></details>
+        <details class="glossary-entry" id="annuite-de-la-dette"><summary>Annuité de la dette</summary><p>Somme payée sur une année au titre des emprunts : les intérêts et le remboursement du capital. Ce n’est pas la même chose que le montant total de la dette restante. À distinguer de : encours de dette, intérêts, remboursement du capital.</p></details>
+        <details class="glossary-entry" id="autofinancement"><summary>Autofinancement</summary><p>Argent que la collectivité peut consacrer à ses projets grâce aux ressources dégagées par son activité courante, plutôt que par un nouvel emprunt ou une subvention. Le terme est souvent employé au sens large. Vérifier si l’indicateur concerne l’épargne brute ou l’épargne nette.</p></details>
+        <details class="glossary-entry" id="budget-annexe"><summary>Budget annexe</summary><p>Budget séparé du budget principal, voté par l’assemblée de la collectivité, qui sert à suivre une activité ou un service particulier (par exemple l’eau ou l’assainissement) et à en établir le coût réel. Il ne faut pas l’additionner au budget principal sans vérifier les règles de consolidation : certains flux entre budgets seraient comptés deux fois.</p></details>
+        <details class="glossary-entry" id="budget-principal"><summary>Budget principal</summary><p>Le budget central de la collectivité. Selon le principe d’unité, il retrace ses recettes et ses dépenses ; certaines activités sont suivies à part, dans des budgets annexes.</p></details>
+        <details class="glossary-entry" id="capacite-d-autofinancement-caf"><summary>Capacité d’autofinancement (CAF)</summary><p>Ressource dégagée par l’activité de l’année qui peut aider à financer les investissements ou à rembourser des emprunts. Selon le contexte, la CAF peut être définie selon des règles comptables précises : vérifier la formule utilisée par la source.</p></details>
+        <details class="glossary-entry" id="capacite-de-desendettement"><summary>Capacité de désendettement</summary><p>Nombre d’années théoriques nécessaires pour rembourser toute la dette si la collectivité y consacrait toute son épargne brute annuelle. C’est un indicateur simplifié, pas une date réelle de remboursement. Formule utilisée par la DGCL : dette au 31 décembre ÷ épargne brute de l’année, exprimée en années.</p></details>
+        <details class="glossary-entry" id="charges-depenses-de-fonctionnement"><summary>Charges / dépenses de fonctionnement</summary><p>Ce que la collectivité dépense pour faire fonctionner ses services au quotidien : principalement les frais de personnel, mais aussi les achats et charges externes, les subventions et participations versées et les intérêts de la dette. Le contenu exact dépend de l’agrégat comptable choisi.</p></details>
+        <details class="glossary-entry" id="charges-financieres"><summary>Charges financières</summary><p>Principalement les intérêts des emprunts, qui sont une dépense de fonctionnement. Le remboursement du capital est présenté séparément, en dépense d’investissement.</p></details>
+        <details class="glossary-entry" id="compte-administratif-compte-financier-unique"><summary>Compte administratif / compte financier unique</summary><p>Documents qui rendent compte de ce qui a réellement été encaissé et dépensé. Le nom et le format varient selon l’exercice et le cadre comptable ; ils ne doivent pas être confondus avec le budget prévisionnel.</p></details>
+        <details class="glossary-entry" id="comptes-consolides"><summary>Comptes consolidés</summary><p>Vue qui regroupe le budget principal et les budgets annexes en neutralisant certains échanges entre eux. Cela évite, autant que possible, de compter deux fois le même flux.</p></details>
+        <details class="glossary-entry" id="credits-votes"><summary>Crédits votés</summary><p>Montants autorisés par le budget pour une dépense. Ils indiquent ce qui peut être dépensé, pas nécessairement ce qui a effectivement été payé.</p></details>
+        <details class="glossary-entry" id="deficit-public"><summary>Déficit public</summary><p>Besoin de financement des administrations publiques sur une période, au sens de la comptabilité nationale : leurs dépenses dépassent l’ensemble de leurs ressources. Le déficit est mesuré sur une période ; la dette est un encours évalué à une date donnée.</p></details>
+        <details class="glossary-entry" id="depenses-d-equipement"><summary>Dépenses d’équipement</summary><p>Dépenses qui modifient la consistance ou la valeur du patrimoine de la collectivité : construction ou aménagement de bâtiments, travaux d’infrastructure, achats de matériels durables. Elles font partie de l’investissement, mais ne représentent pas toutes les dépenses d’investissement.</p></details>
+        <details class="glossary-entry" id="depenses-d-investissement"><summary>Dépenses d’investissement</summary><p>Dépenses liées à des biens ou projets qui servent au-delà de l’année : construction, rénovation importante, achat d’équipement ou certains remboursements et opérations financières selon le total utilisé.</p></details>
+        <details class="glossary-entry" id="dette-brute"><summary>Dette brute</summary><p>Montant des dettes retenues par la définition statistique, sans déduire les actifs financiers que l’administration possède. C’est la mesure utilisée notamment pour la dette publique au sens de Maastricht.</p></details>
+        <details class="glossary-entry" id="dette-nette"><summary>Dette nette</summary><p>Dette brute diminuée de certains actifs financiers. Elle donne une autre vue de la situation financière, mais ne signifie pas que tous ces actifs peuvent être utilisés immédiatement pour payer la dette.</p></details>
+        <details class="glossary-entry" id="dette-publique-au-sens-de-maastricht"><summary>Dette publique au sens de Maastricht</summary><p>Indicateur européen harmonisé de dette brute des administrations publiques, calculé à une date précise et après neutralisation des dettes entre administrations publiques. Il ne correspond pas à toutes les dettes possibles d’un pays ou d’une collectivité.</p></details>
+        <details class="glossary-entry" id="dotation-globale-de-fonctionnement-dgf"><summary>Dotation globale de fonctionnement (DGF)</summary><p>Somme versée chaque année par l’État aux collectivités selon des règles nationales. Elle contribue au financement de leurs dépenses, mais son montant varie selon la collectivité et les critères appliqués.</p></details>
+        <details class="glossary-entry" id="encours-de-dette"><summary>Encours de dette</summary><p>Capital qu’il reste à rembourser à une date donnée. C’est une photographie de la dette restante, pas la somme des remboursements effectués pendant l’année.</p></details>
+        <details class="glossary-entry" id="epargne-brute"><summary>Épargne brute</summary><p>Différence entre les recettes et les dépenses de fonctionnement. Elle indique la marge dégagée avant remboursement du capital des emprunts et avant le financement des investissements. Formule de la DGCL : recettes de fonctionnement − dépenses de fonctionnement (opérations réelles). Vérifier les libellés et les retraitements de la source.</p></details>
+        <details class="glossary-entry" id="epargne-de-gestion"><summary>Épargne de gestion</summary><p>Épargne issue du fonctionnement avant prise en compte de certains frais financiers, selon la définition de l’agrégat. Comparer uniquement des séries calculées selon la même méthode.</p></details>
+        <details class="glossary-entry" id="epargne-nette"><summary>Épargne nette</summary><p>Épargne brute après retrait du remboursement du capital de la dette. Elle donne une idée de ce qui reste pour contribuer au financement des investissements, avant les autres ressources et dépenses concernées.</p></details>
+        <details class="glossary-entry" id="etablissement-public-de-cooperation-intercommunale-epci"><summary>Établissement public de coopération intercommunale (EPCI)</summary><p>Structure administrative qui regroupe plusieurs communes exerçant des compétences en commun et élaborant des projets de développement intercommunaux : communautés de communes, d’agglomération, urbaines, métropoles, syndicats de communes. Toutes les recettes et dépenses intercommunales ne figurent pas dans le budget de chaque commune.</p></details>
+        <details class="glossary-entry" id="excedent"><summary>Excédent</summary><p>Situation où les recettes dépassent les dépenses pour le périmètre et la période considérés. Dans le budget d’une collectivité, l’excédent de la section de fonctionnement sert d’abord à rembourser le capital emprunté ; le surplus contribue à financer les investissements.</p></details>
+        <details class="glossary-entry" id="exercice-budgetaire"><summary>Exercice budgétaire</summary><p>Période de référence des comptes : pour les collectivités françaises, l’année civile, du 1er janvier au 31 décembre. Un chiffre annuel doit être comparé à un chiffre annuel de même périmètre, pas à une donnée trimestrielle ou prévisionnelle.</p></details>
+        <details class="glossary-entry" id="fiscalite-directe-locale"><summary>Fiscalité directe locale</summary><p>Impôts locaux dont le produit est attribué aux collectivités selon les règles en vigueur. Les contribuables, les taux, les bases et la répartition entre commune, intercommunalité et autres niveaux doivent être distingués.</p></details>
+        <details class="glossary-entry" id="fonds-de-compensation-pour-la-tva-fctva"><summary>Fonds de compensation pour la TVA (FCTVA)</summary><p>Mécanisme par lequel certaines collectivités reçoivent une compensation forfaitaire d’une partie de la TVA payée sur des dépenses d’investissement éligibles. Ce n’est pas le remboursement intégral de toute TVA.</p></details>
+        <details class="glossary-entry" id="fonds-de-roulement"><summary>Fonds de roulement</summary><p>Dans les comptes des collectivités publiés par la DGCL, la variation du fonds de roulement d’une année est la différence entre les recettes totales (emprunts compris) et les dépenses totales (remboursements de dette compris). Elle ne se confond pas avec la trésorerie, présentée à part.</p></details>
+        <details class="glossary-entry" id="impots-locaux"><summary>Impôts locaux</summary><p>Recettes fiscales liées à la fiscalité locale, selon le champ exact de la donnée. Le montant encaissé par une commune ne correspond pas forcément à tout ce que paient les habitants : certaines recettes reviennent à d’autres niveaux publics.</p></details>
+        <details class="glossary-entry" id="inflation"><summary>Inflation</summary><p>Hausse générale et durable des prix, qui traduit une perte du pouvoir d’achat de la monnaie. Une dépense qui augmente en euros ne signifie donc pas forcément que la collectivité achète davantage : une partie de la hausse peut venir des prix.</p></details>
+        <details class="glossary-entry" id="interets-d-emprunt"><summary>Intérêts d’emprunt</summary><p>Coût payé au prêteur pour avoir emprunté de l’argent. Les intérêts sont une dépense ; le remboursement du capital réduit le montant restant dû.</p></details>
+        <details class="glossary-entry" id="investissement"><summary>Investissement</summary><p>Dépenses destinées à créer, acquérir ou améliorer des biens durables, qui modifient le patrimoine de la collectivité. Elles sont financées par les ressources propres, les dotations et subventions et, éventuellement, l’emprunt.</p></details>
+        <details class="glossary-entry" id="mandat-de-paiement"><summary>Mandat de paiement</summary><p>Ordre émis par la collectivité pour qu’une dépense soit payée. Dans les comptes, les notions d’engagement, de mandat et de paiement effectif peuvent correspondre à des étapes différentes.</p></details>
+        <details class="glossary-entry" id="montant-par-habitant"><summary>Montant par habitant</summary><p>Montant total divisé par la population retenue. Cela facilite certaines comparaisons, mais ne signifie pas que chaque habitant paie ou reçoit exactement cette somme. Il faut vérifier l’année de population et le périmètre.</p></details>
+        <details class="glossary-entry" id="nomenclature-comptable-m14-m57"><summary>Nomenclature comptable (M14, M57…)</summary><p>Règles et catégories qui organisent la comptabilité des collectivités. Une évolution de nomenclature peut changer la présentation des données : une comparaison historique doit vérifier que les chiffres sont comparables.</p></details>
+        <details class="glossary-entry" id="population-de-reference"><summary>Population de référence</summary><p>Populations officielles de chaque commune, authentifiées chaque année par décret : population municipale, population comptée à part et population totale. Pour un montant par habitant, il faut savoir laquelle est utilisée : les fiches de la DGFiP retiennent la population légale au 1er janvier de l’exercice.</p></details>
+        <details class="glossary-entry" id="produit-interieur-brut-pib"><summary>Produit intérieur brut (PIB)</summary><p>Valeur de la richesse produite sur un territoire pendant une période. Le ratio dette/PIB compare un stock de dette à la taille annuelle de l’économie ; ce n’est pas une part de la dette qui serait remboursée en une année.</p></details>
+        <details class="glossary-entry" id="recettes-d-investissement"><summary>Recettes d’investissement</summary><p>Ressources destinées au financement des investissements : subventions, cessions, fonds dédiés, emprunts et autres recettes selon le total étudié. Un emprunt est une ressource de financement, mais il augmente la dette.</p></details>
+        <details class="glossary-entry" id="recettes-de-fonctionnement"><summary>Recettes de fonctionnement</summary><p>Ressources courantes servant à financer les services : impôts, dotations, participations, produits de services et autres recettes selon le périmètre. Elles ne sont pas synonymes de toutes les ressources de la collectivité.</p></details>
+        <details class="glossary-entry" id="recettes-fiscales"><summary>Recettes fiscales</summary><p>Recettes provenant des impôts et taxes. Le périmètre peut inclure des impôts différents selon la source : il faut lire le libellé plutôt que supposer qu’il s’agit uniquement des impôts payés directement par les habitants.</p></details>
+        <details class="glossary-entry" id="remboursement-du-capital"><summary>Remboursement du capital</summary><p>Part du remboursement d’un emprunt qui réduit réellement le montant emprunté restant dû. À distinguer des intérêts, qui rémunèrent le prêteur.</p></details>
+        <details class="glossary-entry" id="solde-budgetaire"><summary>Solde budgétaire</summary><p>Différence entre recettes et dépenses pour un périmètre donné. Il faut préciser s’il s’agit du fonctionnement, de l’investissement, du budget total, d’une prévision ou de l’exécution réelle.</p></details>
+        <details class="glossary-entry" id="stock-et-flux"><summary>Stock et flux</summary><p>Un stock se mesure à une date (par exemple la dette au 31 décembre). Un flux se mesure pendant une période (par exemple les dépenses de l’année). Les mélanger conduit à des comparaisons trompeuses.</p></details>
+        <details class="glossary-entry" id="strate-demographique"><summary>Strate démographique</summary><p>Groupe de communes comparables utilisé par la DGFiP : les communes sont réparties en groupes de référence selon leur taille démographique, leur appartenance ou non à une intercommunalité à fiscalité propre et le régime fiscal de celle-ci. Les moyennes de strate doivent être relativisées : elles recouvrent des situations et des modes de gestion très divers.</p></details>
+        <details class="glossary-entry" id="subvention"><summary>Subvention</summary><p>Concours volontaire versé par une collectivité à une association, une personne de droit privé ou un organisme public, pour son fonctionnement ou ses investissements. Une subvention versée est une dépense pour la collectivité ; une subvention reçue figure dans ses recettes.</p></details>
+        <details class="glossary-entry" id="taux-d-epargne-brute"><summary>Taux d’épargne brute</summary><p>Part des recettes de fonctionnement qui reste sous forme d’épargne brute, exprimée en pourcentage. Formule de la DGCL : épargne brute ÷ recettes de fonctionnement.</p></details>
+        <details class="glossary-entry" id="transfert-entre-administrations"><summary>Transfert entre administrations</summary><p>Transfert courant entre sous-secteurs des administrations publiques (administration centrale, administrations locales, administrations de sécurité sociale), hors impôts, subventions, aides à l’investissement et autres transferts en capital. Pour présenter un total, les flux et les dettes entre administrations peuvent être neutralisés (consolidation) afin de ne pas compter deux fois le même montant.</p></details>
+        <details class="glossary-entry" id="valeur-nominale-euros-courants"><summary>Valeur nominale / euros courants</summary><p>Montant exprimé dans les euros de l’année concernée, sans correction de l’inflation. Pour savoir si une dépense a réellement augmenté en pouvoir d’achat, il faut aussi regarder l’évolution des prix.</p></details>
       </div>
-
-      <p class="glossary-disclaimer">Une définition simplifiée aide à comprendre, mais ne remplace pas la fiche méthodologique de la source. Deux indicateurs portant des noms proches peuvent avoir des périmètres différents.</p>
+      <p class="glossary-disclaimer">Une définition simplifiée aide à comprendre. Elle ne remplace pas la fiche méthodologique de la source. Deux indicateurs aux noms proches peuvent avoir des périmètres différents.</p>
     </section>
 
     <section id="methode" class="section method-section">
       <p class="eyebrow">Une méthode lisible</p><h2>Compréhensible pour tous. Vérifiable par chacun.</h2>
       <div class="method-grid">
         <div><span class="step">01</span><h3>Le chiffre</h3><p>Une valeur, une unité et une période clairement affichées.</p></div>
-        <div><span class="step">02</span><h3>Ce qu’il signifie</h3><p>Une explication simple, sans remplacer la définition officielle.</p></div>
-        <div><span class="step">03</span><h3>La preuve</h3><p>Un lien vers la source officielle et, quand disponible, le fichier brut.</p></div>
+        <div><span class="step">02</span><h3>Ce qu’il signifie</h3><p>Une explication simple, qui ne remplace pas la définition officielle.</p></div>
+        <div><span class="step">03</span><h3>La preuve</h3><p>Un lien vers la source officielle et, quand il existe, le fichier brut.</p></div>
         <div><span class="step">04</span><h3>Le calcul</h3><p>La formule, les données d’entrée et les limites sont consultables.</p></div>
       </div>
     </section>
 
     <section id="limites" class="section limitations">
-      <p class="eyebrow">État du prototype</p><h2>Ce qui reste à construire</h2>
+      <p class="eyebrow">Limites actuelles</p><h2>Ce que le site ne fait pas encore</h2>
       <ul>
-        <li>Le contrôle automatique d’une affirmation n’est possible que si le jeu de données couvre le même indicateur, la même période et le même périmètre.</li>
-        <li>La recherche communale utilise le référentiel géographique national ; l’affichage automatisé des comptes financiers de chaque commune reste en cours d’extension.</li>
-        <li>La série de dette est transcrite depuis la page INSEE et doit encore être rapprochée automatiquement du fichier XLSX officiel.</li>
-        <li>Les analyses communales dépendent de la disponibilité des agrégats OFGL et doivent respecter le périmètre, la période et les définitions comptables avant toute comparaison ou conclusion.</li>
+        <li>Un chiffre n’est comparé automatiquement que si la donnée couvre le même indicateur, la même période et le même périmètre.</li>
+        <li>Les comptes communaux sont lus automatiquement dans les bases de l’OFGL et de la DGFiP. Ils ne sont pas relus commune par commune.</li>
+        <li>La série de dette nationale est transcrite de la page de l’INSEE et relue contre elle. Le rapprochement automatique avec le fichier XLSX reste à faire.</li>
+        <li>L’analyse communale dépend des postes publiés par l’OFGL. Vérifiez le périmètre, la période et les définitions avant toute comparaison.</li>
       </ul>
     </section>
   </main>
   <footer class="site-footer">
-    <div><strong>Information citoyenne</strong><p>Finances publiques · Sources officielles · Données brutes et calculs traçables.</p></div>
-    <a href="#limites">État du prototype et prochaines étapes</a>
+    <div><strong>Information citoyenne</strong><p>Finances publiques · sources officielles · données brutes et calculs traçables.</p></div>
+    <ul class="footer-links">
+      <li><a href="#methode">Notre méthode</a></li>
+      <li><a href="#limites">Limites actuelles</a></li>
+      <li><a href="#glossaire">Glossaire</a></li>
+      <li><a href="https://tuzilucas.github.io/FRANCE_2027/" target="_blank" rel="noopener noreferrer">Site associé : Présidentielle 2027 — Pièces à l’appui ↗<span class="visually-hidden"> (nouvel onglet)</span></a></li>
+    </ul>
   </footer>
+  <a class="back-to-top" href="#contenu" aria-label="Haut de page" hidden><span class="back-to-top-label">Haut de page</span> <span aria-hidden="true">↑</span></a>
 </body>
 </html>
