@@ -97,8 +97,8 @@ const TAUX = {
   empty: { status: 200, body: { total_count: 0, results: [] } }
 };
 
-async function newPage(browser, viewport, { geo = "fameck", ofgl = "ods_limit_error", dgfip = "fameck", geoFail = false, geoHangMs = 0, delayMs = 0 } = {}) {
-  const context = await browser.newContext({ viewport, deviceScaleFactor: 1 });
+async function newPage(browser, viewport, { geo = "fameck", ofgl = "ods_limit_error", dgfip = "fameck", geoFail = false, geoHangMs = 0, delayMs = 0, colorScheme = "light" } = {}) {
+  const context = await browser.newContext({ viewport, deviceScaleFactor: 1, colorScheme });
   const page = await context.newPage();
   const log = { console: [], pageErrors: [], failed: [], external: [], ofglUrls: [], geoUrls: [] };
   page.on("console", (m) => { if (m.type() === "error" || m.type() === "warning") log.console.push(m.type() + ": " + m.text()); });
@@ -417,8 +417,13 @@ async function overflow(page) {
     const { context, page, log } = await newPage(browser, { width: 390, height: 844 });
     await page.goto(BASE, { waitUntil: "networkidle" });
     await page.click("#commune-form button[type=submit]");
-    const msg = await page.$eval("#commune-query", (i) => i.validationMessage);
-    record("COM-EMPTY-QUERY", "Recherche vide bloquée par le formulaire", "390", log.geoUrls.length === 0 ? "VALIDÉ" : "ÉCHOUÉ", `aucune requête émise ; message natif : « ${msg} »`);
+    await page.waitForTimeout(200);
+    const empty = await page.evaluate(() => {
+      const i = document.getElementById("commune-query"), r = document.getElementById("commune-result");
+      return { native: i.validationMessage, required: i.required, live: r.getAttribute("aria-live"), hidden: r.hidden, text: r.textContent.trim(), invalid: i.getAttribute("aria-invalid"), focus: document.activeElement === i };
+    });
+    record("COM-EMPTY-QUERY", "Recherche vide : message du site dans la zone aria-live, pas de bulle native", "390",
+      log.geoUrls.length === 0 && !empty.native && !empty.required && empty.live === "polite" && !empty.hidden && /Saisissez une commune/.test(empty.text) && empty.invalid === "true" && empty.focus ? "VALIDÉ" : "ÉCHOUÉ", JSON.stringify(empty).slice(0, 220));
     await page.fill("#commune-query", "   ");
     await page.press("#commune-query", "Enter");
     await page.waitForTimeout(200);
@@ -430,6 +435,15 @@ async function overflow(page) {
     await page.waitForTimeout(200);
     const partial = await page.textContent("#commune-result");
     record("COM-PARTIAL", "Code partiel « 5729 » : message explicite, aucune requête", "390", log.geoUrls.length === 0 && /5 caractères/.test(partial) ? "VALIDÉ" : "ÉCHOUÉ", partial.trim().slice(0, 120));
+    await page.fill("#commune-query", "Fameck");
+    await page.click("#commune-form button[type=submit]");
+    await page.waitForTimeout(300);
+    const cleared = await page.$eval("#commune-query", (i) => i.getAttribute("aria-invalid"));
+    record("COM-EMPTY-RESET", "Saisie valide après une erreur : état invalide retiré", "390", cleared === null ? "VALIDÉ" : "ÉCHOUÉ", "aria-invalid=" + cleared);
+    await page.click("#claim-form button[type=submit]");
+    await page.waitForTimeout(200);
+    const claimEmpty = await page.evaluate(() => ({ native: document.getElementById("claim-text").validationMessage, text: document.getElementById("claim-result").textContent }));
+    record("CLAIM-EMPTY", "Vérification sans texte : message du site, pas de bulle native", "390", !claimEmpty.native && /Saisissez un chiffre/.test(claimEmpty.text) ? "VALIDÉ" : "ÉCHOUÉ", claimEmpty.text.slice(0, 120));
     await context.close();
   }
 
@@ -511,8 +525,10 @@ async function overflow(page) {
       record("STRATA-MOBILE", "Tableaux de strate sans débordement de la page sur mobile", "375", sw <= 0 ? "VALIDÉ" : "ÉCHOUÉ", "débordement=" + sw + "px");
       const badge = await page.$eval("#strata-status", (b) => ({ hidden: b.hidden, text: b.textContent }));
       record("STRATA-BADGE", "Pastille « Données officielles DGFiP » affichée seulement après réponse de la DGFiP", "375", !badge.hidden && /2025/.test(badge.text) ? "VALIDÉ" : "ÉCHOUÉ", JSON.stringify(badge));
-      const hints = await page.$$eval("#strata-content .scroll-hint.is-visible", (h) => h.length);
-      record("TABLE-SCROLL-HINT", "Tableaux larges : indice de défilement affiché sur mobile", "375", hints > 0 ? "VALIDÉ" : "ÉCHOUÉ", hints + " indice(s) visible(s)");
+      // Les tableaux de strate s’empilent sous 620 px (aucun défilement) ; les autres tableaux larges gardent l’indice.
+      const hints = await page.$$eval("#composition-dette .scroll-hint.is-visible", (h) => h.length);
+      const strataHints = await page.$$eval("#strata-content .scroll-hint.is-visible", (h) => h.length);
+      record("TABLE-SCROLL-HINT", "Tableaux larges : indice de défilement affiché sur mobile, inutile pour les tableaux de strate empilés", "375", hints > 0 && strataHints === 0 ? "VALIDÉ" : "ÉCHOUÉ", hints + " indice(s) visible(s) hors strate ; " + strataHints + " dans la strate");
       await page.locator("#comparaison-strate").screenshot({ path: path.join(OUT, "strate-375.png") });
     } else if (scenario === "error") {
       const badgeHidden = await page.$eval("#strata-status", (b) => b.hidden);
@@ -534,7 +550,7 @@ async function overflow(page) {
     fs.writeFileSync(path.join(OUT, "fameck-analyse.txt"), analysis);
     const ribbon = await page.$$eval(".headline-metric strong", (s) => s.map((x) => x.textContent));
     const tilesShown = await page.$$eval(".headline-commune", (t) => t.every((x) => !x.hidden));
-    record("DATA-RIBBON-JS", "Bandeau communal mis à jour après la recherche (donnée absente = « Non disponible »)", "375", ribbon[0].replace(/\u202f/g, " ").includes("3 595,5") && ribbon[1] === "Non disponible" && ribbon[2].includes("M€") && ribbon[3] === "Non disponible" && tilesShown ? "VALIDÉ" : "ÉCHOUÉ", ribbon.join(" / ") + " ; tuiles visibles=" + tilesShown);
+    record("DATA-RIBBON-JS", "Bandeau communal mis à jour après la recherche (donnée absente = « Non disponible »)", "375", ribbon[0].replace(/\u202f/g, " ").includes("3 595,5") && ribbon[1] === "Non disponible" && ribbon[2].replace(/[\u202f\u00a0]/g, " ") === "1 000 €" && !/M€/.test(ribbon.join(" ")) && ribbon[3] === "Non disponible" && tilesShown ? "VALIDÉ" : "ÉCHOUÉ", ribbon.join(" / ") + " ; tuiles visibles=" + tilesShown);
     const waiting = (await page.textContent("#analyse-communale")).replace(/\s+/g, " ");
     record("ERGO-WAIT-TEXT", "Textes d’attente retirés après la recherche", "375", !/Choisissez d’abord une commune|Aucune commune choisie/.test(waiting) ? "VALIDÉ" : "ÉCHOUÉ", waiting.slice(0, 160));
     const ribbonDisplay = await page.$eval(".headline-ribbon", (e) => getComputedStyle(e).display);
@@ -544,6 +560,28 @@ async function overflow(page) {
     await page.locator("#analyse-communale").screenshot({ path: path.join(OUT, "commune-375.png") });
     const wrap = await page.$eval(".history-scroll", (e) => ({ sw: e.scrollWidth, cw: e.clientWidth }));
     record("FAM-TABLE-MOBILE", "Tableau annuel de la fiche standard sur mobile", "375", "À CONFIRMER", `${rows} lignes ; défilement horizontal interne ${wrap.sw}px pour ${wrap.cw}px visibles (seul le tableau défile ; titre et texte restent en place)`);
+    await context.close();
+  }
+
+  // 6 bis. Mode sombre (prefers-color-scheme) : contraste ≥ 4,5:1 de tous les textes, analyse, strate et taux remplis.
+  for (const width of [390, 1440]) {
+    const { context, page, log } = await newPage(browser, { width, height: 900 }, { geo: "fameck", ofgl: "fameck_full", dgfip: "fameck", colorScheme: "dark" });
+    await page.goto(BASE, { waitUntil: "networkidle" });
+    await page.fill("#commune-query", "Fameck");
+    await page.click("#commune-form button[type=submit]");
+    await page.waitForFunction(() => !document.getElementById("strata-status").hidden && document.querySelectorAll("#commune-history-body tr").length > 2 && document.querySelector("#taux-content table"), null, { timeout: 15000 });
+    const bg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+    const low = await contrastIssues(page, "body");
+    record("DARK-CONTRAST", "Mode sombre : fond sombre et tous les textes ≥ 4,5:1 (analyse, strate, taux, tableaux)", String(width), bg === "rgb(19, 21, 17)" && !low.length && !log.pageErrors.length ? "VALIDÉ" : "ÉCHOUÉ", "fond=" + bg + " ; " + (low.join(" | ") || "aucun texte sous 4,5:1"));
+    if (width === 390) {
+      const stacked = await page.$$eval("#strata-content .stack-on-mobile", (w) => w.map((x) => ({ d: getComputedStyle(x.querySelector("td")).display, over: x.scrollWidth - x.clientWidth, label: x.querySelector("td").dataset.label })));
+      record("STRATA-STACK", "Tableaux de strate empilés sur mobile : intitulé de colonne devant chaque valeur, sans défilement", "390", stacked.length === 4 && stacked.every((t) => t.d === "flex" && t.over <= 0 && t.label) ? "VALIDÉ" : "ÉCHOUÉ", JSON.stringify(stacked).slice(0, 200));
+      const glo = await page.evaluate(() => ({ shown: [...document.querySelectorAll(".glossary-entry")].filter((e) => e.offsetParent !== null).length, more: !!document.querySelector(".glossary-more") && document.querySelector(".glossary-more").offsetParent !== null }));
+      await page.click(".glossary-more");
+      const after = await page.$$eval(".glossary-entry", (e) => e.filter((x) => x.offsetParent !== null).length);
+      record("GLO-MOBILE", "Glossaire mobile : 12 définitions puis bouton « Afficher les … définitions »", "390", glo.shown === 12 && glo.more && after > 12 ? "VALIDÉ" : "ÉCHOUÉ", JSON.stringify(glo) + " ; après clic=" + after);
+    }
+    await page.screenshot({ path: path.join(OUT, "sombre-" + width + ".png") });
     await context.close();
   }
 

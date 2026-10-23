@@ -631,12 +631,14 @@
     cap.textContent = typo(caption);
     table.appendChild(cap);
     const thead = document.createElement("thead");
+    thead.setAttribute("role", "rowgroup");
     const htr = document.createElement("tr");
     htr.setAttribute("role", "row");
     headers.forEach((h, i) => { const th = document.createElement("th"); th.scope = "col"; th.setAttribute("role", "columnheader"); th.textContent = typo(h); if (i > 0) th.className = "numeric-cell"; htr.appendChild(th); });
     thead.appendChild(htr);
     table.appendChild(thead);
     const tbody = document.createElement("tbody");
+    tbody.setAttribute("role", "rowgroup");
     rows.forEach((cells) => {
       const tr = document.createElement("tr");
       tr.setAttribute("role", "row");
@@ -1188,7 +1190,7 @@
         unit.textContent = "Md€";
         ribbonDebt.replaceChildren(typo(money.format(latest.debt_eur_billion)) + "\u00a0", unit);
       }
-      if (latest && ribbonDebtContext) ribbonDebtContext.textContent = typo(ratio.format(latest.debt_gdp_percent) + " % du PIB · " + lib.formatQuarter(latest.period));
+      if (latest && ribbonDebtContext) ribbonDebtContext.textContent = typo(ratio.format(latest.debt_gdp_percent) + " % du PIB · " + lib.formatQuarter(latest.period).replace(/ /g, "\u00a0"));
     } catch (error) {
       const value = document.getElementById("latest-debt");
       if (value) value.textContent = "Données indisponibles";

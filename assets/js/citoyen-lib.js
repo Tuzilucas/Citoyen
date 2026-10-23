@@ -417,7 +417,7 @@
       debt: formatEuros(debt),
       rate: Number.isFinite(savingsRate) ? pct.format(savingsRate) + "\u202f%" : "Non disponible",
       savingsContext: where,
-      debtContext: where + " · fin d’exercice",
+      debtContext: name + " · fin de l’exercice " + year,
       rateContext: name + " · calcul du site"
     };
   }

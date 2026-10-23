@@ -217,7 +217,7 @@ test("Analyse communale dynamique : aucune commune n'est imposée par défaut", 
   assert.ok(text.includes('id="municipal-history-wrap" hidden'));
   assert.ok(!/Épargne brute · Fameck|Encours de dette · Fameck|Taux d’épargne brute · Fameck/.test(text));
   const d = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1 }).format(debt.records[0].debt_eur_billion).replace(/[\u00a0\u202f]/g, " ");
-  assert.ok(text.includes('id="ribbon-debt">' + d + " Md€"));
+  assert.ok(text.includes('id="ribbon-debt">' + d + ' <abbr title="milliards d’euros">Md€</abbr>'));
 });
 
 test("Glossaire : les définitions partagées reprennent mot pour mot celles de Pièces à l’appui quand elles sont disponibles", () => {
@@ -307,4 +307,46 @@ test("frenchTypo pose les espaces insécables et l’apostrophe typographique sa
 test("formatQuarter écrit les trimestres en toutes lettres", () => {
   assert.equal(lib.formatQuarter("2026-T2"), "2e trimestre 2026");
   assert.equal(lib.formatQuarter("2026-T1"), "1er trimestre 2026");
+});
+
+test("Formulaires : pas de bulle native (attribut required retiré), préconnexion aux trois services publics", () => {
+  const html = fs.readFileSync(path.join(__dirname, "../../index.html"), "utf8");
+  assert.ok(!/\brequired\b/.test(html), "aucun champ required : les messages du site (aria-live) s’affichent");
+  assert.ok(/id="commune-result"[^>]*aria-live="polite"/.test(html));
+  for (const host of ["https://geo.api.gouv.fr", "https://data.ofgl.fr", "https://data.economie.gouv.fr"]) {
+    assert.ok(html.includes('<link rel="preconnect" href="' + host + '" crossorigin>'), host);
+  }
+});
+
+test("Mode sombre : jetons redéfinis sous prefers-color-scheme, aucune couleur en dur hors des blocs de jetons", () => {
+  const css = fs.readFileSync(path.join(__dirname, "../../assets/css/app.css"), "utf8");
+  assert.ok(/@media \(prefers-color-scheme: dark\)\s*\{\s*:root:not\(\[data-theme="light"\]\)/.test(css));
+  assert.ok(css.includes(':root[data-theme="dark"]'));
+  const rest = css.slice(css.indexOf("/* ---------- Base ---------- */"));
+  assert.deepEqual(rest.match(/#[0-9a-fA-F]{3,8}\b/g) || [], []);
+});
+
+test("formatEuros affiche le montant OFGL en euros, sans conversion en millions", () => {
+  const plain = (t) => t.replace(/[  ]/g, " ");
+  assert.equal(plain(lib.formatEuros(1000)), "1 000 €");
+  assert.equal(plain(lib.formatEuros(1473652.4)), "1 473 652 €");
+  assert.equal(plain(lib.formatEuros(-12500)), "-12 500 €");
+  assert.equal(lib.formatEuros(null), "Non disponible");
+  assert.equal(lib.formatEuros(Number.NaN), "Non disponible");
+  assert.ok(!/M€|millions/.test(lib.formatEuros(6252679)));
+});
+
+test("communeRibbon : libellés courts, euros tels que publiés, donnée absente = « Non disponible »", () => {
+  const plain = (t) => t.replace(/[  ]/g, " ");
+  const r = lib.communeRibbon("Fameck", "2025", 1473652.21, 6252679, 11.11);
+  assert.equal(plain(r.savings), "1 473 652 €");
+  assert.equal(plain(r.debt), "6 252 679 €");
+  assert.equal(plain(r.rate), "11,1 %");
+  assert.equal(r.savingsContext, "Fameck · exercice 2025");
+  assert.equal(r.debtContext, "Fameck · fin de l’exercice 2025");
+  assert.equal(r.rateContext, "Fameck · calcul du site");
+  const empty = lib.communeRibbon("Fameck", "2025", null, null, null);
+  assert.deepEqual([empty.savings, empty.debt, empty.rate], ["Non disponible", "Non disponible", "Non disponible"]);
+  // Petits montants : jamais « 0,00 M€ ».
+  assert.equal(plain(lib.communeRibbon("X", "2024", 999, 1000, null).debt), "1 000 €");
 });
