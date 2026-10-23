@@ -1665,6 +1665,30 @@ select,
 .back-to-top[hidden] {
   display: none;
 }
+/* Écrans larges : le bouton, réduit à sa flèche (nom accessible conservé par aria-label), se loge
+   dans la marge droite. Le contenu et le pied de page gardent une marge au moins égale à la largeur
+   du bouton plus deux espacements : le bouton ne recouvre jamais de texte ni de pastille. */
+@media (min-width: 801px) {
+  main,
+  .site-footer {
+    --gutter: max(clamp(1rem, 5vw, 5rem), calc(var(--control-h) + 2 * var(--space-2)));
+  }
+  .back-to-top {
+    right: max(var(--space-2), calc((clamp(1rem, 5vw, 5rem) - var(--control-h)) / 2));
+    justify-content: center;
+    width: var(--control-h);
+    padding: 0;
+    font-size: 1.25rem;
+  }
+  .back-to-top-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
 
 /* ---------- Adaptations ---------- */
 @media (max-width: 800px) {
