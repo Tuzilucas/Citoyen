@@ -1819,3 +1819,14 @@ select,
     scroll-behavior: auto !important;
   }
 }
+
+/* Téléphones et petites tablettes : le bouton « Haut de page » ne flotte plus (il recouvrait du
+   texte pendant le défilement) ; il devient un lien centré en fin de page, avant le pied de page. */
+@media (max-width: 800px) {
+  .back-to-top {
+    position: static;
+    display: flex;
+    width: max-content;
+    margin: var(--space-6, 1.5rem) auto;
+  }
+}
