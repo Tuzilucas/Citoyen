@@ -79,6 +79,19 @@ const DGFIP = {
   error: { status: 503, body: { error: "service indisponible" } }
 };
 
+// Simulation des taux par bénéficiaire (DGFiP, fiscalité locale des particuliers) : valeurs réelles de
+// Fameck pour 2025, relevées le 23/10/2026.
+const TAUX = {
+  fameck: { status: 200, body: { total_count: 1, results: [{
+    exercice: "2025", q03: "CA du Val de Fensch", b12vote: 100, b22: 0, b32vote: 10.87, b12tafnb: 0, b32tafnb: 37.6, b32mgptafnb: 0,
+    b52: 0.149, b52a: 0, b52ggemapi: 1.83, taux_global_tfnb: 150.45, e12vote: 27.85, e22: 0, e32vote: 5, e52: 0.111, e52a: 0,
+    e52tasa: 0, e52ggemapi: 0.441, taux_global_tfb: 33.4, taux_plein_teom: 9.67, h12vote: 14.01, h22: 0, h32vote: 8.92,
+    h52: 0.115, h52a: 0, h52ggemapi: 0.58, taux_global_th: 23.63, ind_majothrs: "NON", thsurtaxrstau: null, insee_com: "57206"
+  }] } },
+  error: { status: 503, body: { error: "service indisponible" } },
+  empty: { status: 200, body: { total_count: 0, results: [] } }
+};
+
 async function newPage(browser, viewport, { geo = "fameck", ofgl = "ods_limit_error", dgfip = "fameck", geoFail = false, delayMs = 0 } = {}) {
   const context = await browser.newContext({ viewport, deviceScaleFactor: 1 });
   const page = await context.newPage();
@@ -103,6 +116,10 @@ async function newPage(browser, viewport, { geo = "fameck", ofgl = "ods_limit_er
       const s = OFGL[typeof ofgl === "function" ? ofgl(url) : ofgl];
       if (delayMs) await new Promise((r) => setTimeout(r, delayMs));
       return route.fulfill({ status: s.status, contentType: "application/json", body: s.rawBody || JSON.stringify(s.body) });
+    }
+    if (url.startsWith("https://data.economie.gouv.fr/") && url.includes("fiscalite-locale-des-particuliers")) {
+      const s = TAUX[dgfip] || TAUX.fameck;
+      return route.fulfill({ status: s.status, contentType: "application/json", body: JSON.stringify(s.body) });
     }
     if (url.startsWith("https://data.economie.gouv.fr/")) {
       const s = DGFIP[dgfip];
@@ -406,6 +423,10 @@ async function overflow(page) {
         && text.includes("Sans objet") && text.includes("Non disponible") && /communes de 10 000 à 20 000 hab/.test(text);
       record("STRATA-TABLES", "Fiche DGFiP : 4 tableaux, moyenne de strate, taux, « Sans objet », « Non disponible »", "375", ok ? "VALIDÉ" : "ÉCHOUÉ", `${tables} tableaux ; ` + text.slice(0, 220));
       const sw = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+      const taux = (await page.textContent("#taux-content")).replace(/\s+/g, " ").replace(/\u202f/g, " ");
+      const tauxOk = taux.includes("27,850 %") && taux.includes("5,000 %") && taux.includes("33,400 %") && taux.includes("9,670 %")
+        && taux.includes("CA du Val de Fensch") && !/Syndicats de communes/.test(taux);
+      record("TAUX-BENEFICIAIRES", "Avis de taxe foncière : taux par bénéficiaire, taux global publié, TEOM à part, lignes nulles masquées", "375", tauxOk ? "VALIDÉ" : "ÉCHOUÉ", taux.slice(0, 260));
       record("STRATA-MOBILE", "Tableaux de strate sans débordement de la page sur mobile", "375", sw <= 0 ? "VALIDÉ" : "ÉCHOUÉ", "débordement=" + sw + "px");
       await page.locator("#comparaison-strate").screenshot({ path: path.join(OUT, "strate-375.png") });
     } else if (scenario === "error") {

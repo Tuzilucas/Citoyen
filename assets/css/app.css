@@ -368,3 +368,4 @@ body{background:var(--paper);color:var(--ink)}
 .strata-table-wrap thead th{font-size:.85rem;font-weight:600}
 .strata-table-wrap tbody th{font-weight:400}
 .strata-table-wrap .numeric-cell{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.strata-subtitle{margin:2rem 0 .8rem;font-size:1.2rem}

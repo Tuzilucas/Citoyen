@@ -582,9 +582,44 @@
     }
   }
 
+  // Taux par bénéficiaire sur l'avis d'imposition (DGFiP, issus du REI) : valeurs publiées, aucun calcul.
+  function renderTaux(container, commune, d) {
+    const pct = (v) => cellText(v, 3, " %");
+    const rows = d.rows.filter((r) => [r.tfb, r.tfnb, r.th].some((v) => v !== undefined && v !== null && v !== 0));
+    const nodes = [
+      paragraph(commune.nom + " · année " + (d.year || "inconnue") + (d.epci ? " · intercommunalité : " + d.epci : "") + ". Seuls les bénéficiaires dont le taux n’est pas nul sur la commune sont listés.", "strata-context"),
+      strataTable("Sur l’avis d’imposition : qui reçoit quoi (taux votés ou applicables, DGFiP, " + (d.year || "") + ")",
+        ["Bénéficiaire", "Taxe foncière sur les propriétés bâties", "Taxe foncière sur les propriétés non bâties", "Taxe d’habitation (résidences secondaires, logements vacants)"],
+        rows.map((r) => [r.label, pct(r.tfb), pct(r.tfnb), pct(r.th)]).concat([["Taux global publié par la DGFiP", pct(d.global.tfb), pct(d.global.tfnb), pct(d.global.th)]])),
+      paragraph("Taxe d’enlèvement des ordures ménagères (affichée à part par la DGFiP, taux plein hors zones spécifiques) : " + (d.teom === null ? "non renseignée (la collecte peut être financée par une redevance)" : pct(d.teom)) + "." + (d.thMajoration !== undefined ? " Majoration de la taxe d’habitation sur les résidences secondaires : " + pct(d.thMajoration) + "." : ""), "strata-context"),
+      paragraph("Le taux global additionne, selon la DGFiP, les taux communal, intercommunal, des syndicats et des taxes spéciales ; il exclut les chambres consulaires et d’agriculture. En cas de convergence progressive des taux (commune nouvelle, fusion d’intercommunalités), le taux appliqué sur l’avis peut différer temporairement du taux voté.", "commune-method-note")
+    ];
+    container.replaceChildren(...nodes);
+  }
+
+  async function loadTaux(commune, signal) {
+    const container = document.getElementById("taux-content");
+    if (!container) return;
+    container.replaceChildren(paragraph("Chargement des taux d’imposition de " + commune.nom + "…", "commune-loading"));
+    try {
+      const payload = await fetchJson(lib.TAUX.endpoint + "?" + lib.buildTauxParams(commune.code).toString(), "dgfip", signal);
+      if (signal && signal.aborted) return;
+      if (!payload || !Array.isArray(payload.results)) throw new ServiceError("dgfip", "format");
+      if (!payload.results.length) {
+        container.replaceChildren(paragraph("La DGFiP ne publie pas de taux pour cette commune. Il ne s’agit pas d’un taux nul.", "commune-method-note"));
+        return;
+      }
+      renderTaux(container, commune, lib.readTaux(payload.results[0]));
+    } catch (error) {
+      if (signal && signal.aborted) return;
+      container.replaceChildren(paragraph(serviceErrorText(error, "Le service de la DGFiP") + " Aucun taux n’est affiché. Ce n’est pas une absence de données.", "commune-method-note"));
+    }
+  }
+
   async function loadCommuneCard(card, commune, signal) {
     // Fiche DGFiP chargée en parallèle : sa disponibilité ne dépend pas de celle de l'OFGL.
     loadStrataComparison(commune, signal);
+    loadTaux(commune, signal);
     const loading = paragraph("Chargement des comptes OFGL pour " + commune.nom + "…", "commune-loading");
     card.appendChild(loading);
     const selectedStatus = document.getElementById("municipal-status");

@@ -184,3 +184,16 @@ test("readDgfip reprend les valeurs publiées sans calcul ni zéro inventé", ()
   assert.deepEqual([impo2.commune, impo2.strate], [null, 8.27]);
   assert.equal(lib.readDgfip(null), null);
 });
+
+test("readTaux distingue taux publié, taux absent et composante sans objet", () => {
+  assert.equal(lib.buildTauxParams("57206").get("where"), 'insee_com="57206"');
+  const d = lib.readTaux({ exercice: "2025", q03: "CA du Val de Fensch", e12vote: 27.85, e32vote: 5, e22: 0, taux_global_tfb: 33.4, taux_plein_teom: 9.67, ind_majothrs: "NON" });
+  assert.equal(d.year, "2025");
+  const commune = d.rows[0];
+  assert.deepEqual([commune.tfb, commune.tfnb, commune.th], [27.85, null, null]);
+  const tasa = d.rows.find((r) => /Île-de-France/.test(r.label));
+  assert.equal(tasa.tfnb, undefined, "la TASA n'existe pas pour le foncier non bâti : sans objet");
+  assert.equal(d.rows.find((r) => r.label === "Syndicats de communes").tfb, 0, "un zéro publié reste un zéro");
+  assert.deepEqual(d.global, { tfb: 33.4, tfnb: null, th: null });
+  assert.equal(d.thMajoration, undefined);
+});

@@ -220,6 +220,45 @@
     };
   }
 
+  // Taux de fiscalité directe locale par bénéficiaire (DGFiP, « Fiscalité locale des particuliers »,
+  // issus du fichier REI). Définition de chaque code : notice du REI 2025 (TRACE_REI_2025.xlsx).
+  const TAUX = {
+    endpoint: "https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets/fiscalite-locale-des-particuliers/records",
+    datasetPage: "https://data.economie.gouv.fr/explore/dataset/fiscalite-locale-des-particuliers/"
+  };
+  // [libellé, taxe foncière bâtie, taxe foncière non bâtie, taxe d'habitation] ; null = sans objet.
+  const TAUX_ROWS = [
+    ["Commune (taux voté)", "e12vote", "b12vote", "h12vote"],
+    ["Intercommunalité à fiscalité propre (taux voté)", "e32vote", "b32vote", "h32vote"],
+    ["Syndicats de communes", "e22", "b22", "h22"],
+    ["Taxe spéciale d’équipement (établissement public foncier)", "e52", "b52", "h52"],
+    ["Autres taxes spéciales d’équipement (Grand Paris, Guadeloupe, Martinique, Sud-Ouest)", "e52a", "b52a", "h52a"],
+    ["Taxe GEMAPI (milieux aquatiques et inondations, intercommunalité)", "e52ggemapi", "b52ggemapi", "h52ggemapi"],
+    ["Taxe additionnelle spéciale annuelle (Île-de-France)", "e52tasa", null, null],
+    ["Taxe additionnelle au foncier non bâti (commune)", null, "b12tafnb", null],
+    ["Taxe additionnelle au foncier non bâti (intercommunalité)", null, "b32tafnb", null],
+    ["Taxe additionnelle au foncier non bâti (Métropole du Grand Paris)", null, "b32mgptafnb", null]
+  ];
+
+  function buildTauxParams(inseeCode) {
+    if (!isInseeCode(inseeCode)) throw new Error("Code INSEE invalide");
+    return new URLSearchParams({ where: 'insee_com="' + String(inseeCode).toUpperCase() + '"', order_by: "exercice desc", limit: "1" });
+  }
+
+  // Taux publiés seulement : null si absent, undefined si la taxe n'a pas cette composante (« sans objet »).
+  function readTaux(record) {
+    if (!record || typeof record !== "object") return null;
+    const pick = (k) => (k ? num(record, k) : undefined);
+    return {
+      year: record.exercice ? String(record.exercice) : null,
+      epci: typeof record.q03 === "string" && record.q03 ? record.q03 : null,
+      rows: TAUX_ROWS.map(([label, tfb, tfnb, th]) => ({ label, tfb: pick(tfb), tfnb: pick(tfnb), th: pick(th) })),
+      global: { tfb: num(record, "taux_global_tfb"), tfnb: num(record, "taux_global_tfnb"), th: num(record, "taux_global_th") },
+      teom: num(record, "taux_plein_teom"),
+      thMajoration: record.ind_majothrs === "OUI" ? num(record, "thsurtaxrstau") : undefined
+    };
+  }
+
   function formatQuarter(period) {
     const match = /^(\d{4})-T([1-4])$/.exec(String(period ?? ""));
     if (!match) return String(period ?? "");
@@ -249,5 +288,5 @@
     return "unknown";
   }
 
-  return { OFGL, DGFIP, dgfipKey, buildDgfipParams, readDgfip, normalizeText, isInseeCode, classifyCommuneQuery, mergeCommunes, buildOfglParams, ofglDatasetLink, pickAmount, pickPerCapita, summarizeOfglRecords, selectPriorityAggregates, PRIORITY_AGGREGATES, formatQuarter, percentChange, directionWord, detectTopic };
+  return { OFGL, DGFIP, TAUX, dgfipKey, buildDgfipParams, readDgfip, buildTauxParams, readTaux, normalizeText, isInseeCode, classifyCommuneQuery, mergeCommunes, buildOfglParams, ofglDatasetLink, pickAmount, pickPerCapita, summarizeOfglRecords, selectPriorityAggregates, PRIORITY_AGGREGATES, formatQuarter, percentChange, directionWord, detectTopic };
 });

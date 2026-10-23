@@ -108,6 +108,12 @@ Même budget (principal), même commune, chaque exercice 2019-2025 (FAM-01) :
 - Lecture des moyennes : citation de la note méthodologique de la DGFiP (« les valeurs moyennes des groupes de référence doivent toujours être relativisées »).
 - Contrôle : fiche de Fameck affichée identique aux valeurs de l’API ; tests STRATA-TABLES, STRATA-MOBILE, STRATA-ERROR, STRATA-EMPTY et 2 tests unitaires ajoutés.
 
+### V8. Ajout du 23 octobre 2026 : qui reçoit quoi sur l’avis de taxe foncière
+
+- Tableau des taux par bénéficiaire (commune, intercommunalité, syndicats, taxes spéciales d’équipement, GEMAPI, TASA d’Île-de-France, taxes additionnelles au foncier non bâti) pour la taxe foncière bâtie, non bâtie et la taxe d’habitation, avec le taux global publié par la DGFiP et la TEOM à part. Source : jeu DGFiP « Fiscalité locale des particuliers » (taux issus du REI) ; chaque code est défini par la notice officielle du REI 2025 (`TRACE_REI_2025.xlsx`).
+- Fameck 2025 : commune 27,85 %, CA du Val de Fensch 5,00 %, TSE 0,111 %, GEMAPI 0,441 %, taux global 33,40 % ; TEOM 9,67 %. Le taux communal est identique à celui de la fiche des comptes individuels.
+- Test réel dans le navigateur empêché par les coupures du proxy de l’environnement vers `data.economie.gouv.fr` ; comportement validé par simulation (valeurs réelles de Fameck) et par lecture directe de l’API.
+
 ### V6. Ce qui reste à faire
 
 1. Fusionner la branche puis publier, pour supprimer l’erreur `restoreAnchor` en production (décision de l’éditeur).
