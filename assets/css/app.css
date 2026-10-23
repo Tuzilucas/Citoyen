@@ -373,3 +373,89 @@ body{background:var(--paper);color:var(--ink)}
 /* Socle commun et fiche standard téléchargeable de la commune recherchée */
 .municipal-dataset { display: grid; gap: .5rem; margin: 1rem 0; justify-items: start; }
 .municipal-dataset:empty { display: none; }
+
+
+/* Passe ergonomie 2026 — hiérarchie, confort de lecture et interactions cohérentes */
+:root{
+  --radius-card:14px;
+  --shadow-soft:0 8px 28px rgba(32,34,31,.055);
+  --focus-ring:#9b3d27;
+}
+html{scroll-padding-top:6rem;scroll-behavior:smooth}
+body{font-size:16px;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.site-header{
+  position:sticky;top:0;z-index:30;
+  background:rgba(247,245,238,.96);
+  backdrop-filter:blur(14px);
+  box-shadow:0 1px 0 rgba(32,34,31,.08);
+}
+.site-header nav a{padding:.45rem .2rem}
+.site-header nav a[aria-current="page"],.site-header nav a:hover{color:var(--accent)}
+.brand:focus-visible,.site-header nav a:focus-visible,.button:focus-visible,.nav-toggle:focus-visible,
+input:focus-visible,select:focus-visible,summary:focus-visible{
+  outline:3px solid var(--focus-ring);outline-offset:3px
+}
+.hero-redesigned{isolation:isolate}
+.hero-redesigned:after{
+  content:"";position:absolute;z-index:-1;right:-8rem;top:2rem;width:min(34vw,440px);aspect-ratio:1;
+  border:1px solid rgba(155,61,39,.16);border-radius:50%;
+  box-shadow:0 0 0 2.3rem rgba(155,61,39,.025),0 0 0 4.6rem rgba(155,61,39,.02);
+  pointer-events:none
+}
+.hero-brand-lockup{position:relative;z-index:1}
+.hero-logo{filter:drop-shadow(0 8px 16px rgba(32,34,31,.08))}
+.hero-actions .button{transition:transform .18s ease,background-color .18s ease,box-shadow .18s ease}
+.button-primary:hover,.button-secondary:hover{transform:translateY(-1px);box-shadow:var(--shadow-soft)}
+.headline-ribbon{gap:0;border-block:1px solid var(--line);background:#efede5}
+.headline-metric{min-width:0;padding:1.15rem clamp(.8rem,2vw,1.5rem);transition:background-color .18s ease}
+.headline-metric:hover{background:rgba(255,255,255,.6)}
+.headline-metric strong{font-variant-numeric:tabular-nums}
+.section{scroll-margin-top:6.5rem}
+.section-heading{gap:1.5rem}
+.section-heading>div{min-width:0}
+.territory-card,.info-card,.claim-form,.debt-card,.commune-result,.claim-result{
+  transition:border-color .18s ease,box-shadow .18s ease,transform .18s ease
+}
+.territory-card:hover,.info-card:hover{border-color:#aaa99f;box-shadow:var(--shadow-soft)}
+.territory-card .button{margin-top:1rem}
+.commune-form,.claim-form{width:100%}
+.commune-search-row input,.claim-form input,.claim-form select,.glossary-search{
+  min-width:0;min-height:48px;padding:.7rem .85rem
+}
+.commune-search-row .button{flex-shrink:0}
+.commune-result[hidden]{display:none}
+.glossary-entry{border-bottom:1px solid var(--line)}
+.glossary-entry summary{padding:.85rem .2rem;font-weight:750;cursor:pointer}
+.glossary-entry summary::marker{color:var(--accent)}
+.glossary-entry[open]{padding-bottom:.7rem}
+.glossary-entry p{max-width:78ch}
+.table-wrap,.strata-table-wrap{max-width:100%;overscroll-behavior-x:contain}
+th{line-height:1.4}
+td,th{padding:.75rem .85rem}
+.site-footer{gap:1.5rem}
+@media(min-width:1100px){
+  .site-header{padding-inline:clamp(1rem,4vw,4rem)}
+  .site-header nav{gap:.4rem 1rem}
+}
+@media(max-width:800px){
+  .hero-redesigned:after{right:-13rem;top:1rem;width:390px;opacity:.6}
+  .headline-ribbon{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .headline-metric{border-bottom:1px solid var(--line)}
+  .headline-metric:nth-child(odd){border-right:1px solid var(--line)}
+  .headline-metric:nth-last-child(-n+2){border-bottom:0}
+  .section-heading{gap:.4rem}
+}
+@media(max-width:480px){
+  .hero-brand-lockup{align-items:flex-start}
+  .hero-logo{width:64px;height:64px}
+  .hero h1{font-size:clamp(2.4rem,12vw,3.5rem)}
+  .headline-metric{padding:.85rem .7rem}
+  .headline-metric strong{font-size:1.1rem;overflow-wrap:anywhere}
+  .headline-metric small,.headline-metric em{font-size:.7rem}
+  .section{padding-top:2.5rem;padding-bottom:2.5rem}
+  .table-wrap th,.table-wrap td{padding:.6rem .65rem}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
+}
