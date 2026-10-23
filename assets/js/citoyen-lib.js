@@ -401,6 +401,27 @@
       .replace(/(\d) (?=(?:Md€|M€|€|ans\b|habitants\b))/g, "$1\u00a0");
   }
 
+  // Montant en euros tel que publié par l’OFGL : même format que le reste de l’analyse communale
+  // (euros entiers, séparateur de milliers insécable), sans conversion en millions.
+  const EUROS = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 });
+  function formatEuros(value) {
+    return Number.isFinite(value) ? EUROS.format(value) + "\u00a0€" : "Non disponible";
+  }
+
+  // Textes du bandeau communal (libellés courts, montants en euros, donnée absente = « Non disponible »).
+  function communeRibbon(name, year, savings, debt, savingsRate) {
+    const pct = new Intl.NumberFormat("fr-FR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const where = name + " · exercice " + year;
+    return {
+      savings: formatEuros(savings),
+      debt: formatEuros(debt),
+      rate: Number.isFinite(savingsRate) ? pct.format(savingsRate) + "\u202f%" : "Non disponible",
+      savingsContext: where,
+      debtContext: where + " · fin d’exercice",
+      rateContext: name + " · calcul du site"
+    };
+  }
+
   function formatQuarter(period) {
     const match = /^(\d{4})-T([1-4])$/.exec(String(period ?? ""));
     if (!match) return String(period ?? "");
@@ -436,5 +457,5 @@
     return "unknown";
   }
 
-  return { OFGL, DGFIP, TAUX, COMMUNE_INDICATORS, COMMUNE_DATASET_VERSION, buildCommuneDataset, searchSocleIndex, communeNameSet, dgfipKey, buildDgfipParams, readDgfip, buildTauxParams, readTaux, normalizeText, isInseeCode, classifyCommuneQuery, mergeCommunes, buildOfglParams, ofglDatasetLink, pickAmount, pickPerCapita, summarizeOfglRecords, selectPriorityAggregates, PRIORITY_AGGREGATES, formatQuarter, frenchTypo, percentChange, directionWord, detectTopic };
+  return { OFGL, DGFIP, TAUX, COMMUNE_INDICATORS, COMMUNE_DATASET_VERSION, buildCommuneDataset, searchSocleIndex, communeNameSet, dgfipKey, buildDgfipParams, readDgfip, buildTauxParams, readTaux, normalizeText, isInseeCode, classifyCommuneQuery, mergeCommunes, buildOfglParams, ofglDatasetLink, pickAmount, pickPerCapita, summarizeOfglRecords, selectPriorityAggregates, PRIORITY_AGGREGATES, formatQuarter, formatEuros, communeRibbon, frenchTypo, percentChange, directionWord, detectTopic };
 });

@@ -90,6 +90,14 @@
     const text = document.getElementById("claim-text")?.value.trim() || "";
     const period = document.getElementById("claim-period")?.value || "";
     const selectedScope = document.getElementById("claim-scope")?.value || "auto";
+    const claimInput = document.getElementById("claim-text");
+    if (!text) {
+      // Champ vide : message du site (zone aria-live #claim-result) plutôt que la bulle native.
+      if (claimInput) { claimInput.setAttribute("aria-invalid", "true"); claimInput.focus(); }
+      showResult("Saisissez un chiffre ou une affirmation", "Champ vide", ["Recopiez par exemple « la dette publique est de 3 500 milliards », ou indiquez simplement un sujet (dette, budget, commune)."]);
+      return;
+    }
+    if (claimInput) claimInput.removeAttribute("aria-invalid");
     // Toutes les communes de France sont reconnues grâce au socle commun (chargé à la demande).
     let isCommuneName = null;
     try { isCommuneName = lib.communeNameSet(await loadSearchIndex()); } catch (error) { isCommuneName = null; }
@@ -191,9 +199,7 @@
     container.appendChild(p);
   }
 
-  function formatFinancialAmount(value) {
-    return Number.isFinite(value) ? new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 }).format(value) + " €" : "Non disponible";
-  }
+  const formatFinancialAmount = lib.formatEuros;
 
   class ServiceError extends Error {
     constructor(service, reason, timeoutMs) {
@@ -570,15 +576,14 @@
 
   // Bandeau : les tuiles communales n’apparaissent qu’une fois une commune chargée ; donnée absente = « Non disponible ».
   function updateRibbon(commune, latestYear, savings, debt, savingsRate) {
-    const millions = new Intl.NumberFormat("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    const ratio = new Intl.NumberFormat("fr-FR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
     const set = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = typo(value); };
-    set("ribbon-commune-savings", savings === null ? "Non disponible" : millions.format(savings / 1e6) + " M€");
-    set("ribbon-commune-debt", debt === null ? "Non disponible" : millions.format(debt / 1e6) + " M€");
-    set("ribbon-commune-rate", savingsRate === null ? "Non disponible" : ratio.format(savingsRate) + " %");
-    set("ribbon-local-savings-context", "Exercice " + latestYear + " · " + commune.nom + " (M€ : millions d’euros)");
-    set("ribbon-local-debt-context", "Exercice " + latestYear + " · " + commune.nom);
-    set("ribbon-local-rate-context", "Calcul indicatif · " + commune.nom);
+    const r = lib.communeRibbon(commune.nom, latestYear, savings, debt, savingsRate);
+    set("ribbon-commune-savings", r.savings);
+    set("ribbon-commune-debt", r.debt);
+    set("ribbon-commune-rate", r.rate);
+    set("ribbon-local-savings-context", r.savingsContext);
+    set("ribbon-local-debt-context", r.debtContext);
+    set("ribbon-local-rate-context", r.rateContext);
     document.querySelectorAll(".headline-commune").forEach((tile) => { tile.hidden = false; });
     const call = document.getElementById("ribbon-call");
     if (call) call.hidden = true;
@@ -618,7 +623,7 @@
 
   function strataTable(caption, headers, rows) {
     const wrap = document.createElement("div");
-    wrap.className = "strata-table-wrap";
+    wrap.className = "strata-table-wrap stack-on-mobile";
     const table = document.createElement("table");
     const cap = document.createElement("caption");
     cap.textContent = typo(caption);
@@ -633,7 +638,8 @@
       const tr = document.createElement("tr");
       cells.forEach((txt, i) => {
         const cell = document.createElement(i === 0 ? "th" : "td");
-        if (i === 0) cell.scope = "row"; else cell.className = "numeric-cell";
+        // data-label : intitulé de colonne repris devant chaque valeur quand le tableau s’empile (mobile).
+        if (i === 0) cell.scope = "row"; else { cell.className = "numeric-cell"; cell.dataset.label = typo(headers[i]); }
         cell.textContent = typo(txt);
         tr.appendChild(cell);
       });
@@ -940,6 +946,17 @@
       if (button) button.textContent = busy ? "Recherche…" : "Rechercher";
     };
     const setResultBusy = (busy) => result.setAttribute("aria-busy", busy ? "true" : "false");
+    // Saisie vide ou invalide : message du site (zone aria-live #commune-result) plutôt que la bulle native.
+    const setInvalid = (invalid) => {
+      if (invalid) {
+        input.setAttribute("aria-invalid", "true");
+        input.setAttribute("aria-describedby", "commune-result commune-hint");
+        input.focus();
+      } else {
+        input.removeAttribute("aria-invalid");
+        input.setAttribute("aria-describedby", "commune-hint");
+      }
+    };
 
     // kind : résultat de lib.classifyCommuneQuery ; fromUrl : recherche relancée depuis l’adresse.
     const search = async (kind, fromUrl) => {
@@ -949,6 +966,7 @@
         setBusy(false);
         setResultBusy(false);
       }
+      setInvalid(kind.type === "empty" || kind.type === "partial-code" || kind.type === "invalid-code");
       if (kind.type === "empty") {
         showSearchMessage(result, "Saisissez une commune", "Indiquez un nom de commune, un code postal ou un code INSEE (5 caractères, par exemple 57206 ou 2A004).", false);
         return;
@@ -1136,7 +1154,12 @@
       const latest = debtData.records && debtData.records[0];
       const ribbonDebt = document.getElementById("ribbon-debt");
       const ribbonDebtContext = document.getElementById("ribbon-debt-context");
-      if (latest && ribbonDebt) ribbonDebt.textContent = typo(formatDebt(latest.debt_eur_billion));
+      if (latest && ribbonDebt) {
+        const unit = document.createElement("abbr");
+        unit.title = "milliards d’euros";
+        unit.textContent = "Md€";
+        ribbonDebt.replaceChildren(typo(money.format(latest.debt_eur_billion)) + "\u00a0", unit);
+      }
       if (latest && ribbonDebtContext) ribbonDebtContext.textContent = typo(ratio.format(latest.debt_gdp_percent) + " % du PIB · " + lib.formatQuarter(latest.period));
     } catch (error) {
       const value = document.getElementById("latest-debt");

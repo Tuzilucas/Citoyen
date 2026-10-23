@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Les finances de votre commune et de la France, avec les sources officielles, les données brutes et des calculs expliqués.">
+  <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#102f49">
   <link rel="icon" type="image/svg+xml" href="assets/img/logo-information-citoyenne.svg">
   <title>Information citoyenne — Finances publiques, sources à l’appui</title>
@@ -14,6 +15,10 @@
   <meta property="og:title" content="Information citoyenne — Finances publiques, sources à l’appui">
   <meta property="og:description" content="Les finances de votre commune et de la France, avec les sources officielles, les données brutes et des calculs expliqués.">
   <meta property="og:url" content="https://tuzilucas.github.io/Citoyen/">
+  <!-- Services publics interrogés lors d’une recherche de commune : connexion ouverte à l’avance. -->
+  <link rel="preconnect" href="https://geo.api.gouv.fr" crossorigin>
+  <link rel="preconnect" href="https://data.ofgl.fr" crossorigin>
+  <link rel="preconnect" href="https://data.economie.gouv.fr" crossorigin>
   <link rel="stylesheet" href="assets/css/app.css">
   <script src="assets/js/citoyen-lib.js" defer></script>
   <script src="assets/js/app.js" defer></script>
@@ -49,24 +54,33 @@
       <form id="commune-form" class="commune-form">
         <label for="commune-query">Nom, code postal ou code INSEE</label>
         <div class="commune-search-row">
-          <input id="commune-query" name="commune" type="search" placeholder="Ex. : Fameck, 57290 ou 57206" autocomplete="off" required>
+          <input id="commune-query" name="commune" type="search" placeholder="Ex. : Fameck, 57290 ou 57206" autocomplete="off" aria-describedby="commune-hint">
           <button class="button button-primary" type="submit">Rechercher</button>
         </div>
-        <p class="form-hint">Pour chaque commune, le site affiche les comptes publiés par l’<abbr title="Observatoire des finances et de la gestion publique locales">OFGL</abbr> et la <abbr title="Direction générale des finances publiques">DGFiP</abbr> quand ils existent. Sinon, il l’indique.</p>
+        <p class="form-hint" id="commune-hint">Pour chaque commune, le site affiche les comptes publiés par l’<abbr title="Observatoire des finances et de la gestion publique locales">OFGL</abbr> et la <abbr title="Direction générale des finances publiques">DGFiP</abbr> quand ils existent. Sinon, il l’indique.</p>
       </form>
       <div id="commune-result" class="commune-result" aria-live="polite" hidden></div>
       <ul class="hero-links">
         <li><a href="#verifier">Vérifier un chiffre entendu</a></li>
-        <li><a href="#indicateur-dette">La dette publique de la France</a></li>
+        <li class="hero-link-debt"><a href="#indicateur-dette">La dette publique de la France</a></li>
       </ul>
+      <aside class="hero-guide" aria-labelledby="hero-guide-title">
+        <h2 id="hero-guide-title">Ce que vous trouverez</h2>
+        <ol>
+          <li><a href="#analyse-communale"><strong>Les comptes de la commune</strong><span>Recettes, dépenses, épargne et dette du budget principal, publiés par l’OFGL.</span></a></li>
+          <li><a href="#comparaison-strate"><strong>La comparaison avec les communes de même taille</strong><span>Montants par habitant à côté de la moyenne de la strate, selon la DGFiP.</span></a></li>
+          <li><a href="#taux-fonciers"><strong>Les taux de la taxe foncière</strong><span>Qui perçoit quoi sur l’avis : commune, intercommunalité, syndicats.</span></a></li>
+          <li><a href="#indicateur-dette"><strong>La dette publique de la France</strong><span>Série trimestrielle publiée par l’INSEE.</span></a></li>
+        </ol>
+      </aside>
     </section>
 
     <section class="headline-ribbon" aria-label="Quelques chiffres clés">
-      <a href="#indicateur-dette" class="headline-metric"><span class="headline-icon" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 9.5 10 4l7 5.5V17H3z"/><path d="M8 17v-4.5h4V17"/></svg></span><span><small>Dette publique (au sens de Maastricht), en milliards d’euros (Md€)</small><strong id="ribbon-debt">3 595,5 Md€</strong><em id="ribbon-debt-context">119,0 % du PIB · 2e trimestre 2026</em></span></a>
+      <a href="#indicateur-dette" class="headline-metric"><span class="headline-icon" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 9.5 10 4l7 5.5V17H3z"/><path d="M8 17v-4.5h4V17"/></svg></span><span><small>Dette publique (au sens de Maastricht)</small><strong id="ribbon-debt">3 595,5 <abbr title="milliards d’euros">Md€</abbr></strong><em id="ribbon-debt-context">119,0 % du PIB · 2e trimestre 2026</em></span></a>
       <a href="#communes" class="headline-call" id="ribbon-call">Choisissez une commune pour afficher son épargne brute, sa dette et son taux d’épargne →</a>
-      <a href="#analyse-communale" class="headline-metric headline-commune" hidden><span class="headline-icon" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 16V9M8 16V5M12 16v-6M16 16V7"/></svg></span><span><small>Épargne brute · commune recherchée</small><strong id="ribbon-commune-savings">Non disponible</strong><em id="ribbon-local-savings-context">Aucune commune choisie</em></span></a>
-      <a href="#analyse-communale" class="headline-metric headline-commune" hidden><span class="headline-icon" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 5h14M3 10h14M3 15h9"/></svg></span><span><small>Encours de dette · commune recherchée</small><strong id="ribbon-commune-debt">Non disponible</strong><em id="ribbon-local-debt-context">En fin d’exercice</em></span></a>
-      <a href="#analyse-communale" class="headline-metric headline-commune" hidden><span class="headline-icon" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 16 16 4M11 4h5v5"/></svg></span><span><small>Taux d’épargne brute · commune recherchée</small><strong id="ribbon-commune-rate">Non disponible</strong><em id="ribbon-local-rate-context">Calculé si les données sont disponibles</em></span></a>
+      <a href="#analyse-communale" class="headline-metric headline-commune" hidden><span class="headline-icon" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 16V9M8 16V5M12 16v-6M16 16V7"/></svg></span><span><small>Épargne brute</small><strong id="ribbon-commune-savings">Non disponible</strong><em id="ribbon-local-savings-context">Aucune commune choisie</em></span></a>
+      <a href="#analyse-communale" class="headline-metric headline-commune" hidden><span class="headline-icon" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 5h14M3 10h14M3 15h9"/></svg></span><span><small>Encours de dette</small><strong id="ribbon-commune-debt">Non disponible</strong><em id="ribbon-local-debt-context">En fin d’exercice</em></span></a>
+      <a href="#analyse-communale" class="headline-metric headline-commune" hidden><span class="headline-icon" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 16 16 4M11 4h5v5"/></svg></span><span><small>Taux d’épargne brute</small><strong id="ribbon-commune-rate">Non disponible</strong><em id="ribbon-local-rate-context">Calculé si les données sont disponibles</em></span></a>
     </section>
 
     <section id="territoires" class="section territory-section">
@@ -125,7 +139,7 @@
       </div>
       <p class="municipal-intro">La DGFiP publie les comptes de chaque commune en euros par habitant. Elle les place à côté de la moyenne des communes de la même « strate » : même tranche de population et même type de rattachement à une intercommunalité. On y lit aussi d’où vient et où va l’argent de fonctionnement. Enfin, on y trouve le produit de chaque impôt local et le taux voté (taxe foncière, taxe d’habitation sur les résidences secondaires, cotisation foncière des entreprises, fraction de TVA…).</p>
       <div id="strata-content" aria-live="polite"><p>Choisissez une commune pour afficher sa fiche officielle.</p></div>
-      <h3 class="strata-subtitle">Sur l’avis de taxe foncière : qui reçoit quoi</h3>
+      <h3 class="strata-subtitle" id="taux-fonciers">Sur l’avis de taxe foncière : qui reçoit quoi</h3>
       <div id="taux-content" aria-live="polite"><p>Choisissez une commune pour afficher les taux de chaque bénéficiaire.</p></div>
       <div class="municipal-source-note">
         <strong>Lire une moyenne de strate</strong>
@@ -142,7 +156,7 @@
       </div>
       <form id="claim-form" class="claim-form">
         <label for="claim-text">Le chiffre ou l’affirmation</label>
-        <input id="claim-text" name="claim" type="search" placeholder="Ex. : la dette publique est de 3 500 milliards" autocomplete="off" required>
+        <input id="claim-text" name="claim" type="search" placeholder="Ex. : la dette publique est de 3 500 milliards" autocomplete="off">
         <div class="form-grid">
           <div><label for="claim-period">Période concernée (si connue)</label><select id="claim-period" name="period"><option value="">Je ne sais pas</option><option value="2026-T2">2e trimestre 2026</option><option value="2026-T1">1er trimestre 2026</option><option value="2025-T4">4e trimestre 2025</option><option value="2025">Année 2025</option><option value="2024">Année 2024</option><option value="2015">Année 2015</option><option value="2014">Année 2014</option><option value="2014-2015">2014–2015 (deux exercices)</option></select></div>
           <div><label for="claim-scope">Sujet</label><select id="claim-scope" name="scope"><option value="auto">Détecter automatiquement</option><option value="dette">Dette publique</option><option value="education">Budget de l’Éducation nationale</option><option value="commune">Finances d’une commune</option><option value="budget-etat">Budget de l’État</option></select></div>
