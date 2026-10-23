@@ -223,12 +223,70 @@
       "official_identifier": "57206",
       "fameck_present": true,
       "detail_level": "agrégats du budget principal exécuté",
-      "retrieval_status": "retranscription_secondaire_effectuee",
-      "validation_status": "a_recouper_avec_export_OFGL",
+      "retrieval_status": "remplacée le 2026-10-23 par la fiche standard construite depuis l'API OFGL (data/communes/finances/57206.json)",
+      "validation_status": "obsolète : la série FMPC s'écarte de l'OFGL de quelques milliers d'euros (recettes, dépenses, épargne) et de 725 k€ sur la dette 2019 ; la population, la dette 2020-2025, les impôts locaux et la DGF concordent",
       "known_limitations": "L'export brut OFGL n'a pas été téléchargé ni rapproché ligne à ligne. Une autre page secondaire publie certains montants 2024 différents; les périmètres doivent être réconciliés. Le statut 2025 de Fameck reste à vérifier dans la source officielle.",
       "validation_method": "Retranscription de la série affichée par FMPC; prochaine étape: requête OFGL filtrée sur Fameck (code INSEE 57206), année et agrégat, puis comparaison valeur par valeur.",
       "file_sha256": null,
-      "notes": "La série du site suit les libellés recettes réelles, dépenses réelles et épargne brute de la source FMPC; elle n'est pas mélangée aux agrégats différents du Journal du Net."
+      "notes": "Fiche pilote ayant servi de modèle à la structure standard appliquée à toutes les communes (citoyen-lib.js, buildCommuneDataset). Fichier data/indicators/fameck-finances-2024.json retiré."
+    },
+    {
+      "source_id": "insee-cog-2026",
+      "exact_name": "Code officiel géographique au 1er janvier 2026",
+      "producer": "INSEE",
+      "administrative_level": "commune, département, région",
+      "entity_id": null,
+      "category": "referentiel_geographique",
+      "description": "Liste officielle des 34 875 communes, des départements et des régions ; base du socle commun (data/entities).",
+      "official_page_url": "https://www.insee.fr/fr/information/8740222",
+      "secondary_source_url": null,
+      "download_or_api_url": "https://www.insee.fr/fr/statistiques/fichier/8740222/v_commune_2026.csv",
+      "format": "CSV",
+      "license_and_obligations": "Licence ouverte (Etalab)",
+      "available_vintages": [
+        "2026"
+      ],
+      "publication_date": null,
+      "consultation_date": "2026-10-23",
+      "retrieval_date": "2026-10-23",
+      "official_identifier": null,
+      "fameck_present": null,
+      "detail_level": null,
+      "retrieval_status": "fichiers téléchargés par scripts/socle/construire-socle.py",
+      "validation_status": "source officielle ; rapprochement Fameck vérifié sur la page INSEE de la commune",
+      "known_limitations": null,
+      "validation_method": null,
+      "file_sha256": null,
+      "notes": "Communes de type COM uniquement (hors communes déléguées, associées et arrondissements municipaux)."
+    },
+    {
+      "source_id": "dgcl-epci-2026",
+      "exact_name": "Composition communale des EPCI à fiscalité propre au 1er janvier 2026",
+      "producer": "DGCL (ministère de l'Intérieur)",
+      "administrative_level": "commune, EPCI",
+      "entity_id": null,
+      "category": "referentiel_geographique",
+      "description": "Intercommunalité de rattachement et populations légales en vigueur de chaque commune (socle commun).",
+      "official_page_url": "https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/acces-aux-statistiques-par-thematique/perimetre-des-intercommunalites/liste-et-composition-des-epci-fiscalite-propre",
+      "secondary_source_url": null,
+      "download_or_api_url": "https://www.collectivites-locales.gouv.fr/files/files/Etudes-et-statistiques/DESL/2026/EPCI/epcicom2026.xlsx",
+      "format": "XLSX",
+      "license_and_obligations": "Licence ouverte (Etalab)",
+      "available_vintages": [
+        "2026"
+      ],
+      "publication_date": null,
+      "consultation_date": "2026-10-23",
+      "retrieval_date": "2026-10-23",
+      "official_identifier": null,
+      "fameck_present": null,
+      "detail_level": null,
+      "retrieval_status": "fichier téléchargé par scripts/socle/construire-socle.py",
+      "validation_status": "source officielle ; Fameck → CA Thionville Fensch Agglomération (992367730), identique à l'INSEE",
+      "known_limitations": null,
+      "validation_method": null,
+      "file_sha256": null,
+      "notes": "geo.api.gouv.fr indiquait encore l'ancienne intercommunalité (CA du Val de Fensch) : le socle suit la DGCL et l'INSEE. Quatre îles mono-communales n'ont pas d'intercommunalité."
     }
   ]
 }

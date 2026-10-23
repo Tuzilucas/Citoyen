@@ -198,7 +198,7 @@ tbody tr:hover{background:#eeece3}
 @media(max-width:760px){.composition-notes{grid-template-columns:1fr}.composition-notes article,.composition-notes article+article{padding:1rem 0;border-right:0;border-bottom:1px solid var(--line)}.composition-notes article:last-child{border-bottom:0}.composition-lead{align-items:flex-start;flex-direction:column;gap:.6rem}}
 
 
-/* Repères financiers du territoire pilote Fameck */
+/* Repères financiers de la commune recherchée (même présentation pour toutes les communes) */
 .municipal-finance-section{background:#fff;border-top:2px solid var(--ink);border-bottom:1px solid var(--ink)}
 .municipal-intro{max-width:900px;color:#555750;font-size:.92rem}
 .municipal-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;margin-top:1.5rem;border-top:1px solid var(--ink);border-left:1px solid var(--line)}
@@ -217,7 +217,7 @@ tbody tr:hover{background:#eeece3}
 @media(max-width:620px){.municipal-metrics,.municipal-calculs{grid-template-columns:1fr}.municipal-metric{padding:1rem .6rem}}
 
 
-/* Série annuelle des finances de Fameck */
+/* Série annuelle des finances de la commune recherchée */
 .municipal-history-wrap{margin-top:2rem;overflow-x:auto}
 .municipal-history-wrap h3{font-family:Georgia,"Times New Roman",serif;font-size:1.6rem;font-weight:500}
 .municipal-history-wrap>p{font-size:.82rem;color:var(--muted)}
@@ -339,7 +339,7 @@ body{background:var(--paper);color:var(--ink)}
 .commune-loading{color:var(--muted);font-style:italic}
 .commune-result-card .button-secondary{margin-top:.35rem;white-space:normal}
 
-/* Tableau annuel de Fameck sur mobile : titre et texte ne défilent pas avec le tableau, l’année reste visible */
+/* Tableau annuel de la commune sur mobile : titre et texte ne défilent pas avec le tableau, l’année reste visible */
 .municipal-history-wrap>h3,.municipal-history-wrap>p{position:sticky;left:0;max-width:min(100%,calc(100vw - 2rem))}
 .municipal-history-wrap tbody td:first-child,.municipal-history-wrap thead th:first-child{position:sticky;left:0;z-index:1;background:var(--paper,#f8f7f2);box-shadow:1px 0 0 var(--line)}
 .municipal-history-wrap tr.current-year-row td:first-child{background:inherit}
@@ -369,3 +369,7 @@ body{background:var(--paper);color:var(--ink)}
 .strata-table-wrap tbody th{font-weight:400}
 .strata-table-wrap .numeric-cell{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 .strata-subtitle{margin:2rem 0 .8rem;font-size:1.2rem}
+
+/* Socle commun et fiche standard téléchargeable de la commune recherchée */
+.municipal-dataset { display: grid; gap: .5rem; margin: 1rem 0; justify-items: start; }
+.municipal-dataset:empty { display: none; }

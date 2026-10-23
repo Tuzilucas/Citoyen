@@ -1,0 +1,1129 @@
+{
+ "retrieved_at": "2026-10-23T05:48:19.779Z",
+ "query": {
+  "where": "com_code=\"57206\" AND type_de_budget=\"Budget principal\" AND agregat in (\"Recettes de fonctionnement\",\"Dépenses de fonctionnement\",\"Epargne brute\",\"Epargne nette\",\"Dépenses d'investissement\",\"Dépenses d'équipement\",\"Recettes d'investissement\",\"Encours de dette\",\"Remboursements d'emprunts hors GAD\",\"Annuité de la dette\",\"Fonds de roulement\",\"Impôts locaux\",\"Dotation globale de fonctionnement\",\"Frais de personnel\")"
+ },
+ "total_count": 112,
+ "results": [
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2018",
+   "type_de_budget": "Budget principal",
+   "agregat": "Annuité de la dette",
+   "montant": 823828.6,
+   "euros_par_habitant": 58.929084406294706,
+   "ptot": 13980
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2018",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dépenses d'équipement",
+   "montant": 3245835.01,
+   "euros_par_habitant": 232.177039341917,
+   "ptot": 13980
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2018",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dépenses d'investissement",
+   "montant": 3938566.31,
+   "euros_par_habitant": 281.7286344778255,
+   "ptot": 13980
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2018",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dépenses de fonctionnement",
+   "montant": 10028207.96,
+   "euros_par_habitant": 717.3253190271818,
+   "ptot": 13980
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2018",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dotation globale de fonctionnement",
+   "montant": 5154698,
+   "euros_par_habitant": 368.71945636623747,
+   "ptot": 13980
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2018",
+   "type_de_budget": "Budget principal",
+   "agregat": "Encours de dette",
+   "montant": 6585524.76,
+   "euros_par_habitant": 471.0675793991416,
+   "ptot": 13980
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2018",
+   "type_de_budget": "Budget principal",
+   "agregat": "Epargne brute",
+   "montant": 1952396.93,
+   "euros_par_habitant": 139.65643276108727,
+   "ptot": 13980
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2018",
+   "type_de_budget": "Budget principal",
+   "agregat": "Epargne nette",
+   "montant": 1334238.38,
+   "euros_par_habitant": 95.43908297567954,
+   "ptot": 13980
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2018",
+   "type_de_budget": "Budget principal",
+   "agregat": "Fonds de roulement",
+   "montant": 1846311.13,
+   "euros_par_habitant": 132.06803505007153,
+   "ptot": 13980
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2018",
+   "type_de_budget": "Budget principal",
+   "agregat": "Frais de personnel",
+   "montant": 5720365.43,
+   "euros_par_habitant": 409.18207653791126,
+   "ptot": 13980
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2018",
+   "type_de_budget": "Budget principal",
+   "agregat": "Impôts locaux",
+   "montant": 4442299,
+   "euros_par_habitant": 317.7610157367668,
+   "ptot": 13980
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2018",
+   "type_de_budget": "Budget principal",
+   "agregat": "Recettes d'investissement",
+   "montant": 2410858.66,
+   "euros_par_habitant": 172.45054792560802,
+   "ptot": 13980
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2018",
+   "type_de_budget": "Budget principal",
+   "agregat": "Recettes de fonctionnement",
+   "montant": 11980604.89,
+   "euros_par_habitant": 856.981751788269,
+   "ptot": 13980
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2018",
+   "type_de_budget": "Budget principal",
+   "agregat": "Remboursements d'emprunts hors GAD",
+   "montant": 618158.55,
+   "euros_par_habitant": 44.21734978540773,
+   "ptot": 13980
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2019",
+   "type_de_budget": "Budget principal",
+   "agregat": "Annuité de la dette",
+   "montant": 832806.05,
+   "euros_par_habitant": 58.83476156835041,
+   "ptot": 14155
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2019",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dépenses d'équipement",
+   "montant": 2167017.62,
+   "euros_par_habitant": 153.0920254327093,
+   "ptot": 14155
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2019",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dépenses d'investissement",
+   "montant": 2846707.8,
+   "euros_par_habitant": 201.10969975273753,
+   "ptot": 14155
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2019",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dépenses de fonctionnement",
+   "montant": 10161733.98,
+   "euros_par_habitant": 717.8900727658072,
+   "ptot": 14155
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2019",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dotation globale de fonctionnement",
+   "montant": 5257662,
+   "euros_par_habitant": 371.43496997527376,
+   "ptot": 14155
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2019",
+   "type_de_budget": "Budget principal",
+   "agregat": "Encours de dette",
+   "montant": 6242556.41,
+   "euros_par_habitant": 441.0142288943836,
+   "ptot": 14155
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2019",
+   "type_de_budget": "Budget principal",
+   "agregat": "Epargne brute",
+   "montant": 1886820.14,
+   "euros_par_habitant": 133.29707806428823,
+   "ptot": 14155
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2019",
+   "type_de_budget": "Budget principal",
+   "agregat": "Epargne nette",
+   "montant": 1243851.79,
+   "euros_par_habitant": 87.87366937477923,
+   "ptot": 14155
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2019",
+   "type_de_budget": "Budget principal",
+   "agregat": "Fonds de roulement",
+   "montant": 1716997.54,
+   "euros_par_habitant": 121.29972024019781,
+   "ptot": 14155
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2019",
+   "type_de_budget": "Budget principal",
+   "agregat": "Frais de personnel",
+   "montant": 5837222.06,
+   "euros_par_habitant": 412.3788103143765,
+   "ptot": 14155
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2019",
+   "type_de_budget": "Budget principal",
+   "agregat": "Impôts locaux",
+   "montant": 4527253,
+   "euros_par_habitant": 319.8341928647121,
+   "ptot": 14155
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2019",
+   "type_de_budget": "Budget principal",
+   "agregat": "Recettes d'investissement",
+   "montant": 830574.07,
+   "euros_par_habitant": 58.67708018368067,
+   "ptot": 14155
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2019",
+   "type_de_budget": "Budget principal",
+   "agregat": "Recettes de fonctionnement",
+   "montant": 12048554.12,
+   "euros_par_habitant": 851.1871508300953,
+   "ptot": 14155
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2019",
+   "type_de_budget": "Budget principal",
+   "agregat": "Remboursements d'emprunts hors GAD",
+   "montant": 642968.35,
+   "euros_par_habitant": 45.423408689509,
+   "ptot": 14155
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2020",
+   "type_de_budget": "Budget principal",
+   "agregat": "Annuité de la dette",
+   "montant": 780319.02,
+   "euros_par_habitant": 55.515012805919184,
+   "ptot": 14056
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2020",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dépenses d'équipement",
+   "montant": 1991927.55,
+   "euros_par_habitant": 141.7136845475242,
+   "ptot": 14056
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2020",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dépenses d'investissement",
+   "montant": 3049706.76,
+   "euros_par_habitant": 216.96832384746725,
+   "ptot": 14056
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2020",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dépenses de fonctionnement",
+   "montant": 10079749.28,
+   "euros_par_habitant": 717.1136368810472,
+   "ptot": 14056
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2020",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dotation globale de fonctionnement",
+   "montant": 5288446,
+   "euros_par_habitant": 376.24117814456457,
+   "ptot": 14056
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2020",
+   "type_de_budget": "Budget principal",
+   "agregat": "Encours de dette",
+   "montant": 6132217.71,
+   "euros_par_habitant": 436.27046883893,
+   "ptot": 14056
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2020",
+   "type_de_budget": "Budget principal",
+   "agregat": "Epargne brute",
+   "montant": 1939924.14,
+   "euros_par_habitant": 138.01395418326692,
+   "ptot": 14056
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2020",
+   "type_de_budget": "Budget principal",
+   "agregat": "Epargne nette",
+   "montant": 1330085.43,
+   "euros_par_habitant": 94.62759177575413,
+   "ptot": 14056
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2020",
+   "type_de_budget": "Budget principal",
+   "agregat": "Fonds de roulement",
+   "montant": 3002420.38,
+   "euros_par_habitant": 213.60418184405236,
+   "ptot": 14056
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2020",
+   "type_de_budget": "Budget principal",
+   "agregat": "Frais de personnel",
+   "montant": 5730750.5,
+   "euros_par_habitant": 407.7084874786568,
+   "ptot": 14056
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2020",
+   "type_de_budget": "Budget principal",
+   "agregat": "Impôts locaux",
+   "montant": 4633132.04,
+   "euros_par_habitant": 329.6195247581104,
+   "ptot": 14056
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2020",
+   "type_de_budget": "Budget principal",
+   "agregat": "Recettes d'investissement",
+   "montant": 2073377.35,
+   "euros_par_habitant": 147.50834874786568,
+   "ptot": 14056
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2020",
+   "type_de_budget": "Budget principal",
+   "agregat": "Recettes de fonctionnement",
+   "montant": 12019673.42,
+   "euros_par_habitant": 855.1275910643142,
+   "ptot": 14056
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2020",
+   "type_de_budget": "Budget principal",
+   "agregat": "Remboursements d'emprunts hors GAD",
+   "montant": 609838.71,
+   "euros_par_habitant": 43.386362407512806,
+   "ptot": 14056
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2021",
+   "type_de_budget": "Budget principal",
+   "agregat": "Annuité de la dette",
+   "montant": 808473.1,
+   "euros_par_habitant": 56.155664374522466,
+   "ptot": 14397
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2021",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dépenses d'équipement",
+   "montant": 2429788.62,
+   "euros_par_habitant": 168.77048135028133,
+   "ptot": 14397
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2021",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dépenses d'investissement",
+   "montant": 3153696.46,
+   "euros_par_habitant": 219.05233451413488,
+   "ptot": 14397
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2021",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dépenses de fonctionnement",
+   "montant": 10325521.26,
+   "euros_par_habitant": 717.1995040633465,
+   "ptot": 14397
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2021",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dotation globale de fonctionnement",
+   "montant": 5405098,
+   "euros_par_habitant": 375.432242828367,
+   "ptot": 14397
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2021",
+   "type_de_budget": "Budget principal",
+   "agregat": "Encours de dette",
+   "montant": 6479394.1,
+   "euros_par_habitant": 450.05168437868997,
+   "ptot": 14397
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2021",
+   "type_de_budget": "Budget principal",
+   "agregat": "Epargne brute",
+   "montant": 1678661.6,
+   "euros_par_habitant": 116.59801347502953,
+   "ptot": 14397
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2021",
+   "type_de_budget": "Budget principal",
+   "agregat": "Epargne nette",
+   "montant": 1025337.99,
+   "euros_par_habitant": 71.2188643467389,
+   "ptot": 14397
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2021",
+   "type_de_budget": "Budget principal",
+   "agregat": "Fonds de roulement",
+   "montant": 3432134.8,
+   "euros_par_habitant": 238.3923595193443,
+   "ptot": 14397
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2021",
+   "type_de_budget": "Budget principal",
+   "agregat": "Frais de personnel",
+   "montant": 6117060.44,
+   "euros_par_habitant": 424.8843814683615,
+   "ptot": 14397
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2021",
+   "type_de_budget": "Budget principal",
+   "agregat": "Impôts locaux",
+   "montant": 4748540,
+   "euros_par_habitant": 329.8284364798222,
+   "ptot": 14397
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2021",
+   "type_de_budget": "Budget principal",
+   "agregat": "Recettes d'investissement",
+   "montant": 1904749.28,
+   "euros_par_habitant": 132.30181843439607,
+   "ptot": 14397
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2021",
+   "type_de_budget": "Budget principal",
+   "agregat": "Recettes de fonctionnement",
+   "montant": 12004182.86,
+   "euros_par_habitant": 833.797517538376,
+   "ptot": 14397
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2021",
+   "type_de_budget": "Budget principal",
+   "agregat": "Remboursements d'emprunts hors GAD",
+   "montant": 653323.61,
+   "euros_par_habitant": 45.379149128290614,
+   "ptot": 14397
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2022",
+   "type_de_budget": "Budget principal",
+   "agregat": "Annuité de la dette",
+   "montant": 879216.86,
+   "euros_par_habitant": 60.22445783957805,
+   "ptot": 14599
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2022",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dépenses d'équipement",
+   "montant": 2217485.24,
+   "euros_par_habitant": 151.89295431193918,
+   "ptot": 14599
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2022",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dépenses d'investissement",
+   "montant": 2967300.78,
+   "euros_par_habitant": 203.25370093842042,
+   "ptot": 14599
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2022",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dépenses de fonctionnement",
+   "montant": 11088334.01,
+   "euros_par_habitant": 759.5269545859305,
+   "ptot": 14599
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2022",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dotation globale de fonctionnement",
+   "montant": 5564685,
+   "euros_par_habitant": 381.1689156791561,
+   "ptot": 14599
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2022",
+   "type_de_budget": "Budget principal",
+   "agregat": "Encours de dette",
+   "montant": 5741638.81,
+   "euros_par_habitant": 393.28986985409955,
+   "ptot": 14599
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2022",
+   "type_de_budget": "Budget principal",
+   "agregat": "Epargne brute",
+   "montant": 1337872.92,
+   "euros_par_habitant": 91.64140831563805,
+   "ptot": 14599
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2022",
+   "type_de_budget": "Budget principal",
+   "agregat": "Epargne nette",
+   "montant": 600117.629999999,
+   "euros_par_habitant": 41.10676279197198,
+   "ptot": 14599
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2022",
+   "type_de_budget": "Budget principal",
+   "agregat": "Fonds de roulement",
+   "montant": 3476125.06,
+   "euros_par_habitant": 238.10706623741353,
+   "ptot": 14599
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2022",
+   "type_de_budget": "Budget principal",
+   "agregat": "Frais de personnel",
+   "montant": 6587093.63,
+   "euros_par_habitant": 451.20170080142475,
+   "ptot": 14599
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2022",
+   "type_de_budget": "Budget principal",
+   "agregat": "Impôts locaux",
+   "montant": 4757979,
+   "euros_par_habitant": 325.9112952941982,
+   "ptot": 14599
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2022",
+   "type_de_budget": "Budget principal",
+   "agregat": "Recettes d'investissement",
+   "montant": 1673418.12,
+   "euros_par_habitant": 114.62553051578875,
+   "ptot": 14599
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2022",
+   "type_de_budget": "Budget principal",
+   "agregat": "Recettes de fonctionnement",
+   "montant": 12426206.93,
+   "euros_par_habitant": 851.1683629015686,
+   "ptot": 14599
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2022",
+   "type_de_budget": "Budget principal",
+   "agregat": "Remboursements d'emprunts hors GAD",
+   "montant": 737755.29,
+   "euros_par_habitant": 50.53464552366601,
+   "ptot": 14599
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2023",
+   "type_de_budget": "Budget principal",
+   "agregat": "Annuité de la dette",
+   "montant": 843957.82,
+   "euros_par_habitant": 56.27510968860438,
+   "ptot": 14997
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2023",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dépenses d'équipement",
+   "montant": 4153291.39,
+   "euros_par_habitant": 276.94148096285926,
+   "ptot": 14997
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2023",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dépenses d'investissement",
+   "montant": 5076521,
+   "euros_par_habitant": 338.50243382009734,
+   "ptot": 14997
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2023",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dépenses de fonctionnement",
+   "montant": 11109754.09,
+   "euros_par_habitant": 740.7984323531373,
+   "ptot": 14997
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2023",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dotation globale de fonctionnement",
+   "montant": 5734941,
+   "euros_par_habitant": 382.40588117623525,
+   "ptot": 14997
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2023",
+   "type_de_budget": "Budget principal",
+   "agregat": "Encours de dette",
+   "montant": 7010284.46,
+   "euros_par_habitant": 467.44578649063146,
+   "ptot": 14997
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2023",
+   "type_de_budget": "Budget principal",
+   "agregat": "Epargne brute",
+   "montant": 2204746.11,
+   "euros_par_habitant": 147.01247649529904,
+   "ptot": 14997
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2023",
+   "type_de_budget": "Budget principal",
+   "agregat": "Epargne nette",
+   "montant": 1473391.76,
+   "euros_par_habitant": 98.24576648663066,
+   "ptot": 14997
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2023",
+   "type_de_budget": "Budget principal",
+   "agregat": "Fonds de roulement",
+   "montant": 4635254.11,
+   "euros_par_habitant": 309.0787564179503,
+   "ptot": 14997
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2023",
+   "type_de_budget": "Budget principal",
+   "agregat": "Frais de personnel",
+   "montant": 6628672.89,
+   "euros_par_habitant": 441.999925985197,
+   "ptot": 14997
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2023",
+   "type_de_budget": "Budget principal",
+   "agregat": "Impôts locaux",
+   "montant": 5196957,
+   "euros_par_habitant": 346.53310662132424,
+   "ptot": 14997
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2023",
+   "type_de_budget": "Budget principal",
+   "agregat": "Recettes d'investissement",
+   "montant": 4030903.94,
+   "euros_par_habitant": 268.78068547042744,
+   "ptot": 14997
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2023",
+   "type_de_budget": "Budget principal",
+   "agregat": "Recettes de fonctionnement",
+   "montant": 13314500.2,
+   "euros_par_habitant": 887.8109088484363,
+   "ptot": 14997
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2023",
+   "type_de_budget": "Budget principal",
+   "agregat": "Remboursements d'emprunts hors GAD",
+   "montant": 731354.35,
+   "euros_par_habitant": 48.7667100086684,
+   "ptot": 14997
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2024",
+   "type_de_budget": "Budget principal",
+   "agregat": "Annuité de la dette",
+   "montant": 1030539.05,
+   "euros_par_habitant": 68.86328433010358,
+   "ptot": 14965
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2024",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dépenses d'équipement",
+   "montant": 3633751.54,
+   "euros_par_habitant": 242.81667490811896,
+   "ptot": 14965
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2024",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dépenses d'investissement",
+   "montant": 4742130.54,
+   "euros_par_habitant": 316.88142599398594,
+   "ptot": 14965
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2024",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dépenses de fonctionnement",
+   "montant": 11892845.96,
+   "euros_par_habitant": 794.7107223521551,
+   "ptot": 14965
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2024",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dotation globale de fonctionnement",
+   "montant": 5793856,
+   "euros_par_habitant": 387.16044102906784,
+   "ptot": 14965
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2024",
+   "type_de_budget": "Budget principal",
+   "agregat": "Encours de dette",
+   "montant": 7171313,
+   "euros_par_habitant": 479.2056799198129,
+   "ptot": 14965
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2024",
+   "type_de_budget": "Budget principal",
+   "agregat": "Epargne brute",
+   "montant": 1320128.27,
+   "euros_par_habitant": 88.21438489809556,
+   "ptot": 14965
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2024",
+   "type_de_budget": "Budget principal",
+   "agregat": "Epargne nette",
+   "montant": 481156.809999999,
+   "euros_par_habitant": 32.152142332108184,
+   "ptot": 14965
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2024",
+   "type_de_budget": "Budget principal",
+   "agregat": "Fonds de roulement",
+   "montant": 3561667.21,
+   "euros_par_habitant": 237.99981356498498,
+   "ptot": 14965
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2024",
+   "type_de_budget": "Budget principal",
+   "agregat": "Frais de personnel",
+   "montant": 6825280.72,
+   "euros_par_habitant": 456.0829081189442,
+   "ptot": 14965
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2024",
+   "type_de_budget": "Budget principal",
+   "agregat": "Impôts locaux",
+   "montant": 5344083,
+   "euros_par_habitant": 357.10544604076176,
+   "ptot": 14965
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2024",
+   "type_de_budget": "Budget principal",
+   "agregat": "Recettes d'investissement",
+   "montant": 2348415.37,
+   "euros_par_habitant": 156.9271881055797,
+   "ptot": 14965
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2024",
+   "type_de_budget": "Budget principal",
+   "agregat": "Recettes de fonctionnement",
+   "montant": 13212974.23,
+   "euros_par_habitant": 882.9251072502506,
+   "ptot": 14965
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2024",
+   "type_de_budget": "Budget principal",
+   "agregat": "Remboursements d'emprunts hors GAD",
+   "montant": 838971.46,
+   "euros_par_habitant": 56.062242565987304,
+   "ptot": 14965
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2025",
+   "type_de_budget": "Budget principal",
+   "agregat": "Annuité de la dette",
+   "montant": 1116181.8,
+   "euros_par_habitant": 74.8261580746799,
+   "ptot": 14917
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2025",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dépenses d'équipement",
+   "montant": 2437504.4,
+   "euros_par_habitant": 163.40446470469934,
+   "ptot": 14917
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2025",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dépenses d'investissement",
+   "montant": 3363744.62,
+   "euros_par_habitant": 225.49739357779714,
+   "ptot": 14917
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2025",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dépenses de fonctionnement",
+   "montant": 11789708.74,
+   "euros_par_habitant": 790.353874103372,
+   "ptot": 14917
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2025",
+   "type_de_budget": "Budget principal",
+   "agregat": "Dotation globale de fonctionnement",
+   "montant": 5662113,
+   "euros_par_habitant": 379.5745123014011,
+   "ptot": 14917
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2025",
+   "type_de_budget": "Budget principal",
+   "agregat": "Encours de dette",
+   "montant": 6252678.72,
+   "euros_par_habitant": 419.16462559495875,
+   "ptot": 14917
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2025",
+   "type_de_budget": "Budget principal",
+   "agregat": "Epargne brute",
+   "montant": 1473651.56,
+   "euros_par_habitant": 98.79007575249716,
+   "ptot": 14917
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2025",
+   "type_de_budget": "Budget principal",
+   "agregat": "Epargne nette",
+   "montant": 555017.280000003,
+   "euros_par_habitant": 37.207030904337536,
+   "ptot": 14917
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2025",
+   "type_de_budget": "Budget principal",
+   "agregat": "Fonds de roulement",
+   "montant": 3000697.23,
+   "euros_par_habitant": 201.15956492592343,
+   "ptot": 14917
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2025",
+   "type_de_budget": "Budget principal",
+   "agregat": "Frais de personnel",
+   "montant": 6630096.66,
+   "euros_par_habitant": 444.46582154588725,
+   "ptot": 14917
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2025",
+   "type_de_budget": "Budget principal",
+   "agregat": "Impôts locaux",
+   "montant": 5440593,
+   "euros_par_habitant": 364.7243413555004,
+   "ptot": 14917
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2025",
+   "type_de_budget": "Budget principal",
+   "agregat": "Recettes d'investissement",
+   "montant": 1329123.08,
+   "euros_par_habitant": 89.10123215123684,
+   "ptot": 14917
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2025",
+   "type_de_budget": "Budget principal",
+   "agregat": "Recettes de fonctionnement",
+   "montant": 13263360.3,
+   "euros_par_habitant": 889.1439498558692,
+   "ptot": 14917
+  },
+  {
+   "com_code": "57206",
+   "com_name": "Fameck",
+   "exer": "2025",
+   "type_de_budget": "Budget principal",
+   "agregat": "Remboursements d'emprunts hors GAD",
+   "montant": 918634.28,
+   "euros_par_habitant": 61.58304484815982,
+   "ptot": 14917
+  }
+ ]
+}

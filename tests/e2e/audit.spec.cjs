@@ -51,6 +51,7 @@ const GEO = {
 
 // Simulations OFGL. « ods_limit_error » reproduit la forme d'erreur Opendatasoft v2.1
 // attendue si limit > 100 (hypothèse à confirmer par un appel réel).
+const FIXTURE = JSON.parse(fs.readFileSync(path.join(__dirname, "../fixtures/ofgl-fameck-57206.json"), "utf8"));
 const OFGL = {
   ods_limit_error: { status: 400, body: { error_code: "InvalidRESTParameterError", message: "Invalid value for limit API parameter: 1000 was found but -1 <= limit <= 100 is expected." } },
   fields_euros_par_habitant: { status: 200, body: { total_count: 2, results: [
@@ -62,7 +63,11 @@ const OFGL = {
   truncated_old_years: { status: 200, body: { total_count: 600, results: [
     { exer: "2019", com_code: "57206", agregat: "Encours de dette", montant: 1000 }
   ] } },
-  malformed: { status: 200, rawBody: "<html>maintenance</html>" }
+  malformed: { status: 200, rawBody: "<html>maintenance</html>" },
+  // Lignes OFGL réelles de Fameck (tests/fixtures, relevées le 23/10/2026), et les mêmes lignes
+  // attribuées à Lyon : la fiche standard doit avoir exactement la même structure pour les deux.
+  fameck_full: { status: 200, body: FIXTURE },
+  lyon_full: { status: 200, body: { ...FIXTURE, results: FIXTURE.results.map((r) => ({ ...r, com_code: "69123", com_name: "Lyon" })) } }
 };
 
 // Simulation de la fiche DGFiP (comptes individuels 2025). Les champs et les valeurs reprennent la fiche
@@ -289,8 +294,8 @@ async function overflow(page) {
   await communeCase("COM-MALFORMED", "Réponse OFGL mal formée (HTML) → message clair", "Fameck", { geo: "fameck", ofgl: "malformed" }, async ({ text, log }) => ({
     status: /format inattendu/.test(text) && !/Aucune ligne/.test(text) && !log.pageErrors.length ? "VALIDÉ" : "ÉCHOUÉ", proof: "Texte : " + text.replace(/\s+/g, " ").slice(-260) + " ; erreurs JS=" + log.pageErrors.length
   }));
-  await communeCase("COM-GEO-DOWN", "Indisponibilité geo.api.gouv.fr", "Fameck", { geoFail: true }, async ({ text }) => ({
-    status: /momentanément indisponible/.test(text) ? "VALIDÉ" : "ÉCHOUÉ", proof: "Texte : " + text.replace(/\s+/g, " ").slice(0, 200)
+  await communeCase("COM-GEO-DOWN", "Indisponibilité geo.api.gouv.fr : relais par le socle commun", "Fameck", { geoFail: true }, async ({ text }) => ({
+    status: /ne répond pas/.test(text) && /socle commun/.test(text) && /57206/.test(text) ? "VALIDÉ" : "ÉCHOUÉ", proof: "Texte : " + text.replace(/\s+/g, " ").slice(0, 240)
   }));
   await communeCase("COM-EMPTY-RESULT", "Recherche sans résultat", "Xyzabc", { geo: "empty" }, async ({ text }) => ({
     status: /Aucune commune trouvée/.test(text) ? "VALIDÉ" : "ÉCHOUÉ", proof: "Texte : " + text.replace(/\s+/g, " ").slice(0, 160)
@@ -397,7 +402,9 @@ async function overflow(page) {
     const run = async (text, period) => {
       await page.fill("#claim-text", text);
       await page.selectOption("#claim-period", period);
+      await page.evaluate(() => { const r = document.getElementById("claim-result"); if (r) r.textContent = ""; });
       await page.click("#claim-form button[type=submit]");
+      await page.waitForFunction(() => (document.getElementById("claim-result")?.textContent || "").trim().length > 0, null, { timeout: 5000 }).catch(() => null);
       return (await page.textContent("#claim-result")).replace(/\s+/g, " ");
     };
     const a = await run("la dette publique est de 3 500 milliards", "2026-T2");
@@ -444,18 +451,41 @@ async function overflow(page) {
     await page.fill("#commune-query", "Fameck");
     await page.click("#commune-form button[type=submit]");
     await page.waitForTimeout(700);
-    const analysis = (await page.textContent("#fameck-analysis")).replace(/\s+/g, " ");
+    const analysis = (await page.textContent("#commune-analysis")).replace(/\s+/g, " ");
     fs.writeFileSync(path.join(OUT, "fameck-analyse.txt"), analysis);
     const ribbon = await page.$$eval(".headline-metric strong", (s) => s.map((x) => x.textContent));
     record("DATA-RIBBON-JS", "Bandeau communal mis à jour après la recherche", "375", ribbon[0].replace(/\u202f/g, " ").includes("3 595,5") && ribbon[1] === "—" && ribbon[2].includes("M€") && ribbon[3] === "—" ? "VALIDÉ" : "ÉCHOUÉ", ribbon.join(" / "));
     const ribbonDisplay = await page.$eval(".headline-ribbon", (e) => getComputedStyle(e).display);
     record("RESP-RIBBON", "Bandeau de chiffres clés mis en grille", "375", ribbonDisplay === "grid" ? "VALIDÉ" : "ÉCHOUÉ", "display=" + ribbonDisplay);
     record("TERRITORY-ANALYSIS", "La recherche remplit l’analyse détaillée de la commune", "375", /Recettes de fonctionnement/.test(analysis) && /Limites indispensables/.test(analysis) ? "VALIDÉ" : "ÉCHOUÉ", analysis.slice(0, 260));
-    const rows = await page.$$eval("#fameck-history-body tr", (r) => r.length);
-    await page.locator("#fameck-finances").screenshot({ path: path.join(OUT, "fameck-375.png") });
+    const rows = await page.$$eval("#commune-history-body tr", (r) => r.length);
+    await page.locator("#analyse-communale").screenshot({ path: path.join(OUT, "commune-375.png") });
     const wrap = await page.$eval(".municipal-history-wrap", (e) => ({ sw: e.scrollWidth, cw: e.clientWidth }));
-    record("FAM-TABLE-MOBILE", "Tableau 7 colonnes sur mobile", "375", "À CONFIRMER", `${rows} lignes ; défilement horizontal interne ${wrap.sw}px pour ${wrap.cw}px visibles (le titre « Évolution annuelle » et le texte défilent avec le tableau)`);
+    record("FAM-TABLE-MOBILE", "Tableau annuel de la fiche standard sur mobile", "375", "À CONFIRMER", `${rows} lignes ; défilement horizontal interne ${wrap.sw}px pour ${wrap.cw}px visibles (le titre « Évolution annuelle » et le texte défilent avec le tableau)`);
     await context.close();
+  }
+
+  // 7. Fiche standard : même analyse et même structure pour Fameck et pour Lyon (socle commun + OFGL).
+  {
+    const shapes = {};
+    for (const [name, geo, ofgl] of [["Fameck", "fameck", "fameck_full"], ["Lyon", "lyon", "lyon_full"]]) {
+      const { context, page, log } = await newPage(browser, { width: 1280, height: 900 }, { geo, ofgl });
+      await page.goto(BASE, { waitUntil: "networkidle" });
+      await page.fill("#commune-query", name);
+      await page.click("#commune-form button[type=submit]");
+      await page.waitForSelector("#commune-dataset a[download]", { timeout: 5000 }).catch(() => null);
+      const heads = await page.$$eval("#municipal-history-wrap thead th", (t) => t.map((x) => x.textContent));
+      const rows = await page.$$eval("#commune-history-body tr", (r) => r.map((x) => x.children.length));
+      const socle = (await page.textContent("#commune-dataset")).replace(/\s+/g, " ");
+      const download = await page.$eval("#commune-dataset a[download]", (a) => a.getAttribute("download")).catch(() => null);
+      shapes[name] = { heads: heads.length, rows, socle, download, errors: log.pageErrors.length };
+      await context.close();
+    }
+    const f = shapes.Fameck, l = shapes.Lyon;
+    record("STD-FAMECK", "Fiche standard de Fameck : 8 exercices, 14 colonnes, socle commun (intercommunalité 2026), fiche téléchargeable", "1280",
+      f.rows.length === 8 && f.rows.every((n) => n === 14) && f.heads === 14 && /Thionville Fensch Agglomération/.test(f.socle) && f.download === "fiche-57206-finances.json" && !f.errors ? "VALIDÉ" : "ÉCHOUÉ", JSON.stringify(f).slice(0, 300));
+    record("STD-TOUTES-COMMUNES", "Même structure pour une autre commune (Lyon) : mêmes colonnes, socle et fiche", "1280",
+      l.rows.length === f.rows.length && l.heads === f.heads && /Métropole de Lyon/.test(l.socle) && l.download === "fiche-69123-finances.json" && !l.errors ? "VALIDÉ" : "ÉCHOUÉ", JSON.stringify(l).slice(0, 300));
   }
 
   fs.writeFileSync(path.join(OUT, "resultats.json"), JSON.stringify(results, null, 2));

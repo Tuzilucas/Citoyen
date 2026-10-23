@@ -1,0 +1,356 @@
+{
+  "schema_version": "2.0.0",
+  "dataset_id": "commune-57206-finances",
+  "title": "Repères budgétaires de Fameck — série 2018-2025",
+  "entity": {
+    "name": "Fameck",
+    "insee_code": "57206",
+    "postal_codes": [
+      "57290"
+    ],
+    "department_code": "57",
+    "department_name": "Moselle",
+    "region_code": "44",
+    "region_name": "Grand Est",
+    "parent_epci": {
+      "entity_id": "992367730",
+      "official_name": "CA Thionville Fensch Agglomération",
+      "legal_nature": "CA",
+      "verification_source_id": "dgcl-epci-2026"
+    },
+    "population_legale": {
+      "municipale": 14788,
+      "totale": 14939,
+      "en_vigueur_au": "2026-01-01",
+      "source_id": "dgcl-epci-2026"
+    },
+    "socle_source_id": "insee-cog-2026"
+  },
+  "display_year": 2025,
+  "budget_scope": "budget principal",
+  "currency": "EUR",
+  "indicators": [
+    {
+      "id": "operating_revenue",
+      "label": "Recettes de fonctionnement",
+      "source_aggregate": "Recettes de fonctionnement",
+      "value_eur": 13263360.3,
+      "value_per_capita_eur": 889.1439498558692,
+      "definition": "Ressources courantes de l'exercice : impôts et taxes, dotations, participations, produits des services."
+    },
+    {
+      "id": "operating_expenses",
+      "label": "Dépenses de fonctionnement",
+      "source_aggregate": "Dépenses de fonctionnement",
+      "value_eur": 11789708.74,
+      "value_per_capita_eur": 790.353874103372,
+      "definition": "Coût courant des services : personnel, achats, charges financières, subventions versées."
+    },
+    {
+      "id": "gross_savings",
+      "label": "Épargne brute",
+      "source_aggregate": "Epargne brute",
+      "value_eur": 1473651.56,
+      "value_per_capita_eur": 98.79007575249716,
+      "definition": "Ressource dégagée par le fonctionnement, avant remboursement du capital de la dette."
+    },
+    {
+      "id": "net_savings",
+      "label": "Épargne nette",
+      "source_aggregate": "Epargne nette",
+      "value_eur": 555017.280000003,
+      "value_per_capita_eur": 37.207030904337536,
+      "definition": "Épargne brute après remboursement du capital de la dette."
+    },
+    {
+      "id": "investment_expenses",
+      "label": "Dépenses d'investissement",
+      "source_aggregate": "Dépenses d'investissement",
+      "value_eur": 3363744.62,
+      "value_per_capita_eur": 225.49739357779714,
+      "definition": "Dépenses d'investissement de l'exercice (équipement, subventions d'équipement, autres)."
+    },
+    {
+      "id": "equipment_expenses",
+      "label": "Dépenses d'équipement",
+      "source_aggregate": "Dépenses d'équipement",
+      "value_eur": 2437504.4,
+      "value_per_capita_eur": 163.40446470469934,
+      "definition": "Acquisitions et travaux sur le patrimoine de la commune ; une partie de l'investissement."
+    },
+    {
+      "id": "investment_revenue",
+      "label": "Recettes d'investissement",
+      "source_aggregate": "Recettes d'investissement",
+      "value_eur": 1329123.08,
+      "value_per_capita_eur": 89.10123215123684,
+      "definition": "Ressources d'investissement de l'exercice, emprunts compris."
+    },
+    {
+      "id": "debt_outstanding",
+      "label": "Encours de dette",
+      "source_aggregate": "Encours de dette",
+      "value_eur": 6252678.72,
+      "value_per_capita_eur": 419.16462559495875,
+      "definition": "Capital restant dû à la fin de l'exercice."
+    },
+    {
+      "id": "debt_repayment",
+      "label": "Remboursement du capital de la dette",
+      "source_aggregate": "Remboursements d'emprunts hors GAD",
+      "value_eur": 918634.28,
+      "value_per_capita_eur": 61.58304484815982,
+      "definition": "Capital des emprunts remboursé dans l'année (hors gestion active de la dette)."
+    },
+    {
+      "id": "debt_service",
+      "label": "Annuité de la dette",
+      "source_aggregate": "Annuité de la dette",
+      "value_eur": 1116181.8,
+      "value_per_capita_eur": 74.8261580746799,
+      "definition": "Montant payé dans l'année au titre de la dette."
+    },
+    {
+      "id": "working_capital",
+      "label": "Fonds de roulement",
+      "source_aggregate": "Fonds de roulement",
+      "value_eur": 3000697.23,
+      "value_per_capita_eur": 201.15956492592343,
+      "definition": "Indicateur du financement à moyen terme, distinct de la trésorerie mobilisable."
+    },
+    {
+      "id": "local_taxes",
+      "label": "Impôts locaux",
+      "source_aggregate": "Impôts locaux",
+      "value_eur": 5440593,
+      "value_per_capita_eur": 364.7243413555004,
+      "definition": "Produit des impôts locaux perçus par la commune."
+    },
+    {
+      "id": "dgf",
+      "label": "Dotation globale de fonctionnement",
+      "source_aggregate": "Dotation globale de fonctionnement",
+      "value_eur": 5662113,
+      "value_per_capita_eur": 379.5745123014011,
+      "definition": "Principale dotation de l'État aux collectivités."
+    },
+    {
+      "id": "staff_costs",
+      "label": "Frais de personnel",
+      "source_aggregate": "Frais de personnel",
+      "value_eur": 6630096.66,
+      "value_per_capita_eur": 444.46582154588725,
+      "definition": "Rémunérations et charges du personnel."
+    }
+  ],
+  "calculated_indicators": [
+    {
+      "id": "gross_savings_rate",
+      "label": "Taux d'épargne brute",
+      "value_percent": 11.110695379360235,
+      "formula": "Épargne brute / recettes de fonctionnement × 100"
+    },
+    {
+      "id": "debt_to_gross_savings",
+      "label": "Capacité de désendettement",
+      "value_years": 4.242983137750691,
+      "formula": "Encours de dette / épargne brute"
+    },
+    {
+      "id": "staff_to_operating_expenses",
+      "label": "Frais de personnel / dépenses de fonctionnement",
+      "value_percent": 56.23630580037552,
+      "formula": "Frais de personnel / dépenses de fonctionnement × 100"
+    },
+    {
+      "id": "debt_per_capita",
+      "label": "Dette par habitant",
+      "value_eur": 419.16462559495875,
+      "formula": "Encours de dette / population de l'exercice (OFGL)"
+    }
+  ],
+  "annual_series": [
+    {
+      "year": 2018,
+      "population": 13980,
+      "revenue": 11980604.89,
+      "expense": 10028207.96,
+      "gross_savings": 1952396.93,
+      "net_savings": 1334238.38,
+      "investment_expense": 3938566.31,
+      "equipment_expense": 3245835.01,
+      "investment_revenue": 2410858.66,
+      "debt": 6585524.76,
+      "debt_repayment": 618158.55,
+      "debt_service": 823828.6,
+      "working_capital": 1846311.13,
+      "local_taxes": 4442299,
+      "dgf": 5154698,
+      "staff_costs": 5720365.43,
+      "savings_rate": 16.29631348271598,
+      "debt_years": 3.373046053703844,
+      "debt_per_capita": 471.0675793991416
+    },
+    {
+      "year": 2019,
+      "population": 14155,
+      "revenue": 12048554.12,
+      "expense": 10161733.98,
+      "gross_savings": 1886820.14,
+      "net_savings": 1243851.79,
+      "investment_expense": 2846707.8,
+      "equipment_expense": 2167017.62,
+      "investment_revenue": 830574.07,
+      "debt": 6242556.41,
+      "debt_repayment": 642968.35,
+      "debt_service": 832806.05,
+      "working_capital": 1716997.54,
+      "local_taxes": 4527253,
+      "dgf": 5257662,
+      "staff_costs": 5837222.06,
+      "savings_rate": 15.660137483782993,
+      "debt_years": 3.308506347616154,
+      "debt_per_capita": 441.0142288943836
+    },
+    {
+      "year": 2020,
+      "population": 14056,
+      "revenue": 12019673.42,
+      "expense": 10079749.28,
+      "gross_savings": 1939924.14,
+      "net_savings": 1330085.43,
+      "investment_expense": 3049706.76,
+      "equipment_expense": 1991927.55,
+      "investment_revenue": 2073377.35,
+      "debt": 6132217.71,
+      "debt_repayment": 609838.71,
+      "debt_service": 780319.02,
+      "working_capital": 3002420.38,
+      "local_taxes": 4633132.04,
+      "dgf": 5288446,
+      "staff_costs": 5730750.5,
+      "savings_rate": 16.139574447772308,
+      "debt_years": 3.1610605711623343,
+      "debt_per_capita": 436.27046883893
+    },
+    {
+      "year": 2021,
+      "population": 14397,
+      "revenue": 12004182.86,
+      "expense": 10325521.26,
+      "gross_savings": 1678661.6,
+      "net_savings": 1025337.99,
+      "investment_expense": 3153696.46,
+      "equipment_expense": 2429788.62,
+      "investment_revenue": 1904749.28,
+      "debt": 6479394.1,
+      "debt_repayment": 653323.61,
+      "debt_service": 808473.1,
+      "working_capital": 3432134.8,
+      "local_taxes": 4748540,
+      "dgf": 5405098,
+      "staff_costs": 6117060.44,
+      "savings_rate": 13.983972250152812,
+      "debt_years": 3.8598572219677862,
+      "debt_per_capita": 450.05168437868997
+    },
+    {
+      "year": 2022,
+      "population": 14599,
+      "revenue": 12426206.93,
+      "expense": 11088334.01,
+      "gross_savings": 1337872.92,
+      "net_savings": 600117.629999999,
+      "investment_expense": 2967300.78,
+      "equipment_expense": 2217485.24,
+      "investment_revenue": 1673418.12,
+      "debt": 5741638.81,
+      "debt_repayment": 737755.29,
+      "debt_service": 879216.86,
+      "working_capital": 3476125.06,
+      "local_taxes": 4757979,
+      "dgf": 5564685,
+      "staff_costs": 6587093.63,
+      "savings_rate": 10.766543061262219,
+      "debt_years": 4.291617480380722,
+      "debt_per_capita": 393.28986985409955
+    },
+    {
+      "year": 2023,
+      "population": 14997,
+      "revenue": 13314500.2,
+      "expense": 11109754.09,
+      "gross_savings": 2204746.11,
+      "net_savings": 1473391.76,
+      "investment_expense": 5076521,
+      "equipment_expense": 4153291.39,
+      "investment_revenue": 4030903.94,
+      "debt": 7010284.46,
+      "debt_repayment": 731354.35,
+      "debt_service": 843957.82,
+      "working_capital": 4635254.11,
+      "local_taxes": 5196957,
+      "dgf": 5734941,
+      "staff_costs": 6628672.89,
+      "savings_rate": 16.558985143129895,
+      "debt_years": 3.1796334408772355,
+      "debt_per_capita": 467.44578649063146
+    },
+    {
+      "year": 2024,
+      "population": 14965,
+      "revenue": 13212974.23,
+      "expense": 11892845.96,
+      "gross_savings": 1320128.27,
+      "net_savings": 481156.809999999,
+      "investment_expense": 4742130.54,
+      "equipment_expense": 3633751.54,
+      "investment_revenue": 2348415.37,
+      "debt": 7171313,
+      "debt_repayment": 838971.46,
+      "debt_service": 1030539.05,
+      "working_capital": 3561667.21,
+      "local_taxes": 5344083,
+      "dgf": 5793856,
+      "staff_costs": 6825280.72,
+      "savings_rate": 9.991151477482296,
+      "debt_years": 5.432285000608312,
+      "debt_per_capita": 479.2056799198129
+    },
+    {
+      "year": 2025,
+      "population": 14917,
+      "revenue": 13263360.3,
+      "expense": 11789708.74,
+      "gross_savings": 1473651.56,
+      "net_savings": 555017.280000003,
+      "investment_expense": 3363744.62,
+      "equipment_expense": 2437504.4,
+      "investment_revenue": 1329123.08,
+      "debt": 6252678.72,
+      "debt_repayment": 918634.28,
+      "debt_service": 1116181.8,
+      "working_capital": 3000697.23,
+      "local_taxes": 5440593,
+      "dgf": 5662113,
+      "staff_costs": 6630096.66,
+      "savings_rate": 11.110695379360235,
+      "debt_years": 4.242983137750691,
+      "debt_per_capita": 419.16462559495875
+    }
+  ],
+  "provenance": {
+    "source_publisher": "OFGL — Observatoire des finances et de la gestion publique locales",
+    "official_dataset_url": "https://data.ofgl.fr/explore/dataset/ofgl-base-communes/",
+    "dataset_link_for_entity": "https://data.ofgl.fr/explore/dataset/ofgl-base-communes/?q=57206",
+    "primary_data_origin": "DGFiP, comptes de gestion (agrégats calculés par l'OFGL)",
+    "retrieved_at": "2026-10-23T05:48:40.658Z",
+    "rows_received": 388,
+    "rows_announced": 388
+  },
+  "notes": [
+    "Montants en euros courants, budget principal seulement (budgets annexes exclus).",
+    "Une valeur absente vaut null (« non disponible »), jamais 0.",
+    "Les ratios sont calculés uniquement à partir des valeurs publiées ; ils ne constituent pas un jugement sur la gestion."
+  ]
+}

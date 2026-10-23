@@ -101,28 +101,105 @@ test("percentChange et directionWord ne produisent pas de verbe faux", () => {
 });
 
 test("detectTopic : une mention communale prime sur « dette »", () => {
-  assert.equal(lib.detectTopic("la dette de Fameck est de 7 millions", "auto"), "commune");
+  assert.equal(lib.detectTopic("la dette de la commune est de 7 millions", "auto"), "commune");
   assert.equal(lib.detectTopic("la dette publique est de 3 500 milliards", "auto"), "dette");
   assert.equal(lib.detectTopic("budget de l'Éducation nationale", "auto"), "education");
   assert.equal(lib.detectTopic("n'importe quoi", "auto"), "unknown");
   assert.equal(lib.detectTopic("dette", "commune"), "commune");
 });
 
-// Contrôles de cohérence des données publiées (aucune valeur n'est corrigée ici).
-test("Fameck : épargne brute ≈ recettes − dépenses et ratios recalculables (écart ≤ 1 € / 0,01)", () => {
-  const data = JSON.parse(fs.readFileSync(path.join(__dirname, "../../data/indicators/fameck-finances-2024.json"), "utf8"));
-  data.annual_series.forEach((y) => {
+// Fiche financière standard : construite sur le modèle de Fameck, identique pour toutes les communes.
+const fixture = JSON.parse(fs.readFileSync(path.join(__dirname, "../fixtures/ofgl-fameck-57206.json"), "utf8"));
+const FAMECK = { code: "57206", nom: "Fameck", codesPostaux: ["57290"], codeDepartement: "57" };
+
+test("Fiche standard de Fameck : valeurs OFGL reprises telles quelles, identités comptables vérifiées", () => {
+  const d = lib.buildCommuneDataset(FAMECK, fixture.results, fixture.total_count, "2026-10-23T00:00:00Z");
+  assert.equal(d.schema_version, lib.COMMUNE_DATASET_VERSION);
+  assert.equal(d.dataset_id, "commune-57206-finances");
+  assert.equal(d.display_year, 2025);
+  assert.deepEqual(d.annual_series.map((y) => y.year), [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]);
+  // Valeurs de référence de l'ancienne fiche Fameck qui concordaient déjà avec l'OFGL (2024).
+  const y2024 = d.annual_series.find((y) => y.year === 2024);
+  assert.equal(Math.round(y2024.debt), 7171313);
+  assert.equal(Math.round(y2024.local_taxes), 5344083);
+  assert.equal(y2024.population, 14965);
+  d.annual_series.forEach((y) => {
     assert.ok(Math.abs(y.revenue - y.expense - y.gross_savings) <= 1, "épargne brute " + y.year);
     assert.ok(Math.abs(y.gross_savings - y.debt_repayment - y.net_savings) <= 1, "épargne nette " + y.year);
-    assert.ok(Math.abs(y.gross_savings / y.revenue * 100 - y.savings_rate) < 0.006, "taux " + y.year);
-    assert.ok(Math.abs(y.debt / y.gross_savings - y.debt_years) < 0.006, "désendettement " + y.year);
-    assert.ok(Math.abs(Math.round(y.debt / y.population) - y.debt_per_capita) <= 0, "dette/hab " + y.year);
+    assert.ok(Math.abs(y.gross_savings / y.revenue * 100 - y.savings_rate) < 1e-9, "taux " + y.year);
   });
-  const y = data.annual_series.find((r) => r.year === data.display_year);
-  const byId = Object.fromEntries(data.indicators.map((i) => [i.id, i]));
-  assert.equal(byId.operating_revenue.value_eur, y.revenue);
-  assert.equal(byId.debt_outstanding.value_eur, y.debt);
-  data.indicators.forEach((i) => assert.equal(Math.round(i.value_eur / y.population), i.value_per_capita_eur, i.id));
+  // Chaque indicateur du dernier exercice est la ligne OFGL correspondante, sans recalcul.
+  d.indicators.forEach((i) => {
+    const row = fixture.results.find((r) => r.exer === "2025" && r.agregat === i.source_aggregate);
+    assert.ok(row, i.id);
+    assert.equal(i.value_eur, Math.round(row.montant * 100) / 100, i.id);
+  });
+});
+
+test("Fiche standard : même structure pour toute commune, null (jamais 0) quand l'OFGL ne publie pas", () => {
+  const rows = [
+    { com_code: "01001", exer: "2025", type_de_budget: "Budget principal", agregat: "Recettes de fonctionnement", montant: 583305.88, euros_par_habitant: 650, ptot: 897 },
+    { com_code: "01001", exer: "2025", type_de_budget: "Budget principal", agregat: "Encours de dette", montant: 0, euros_par_habitant: 0, ptot: 897 }
+  ];
+  const other = lib.buildCommuneDataset({ code: "01001", nom: "L'Abergement-Clémenciat" }, rows, 2);
+  const ref = lib.buildCommuneDataset(FAMECK, fixture.results, fixture.total_count);
+  assert.deepEqual(Object.keys(other), Object.keys(ref));
+  assert.deepEqual(other.indicators.map((i) => i.id), ref.indicators.map((i) => i.id));
+  assert.deepEqual(Object.keys(other.annual_series[0]), Object.keys(ref.annual_series[0]));
+  const byId = Object.fromEntries(other.indicators.map((i) => [i.id, i]));
+  assert.equal(byId.debt_outstanding.value_eur, 0);
+  assert.equal(byId.gross_savings.value_eur, null);
+  assert.equal(other.calculated_indicators.find((c) => c.id === "gross_savings_rate").value_percent, null);
+  // Réponse tronquée : aucune fiche plutôt qu'une fiche fausse.
+  assert.equal(lib.buildCommuneDataset(FAMECK, fixture.results.slice(0, 10), fixture.total_count), null);
+});
+
+test("Fiches standard publiées : structure identique pour Fameck, Lyon et une petite commune", () => {
+  const dir = path.join(__dirname, "../../data/communes/finances");
+  const files = fs.readdirSync(dir).filter((f) => f.endsWith(".json"));
+  assert.ok(files.length >= 3);
+  const shapes = files.map((f) => {
+    const d = JSON.parse(fs.readFileSync(path.join(dir, f), "utf8"));
+    assert.equal(d.entity.insee_code + ".json", f);
+    return JSON.stringify([Object.keys(d), d.indicators.map((i) => i.id), Object.keys(d.annual_series[0]), Object.keys(d.entity)]);
+  });
+  assert.equal(new Set(shapes).size, 1);
+});
+
+test("Socle commun : toutes les communes de France, une structure unique", () => {
+  const index = JSON.parse(fs.readFileSync(path.join(__dirname, "../../data/entities.json"), "utf8"));
+  const dir = path.join(__dirname, "../../data/entities/communes");
+  let total = 0, withoutEpci = 0;
+  const keys = new Set();
+  fs.readdirSync(dir).forEach((f) => {
+    const file = JSON.parse(fs.readFileSync(path.join(dir, f), "utf8"));
+    file.entities.forEach((e) => {
+      total += 1;
+      keys.add(Object.keys(e).join(","));
+      assert.ok(lib.isInseeCode(e.entity_id), e.entity_id);
+      assert.equal(e.department_code + ".json", f);
+      if (e.parent_epci === null) withoutEpci += 1;
+    });
+  });
+  assert.equal(total, index.counts.communes);
+  assert.ok(total > 34000);
+  assert.equal(keys.size, 1);
+  assert.equal(withoutEpci, index.counts.communes_sans_epci);
+  const fameck = JSON.parse(fs.readFileSync(path.join(dir, "57.json"), "utf8")).entities.find((e) => e.entity_id === "57206");
+  assert.equal(fameck.parent_epci.entity_id, "992367730");
+  assert.deepEqual(fameck.postal_codes, ["57290"]);
+});
+
+test("Recherche de secours dans le socle et reconnaissance de toute commune", () => {
+  const idx = JSON.parse(fs.readFileSync(path.join(__dirname, "../../data/entities/recherche.json"), "utf8"));
+  assert.deepEqual(lib.searchSocleIndex(idx, { type: "name", value: "fameck" }).map((c) => c.code), ["57206"]);
+  const byCode = lib.searchSocleIndex(idx, { type: "postal-or-insee", value: "57290" });
+  assert.ok(byCode.some((c) => c.code === "57206" && c.matchedBy.includes("codePostal")));
+  assert.equal(lib.searchSocleIndex(idx, { type: "insee", value: "2A004" })[0].nom, "Ajaccio");
+  const isCommune = lib.communeNameSet(idx);
+  assert.equal(lib.detectTopic("la dette de Lyon atteint 1 milliard", "auto", isCommune), "commune");
+  assert.equal(lib.detectTopic("l’endettement d’Aix-en-Provence est de 2 millions", "auto", isCommune), "commune");
+  assert.equal(lib.detectTopic("la dette de la France est de 3 000 milliards", "auto", isCommune), "dette");
 });
 
 test("Analyse communale dynamique : aucune commune n'est imposée par défaut", () => {
@@ -131,9 +208,10 @@ test("Analyse communale dynamique : aucune commune n'est imposée par défaut", 
   const text = html.replace(/ /g, " ");
   assert.ok(text.includes('id="municipal-title">Les finances de la commune recherchée'));
   assert.ok(text.includes('id="municipal-status">En attente d’une commune'));
-  assert.ok(text.includes('id="ribbon-fameck-savings">—'));
-  assert.ok(text.includes('id="ribbon-fameck-debt">—'));
-  assert.ok(text.includes('id="ribbon-fameck-rate">—'));
+  assert.ok(text.includes('id="ribbon-commune-savings">—'));
+  assert.ok(text.includes('id="ribbon-commune-debt">—'));
+  assert.ok(text.includes('id="ribbon-commune-rate">—'));
+  assert.ok(!/fameck/.test(text.replace(/Ex\. : Fameck/, "")), "aucun identifiant propre à Fameck");
   assert.ok(text.includes('id="municipal-history-wrap" hidden'));
   assert.ok(!/Épargne brute · Fameck|Encours de dette · Fameck|Taux d’épargne brute · Fameck/.test(text));
   const d = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1 }).format(debt.records[0].debt_eur_billion).replace(/ /g, " ");

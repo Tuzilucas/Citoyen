@@ -114,6 +114,13 @@ Même budget (principal), même commune, chaque exercice 2019-2025 (FAM-01) :
 - Fameck 2025 : commune 27,85 %, CA du Val de Fensch 5,00 %, TSE 0,111 %, GEMAPI 0,441 %, taux global 33,40 % ; TEOM 9,67 %. Le taux communal est identique à celui de la fiche des comptes individuels.
 - Test réel dans le navigateur empêché par les coupures du proxy de l’environnement vers `data.economie.gouv.fr` ; comportement validé par simulation (valeurs réelles de Fameck) et par lecture directe de l’API.
 
+### V9. 23 octobre 2026 : modèle Fameck étendu à toutes les communes, socle commun
+
+- **Fiche standard** (`buildCommuneDataset`, schéma 2.0.0) : structure de la fiche Fameck (14 indicateurs, 4 ratios, série annuelle, provenance), produite pour toute commune depuis l'OFGL ; `null` si absent, aucune fiche si la réponse est incomplète. Fiches de référence : Fameck (57206), Lyon (69123), L'Abergement-Clémenciat (01001), même structure vérifiée par test.
+- **Ancienne fiche Fameck (FMPC) retirée** : rapprochée de l'OFGL, elle concordait pour la population, la dette 2020-2025, les impôts locaux et la DGF, mais s'en écartait de quelques milliers d'euros sur les recettes, dépenses et épargne de chaque année (jusqu'à 193 k€ sur l'épargne brute 2019) et de 725 k€ sur la dette 2019. La source officielle (OFGL) fait foi.
+- **Socle commun** : 34 875 communes, 101 départements, 18 régions, 1 253 intercommunalités (INSEE COG 2026, DGCL 2026). geo.api.gouv.fr indiquait encore l'ancienne intercommunalité de Fameck (CA du Val de Fensch) ; l'INSEE et la DGCL donnent CA Thionville Fensch Agglomération (992367730) : le socle suit les sources officielles.
+- **Plus rien de propre à Fameck dans le code** : identifiants de la page généralisés (`#analyse-communale`, `commune-*`), reconnaissance de toutes les communes dans « Vérifier une affirmation », recherche de secours sur le socle si geo.api.gouv.fr ne répond pas. Tests : 23 unitaires, 76 navigateur (dont STD-FAMECK et STD-TOUTES-COMMUNES).
+
 ### V6. Ce qui reste à faire
 
 1. Fusionner la branche puis publier, pour supprimer l’erreur `restoreAnchor` en production (décision de l’éditeur).

@@ -66,12 +66,15 @@
     result.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
 
-  function handleClaim(event) {
+  async function handleClaim(event) {
     event.preventDefault();
     const text = document.getElementById("claim-text")?.value.trim() || "";
     const period = document.getElementById("claim-period")?.value || "";
     const selectedScope = document.getElementById("claim-scope")?.value || "auto";
-    const topic = lib.detectTopic(text, selectedScope);
+    // Toutes les communes de France sont reconnues grâce au socle commun (chargé à la demande).
+    let isCommuneName = null;
+    try { isCommuneName = lib.communeNameSet(await loadSearchIndex()); } catch (error) { isCommuneName = null; }
+    const topic = lib.detectTopic(text, selectedScope, isCommuneName);
 
     if (topic === "dette" && debtData && /^\d{4}(-\d{4})?$/.test(period)) {
       showResult("La dette se mesure par trimestre", "Période à préciser", [
@@ -206,6 +209,23 @@
     } catch (error) {
       throw new ServiceError(service, "format");
     }
+  }
+
+  // Socle commun des territoires (data/entities) : même structure pour toutes les communes.
+  let searchIndexPromise = null;
+  function loadSearchIndex() {
+    if (!searchIndexPromise) {
+      searchIndexPromise = fetchJson("data/entities/recherche.json", "socle").catch((error) => { searchIndexPromise = null; throw error; });
+    }
+    return searchIndexPromise;
+  }
+  const socleFiles = new Map();
+  async function loadSocleCommune(commune) {
+    const code = String(commune.code || "").toUpperCase();
+    const dep = commune.codeDepartement || (/^97/.test(code) ? code.slice(0, 3) : code.slice(0, 2));
+    if (!socleFiles.has(dep)) socleFiles.set(dep, fetchJson("data/entities/communes/" + encodeURIComponent(dep) + ".json", "socle").catch(() => null));
+    const file = await socleFiles.get(dep);
+    return file && Array.isArray(file.entities) ? file.entities.find((e) => e.entity_id === code) || null : null;
   }
 
   // Récupère toutes les pages (100 lignes maximum par appel) pour une commune identifiée par son code INSEE.
@@ -369,11 +389,11 @@
     const title = document.getElementById("municipal-title");
     const status = document.getElementById("municipal-status");
     const intro = document.getElementById("municipal-intro");
-    const metrics = document.getElementById("fameck-metrics");
-    const calculations = document.getElementById("fameck-calculs");
-    const analysis = document.getElementById("fameck-analysis");
+    const metrics = document.getElementById("commune-metrics");
+    const calculations = document.getElementById("commune-calculs");
+    const analysis = document.getElementById("commune-analysis");
     const historyWrap = document.getElementById("municipal-history-wrap");
-    const history = document.getElementById("fameck-history-body");
+    const history = document.getElementById("commune-history-body");
     if (!metrics || !analysis) return;
 
     const summary = lib.summarizeOfglRecords(data.rows, data.total, commune.code);
@@ -391,6 +411,7 @@
       metrics.appendChild(paragraph("Aucun montant de synthèse n’est affiché : la réponse de l’OFGL est incomplète ou l’exercice ne peut pas être identifié de façon fiable. " + summary.received + " ligne(s) reçue(s), " + (summary.totalCount === null ? "total non communiqué" : summary.totalCount + " ligne(s) annoncée(s)") + ".", "commune-method-note"));
       analysis.append(paragraph("Pourquoi aucun chiffre n’est présenté : choisir le dernier exercice à partir d’un extrait tronqué pourrait mélanger des années ou masquer des agrégats. Réessayez plus tard ou ouvrez la fiche OFGL de cette commune."));
       if (historyWrap) historyWrap.hidden = true;
+      renderDatasetTools(commune, null);
       return;
     }
 
@@ -470,33 +491,67 @@
     analysis.appendChild(makeP(changeText("Dépenses de fonctionnement", firstExpense, expense)));
     analysis.appendChild(makeP(changeText("Épargne brute", firstSavings, savings)));
     analysis.appendChild(makeP(changeText("Encours de dette", firstDebt, debt)));
-    analysis.appendChild(makeP("Limites indispensables : montants nominaux, non corrigés de l’inflation ; comparaison entre première et dernière année seulement ; pas de comparaison par strate démographique dans cette version ; les libellés et périmètres doivent être vérifiés dans la documentation OFGL. Ces chiffres ne démontrent aucune causalité et ne constituent pas un jugement politique.", "municipal-analysis-note"));
+    analysis.appendChild(makeP("Limites indispensables : montants nominaux, non corrigés de l’inflation ; comparaison entre première et dernière année seulement ; la comparaison avec les communes de même strate figure dans la section suivante (fiche DGFiP) ; les libellés et périmètres doivent être vérifiés dans la documentation OFGL. Ces chiffres ne démontrent aucune causalité et ne constituent pas un jugement politique.", "municipal-analysis-note"));
     if (historyWrap) historyWrap.hidden = false;
     const cap = document.getElementById("municipal-history-caption");
     if (cap) cap.textContent = commune.nom + " · budget principal · données OFGL à contrôler";
     const historyIntro = document.getElementById("municipal-history-intro");
     if (historyIntro) historyIntro.textContent = "Exercices reçus : " + yearList.join(", ") + ". Les montants sont en euros courants. « Non disponible » signifie que l’agrégat n’a pas été trouvé ; il ne signifie pas zéro.";
-    if (history) {
-      yearList.forEach((year) => {
+    // Tableau annuel : fiche standard (même structure pour toutes les communes, modèle de la fiche Fameck).
+    const dataset = lib.buildCommuneDataset(commune, data.rows, data.total, new Date().toISOString());
+    if (history && dataset) {
+      const euros0 = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 });
+      const amount = (v) => (v === null ? "Non disponible" : formatFinancialAmount(v));
+      dataset.annual_series.forEach((y) => {
         const tr = document.createElement("tr");
-        const defs = [MUNICIPAL_DEFINITIONS[0], MUNICIPAL_DEFINITIONS[1], MUNICIPAL_DEFINITIONS[2], MUNICIPAL_DEFINITIONS[4]];
-        const vals = defs.map((d) => municipalValue(data.rows, d, year));
-        const r = vals[0] !== null && vals[0] > 0 && vals[2] !== null ? ratio.format(vals[2] / vals[0] * 100) + " %" : "Non disponible";
-        const d = vals[2] !== null && vals[2] > 0 && vals[3] !== null ? ratio.format(vals[3] / vals[2]) + " ans" : "Non calculable";
-        const cells = [String(year), ...vals.map((v) => v === null ? "Non disponible" : formatFinancialAmount(v)), r, d];
+        const cells = [
+          String(y.year),
+          y.population === null ? "Non disponible" : euros0.format(y.population),
+          amount(y.revenue), amount(y.expense), amount(y.gross_savings), amount(y.net_savings),
+          amount(y.debt), y.debt_per_capita === null ? "Non calculable" : euros0.format(y.debt_per_capita) + " €",
+          amount(y.local_taxes), amount(y.dgf), amount(y.investment_expense), amount(y.working_capital),
+          y.savings_rate === null ? "Non calculable" : ratio.format(y.savings_rate) + " %",
+          y.debt_years === null ? "Non calculable" : ratio.format(y.debt_years) + " ans"
+        ];
         cells.forEach((txt, i) => { const td = document.createElement("td"); td.textContent = txt; if (i > 0) td.className = "numeric-cell"; tr.appendChild(td); });
-        if (year === latestYear) tr.className = "current-year-row";
+        if (y.year === latestYear) tr.className = "current-year-row";
         history.appendChild(tr);
       });
     }
+    renderDatasetTools(commune, dataset);
     const millions = new Intl.NumberFormat("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const set = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
-    set("ribbon-fameck-savings", savings === null ? "—" : millions.format(savings / 1e6) + " M€");
-    set("ribbon-fameck-debt", debt === null ? "—" : millions.format(debt / 1e6) + " M€");
-    set("ribbon-fameck-rate", savingsRate === null ? "—" : ratio.format(savingsRate) + " %");
+    set("ribbon-commune-savings", savings === null ? "—" : millions.format(savings / 1e6) + " M€");
+    set("ribbon-commune-debt", debt === null ? "—" : millions.format(debt / 1e6) + " M€");
+    set("ribbon-commune-rate", savingsRate === null ? "—" : ratio.format(savingsRate) + " %");
     set("ribbon-local-savings-context", "Exercice " + latestYear + " · " + commune.nom);
     set("ribbon-local-debt-context", "Exercice " + latestYear + " · " + commune.nom);
     set("ribbon-local-rate-context", "Calcul indicatif · " + commune.nom);
+  }
+
+  // Identité issue du socle commun (INSEE, DGCL) et fiche standard téléchargeable.
+  async function renderDatasetTools(commune, dataset) {
+    const box = document.getElementById("commune-dataset");
+    if (!box) return;
+    box.replaceChildren();
+    const entity = await loadSocleCommune(commune).catch(() => null);
+    if (entity) {
+      const epci = entity.parent_epci ? entity.parent_epci.official_name + " (" + entity.parent_epci.entity_id + ")" : "aucune (commune isolée)";
+      const pop = entity.population && Number.isFinite(entity.population.municipale)
+        ? new Intl.NumberFormat("fr-FR").format(entity.population.municipale) + " habitants (population municipale en vigueur au 1er janvier 2026)"
+        : "non disponible";
+      box.appendChild(paragraph("Socle commun : " + entity.official_name + " · " + entity.department_name + " · " + entity.region_name + " · intercommunalité : " + epci + " · population : " + pop + ". Sources : INSEE (Code officiel géographique 2026) et DGCL (composition des intercommunalités au 1er janvier 2026).", "commune-meta"));
+    }
+    if (!dataset) return;
+    if (entity) dataset.entity = { ...dataset.entity, department_name: entity.department_name, region_code: entity.region_code, region_name: entity.region_name, parent_epci: entity.parent_epci, population_legale: entity.population };
+    const blob = new Blob([JSON.stringify(dataset, null, 2)], { type: "application/json" });
+    const link = document.createElement("a");
+    link.className = "button button-secondary";
+    link.href = URL.createObjectURL(blob);
+    link.download = "fiche-" + dataset.entity.insee_code + "-finances.json";
+    link.textContent = "Télécharger la fiche standard de " + (commune.nom || dataset.entity.insee_code) + " (JSON)";
+    box.appendChild(link);
+    box.appendChild(paragraph("Même structure pour toutes les communes (modèle de la fiche pilote de Fameck) : indicateurs du dernier exercice, ratios calculés, série annuelle et provenance OFGL.", "commune-meta"));
   }
 
   // Comparaison avec la strate et impôts locaux : fiche officielle DGFiP de la commune (aucun calcul).
@@ -634,7 +689,7 @@
       renderSelectedTerritory(commune, data);
       const link = document.createElement("a");
       link.className = "button button-secondary";
-      link.href = "#fameck-finances";
+      link.href = "#analyse-communale";
       link.textContent = "Lire l’analyse détaillée de " + commune.nom;
       card.appendChild(link);
     } catch (error) {
@@ -643,7 +698,7 @@
       renderFinanceError(card, error);
       if (selectedTitle) selectedTitle.textContent = "Analyse de " + commune.nom;
       if (selectedStatus) selectedStatus.textContent = "Données indisponibles";
-      const metrics = document.getElementById("fameck-metrics");
+      const metrics = document.getElementById("commune-metrics");
       if (metrics) metrics.replaceChildren(paragraph(serviceErrorText(error, "L’OFGL") + " Aucun montant n’est affiché. Réessayez ou ouvrez la source officielle.", "commune-method-note"));
     }
     card.appendChild(sourceLink(commune));
@@ -668,6 +723,20 @@
     }
     if (kind.type === "insee") return lib.mergeCommunes([{ communes: await query({ code: kind.value }), matchedBy: "code" }]);
     return lib.mergeCommunes([{ communes: await query({ nom: kind.value, boost: "population" }), matchedBy: "nom" }]);
+  }
+
+  // geo.api.gouv.fr d'abord ; s'il ne répond pas, le socle commun publié avec le site prend le relais.
+  async function searchCommunesWithFallback(kind, signal) {
+    try {
+      return { communes: await searchCommunes(kind, signal), fallback: false };
+    } catch (error) {
+      if (signal.aborted) throw error;
+      try {
+        return { communes: lib.searchSocleIndex(await loadSearchIndex(), kind, 10), fallback: true };
+      } catch (fallbackError) {
+        throw error;
+      }
+    }
   }
 
   function initMobileNavigation() {
@@ -734,7 +803,7 @@
       result.replaceChildren(paragraph("Recherche dans le référentiel national des communes…"));
       result.hidden = false;
       try {
-        const communes = await searchCommunes(kind, controller.signal);
+        const { communes, fallback } = await searchCommunesWithFallback(kind, controller.signal);
         if (controller.signal.aborted) return;
         result.replaceChildren();
         if (!communes.length) {
@@ -743,7 +812,9 @@
         }
         const heading = document.createElement("h3");
         heading.textContent = communes.length === 1 ? "Commune trouvée" : communes.length + " communes correspondent : choisissez la bonne";
-        result.append(heading, paragraph("L’identité géographique est fournie par le service public geo.api.gouv.fr ; chaque commune est identifiée par son code INSEE. Les chiffres financiers de l’OFGL restent soumis à leur propre périmètre, exercice et disponibilité.", "commune-meta"));
+        result.append(heading, paragraph(fallback
+          ? "Le service geo.api.gouv.fr ne répond pas : les communes proviennent du socle commun publié avec ce site (Code officiel géographique de l’INSEE au 1er janvier 2026). Chaque commune est identifiée par son code INSEE."
+          : "L’identité géographique est fournie par le service public geo.api.gouv.fr ; chaque commune est identifiée par son code INSEE. Les chiffres financiers de l’OFGL restent soumis à leur propre périmètre, exercice et disponibilité.", "commune-meta"));
         const loads = [];
         communes.forEach((commune) => {
           const card = document.createElement("article");
@@ -847,7 +918,6 @@
     }
   }
 
-  function initFameckFinances() { /* L’analyse locale est désormais alimentée par la commune recherchée. */ }
 
   // Les tableaux chargés après coup déplacent les sections : on revient sur l’ancre demandée.
   function restoreAnchor(initialScroll) {
@@ -862,7 +932,11 @@
     initGlossary();
     const pending = [initDebtComposition()];
     const form = document.getElementById("claim-form");
-    if (form) form.addEventListener("submit", handleClaim);
+    if (form) {
+      form.addEventListener("submit", handleClaim);
+      // Liste des communes du socle commun préchargée dès la saisie (reconnaissance de toutes les communes).
+      form.addEventListener("focusin", () => { loadSearchIndex().catch(() => null); }, { once: true });
+    }
     try {
       const response = await fetch(DATA_URL, { cache: "no-store" });
       if (!response.ok) throw new Error("HTTP " + response.status);

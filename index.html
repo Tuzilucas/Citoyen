@@ -30,7 +30,7 @@
       <a href="#contenu">Accueil</a>
       <a href="#territoires">France</a>
       <a href="#communes">Communes</a>
-      <a href="#fameck-finances">Analyse communale</a>
+      <a href="#analyse-communale">Analyse communale</a>
       <a href="#comparaison-strate">Communes équivalentes</a>
       <a href="#verifier">Vérifier un chiffre</a>
       <a href="#explorer">Explorer les données</a>
@@ -66,9 +66,9 @@
 
     <section class="headline-ribbon" aria-label="Quelques chiffres clés">
       <a href="#indicateur-dette" class="headline-metric"><span class="headline-icon" aria-hidden="true">⌂</span><span><small>Dette publique brute · France</small><strong id="ribbon-debt">3 595,5 Md€</strong><em id="ribbon-debt-context">119,0 % du PIB · T2 2026</em></span></a>
-      <a href="#fameck-finances" class="headline-metric"><span class="headline-icon" aria-hidden="true">▥</span><span><small>Épargne brute · commune recherchée</small><strong id="ribbon-fameck-savings">—</strong><em id="ribbon-local-savings-context">Choisissez une commune</em></span></a>
-      <a href="#fameck-finances" class="headline-metric"><span class="headline-icon" aria-hidden="true">▤</span><span><small>Encours de dette · commune recherchée</small><strong id="ribbon-fameck-debt">—</strong><em id="ribbon-local-debt-context">En fin d’exercice</em></span></a>
-      <a href="#fameck-finances" class="headline-metric"><span class="headline-icon" aria-hidden="true">↗</span><span><small>Taux d’épargne brute · commune recherchée</small><strong id="ribbon-fameck-rate">—</strong><em id="ribbon-local-rate-context">Calculé si les données sont disponibles</em></span></a>
+      <a href="#analyse-communale" class="headline-metric"><span class="headline-icon" aria-hidden="true">▥</span><span><small>Épargne brute · commune recherchée</small><strong id="ribbon-commune-savings">—</strong><em id="ribbon-local-savings-context">Choisissez une commune</em></span></a>
+      <a href="#analyse-communale" class="headline-metric"><span class="headline-icon" aria-hidden="true">▤</span><span><small>Encours de dette · commune recherchée</small><strong id="ribbon-commune-debt">—</strong><em id="ribbon-local-debt-context">En fin d’exercice</em></span></a>
+      <a href="#analyse-communale" class="headline-metric"><span class="headline-icon" aria-hidden="true">↗</span><span><small>Taux d’épargne brute · commune recherchée</small><strong id="ribbon-commune-rate">—</strong><em id="ribbon-local-rate-context">Calculé si les données sont disponibles</em></span></a>
     </section>
 
     <section id="territoires" class="section territory-section">
@@ -117,16 +117,17 @@
       <div id="commune-result" class="commune-result" aria-live="polite" hidden></div>
     </section>
 
-  <section id="fameck-finances" class="section municipal-finance-section">
+  <section id="analyse-communale" class="section municipal-finance-section">
       <div class="section-heading">
         <div><p class="eyebrow">Analyse territoriale détaillée</p><h2 id="municipal-title">Les finances de la commune recherchée</h2></div>
         <span class="status status-review" id="municipal-status">En attente d’une commune</span>
       </div>
-      <p class="municipal-intro" id="municipal-intro">Recherchez une commune dans la section « Rechercher une commune », puis sélectionnez-la si plusieurs résultats sont proposés. Cette partie sera remplacée par son analyse : données disponibles, explication de chaque indicateur, calculs, évolution dans le temps et limites méthodologiques. Aucune donnée de Fameck ne sera imposée par défaut.</p>
-      <div class="municipal-metrics" id="fameck-metrics"><p>Choisissez une commune pour charger ses données.</p></div>
-      <div class="municipal-calculs" id="fameck-calculs"></div>
-      <div class="municipal-readout" id="fameck-analysis"><strong>Comment lire les comptes de cette commune</strong><p>Les indicateurs apparaîtront ici après la recherche.</p></div>
-      <div class="municipal-history-wrap" id="municipal-history-wrap" hidden><h3>Évolution annuelle</h3><p id="municipal-history-intro">Les années ne sont comparées que lorsque les agrégats et les périmètres sont disponibles.</p><table><caption id="municipal-history-caption">Commune sélectionnée · budget principal · données OFGL à contrôler</caption><thead><tr><th scope="col">Année</th><th scope="col">Recettes de fonctionnement</th><th scope="col">Dépenses de fonctionnement</th><th scope="col">Épargne brute</th><th scope="col">Dette en fin d’année</th><th scope="col">Taux d’épargne</th><th scope="col">Désendettement théorique</th></tr></thead><tbody id="fameck-history-body"><tr><td colspan="7">Aucune commune sélectionnée.</td></tr></tbody></table></div>
+      <p class="municipal-intro" id="municipal-intro">Recherchez une commune dans la section « Rechercher une commune », puis sélectionnez-la si plusieurs résultats sont proposés. Cette partie sera remplacée par son analyse : données disponibles, explication de chaque indicateur, calculs, évolution dans le temps et limites méthodologiques. La même analyse s’applique à chacune des 34 875 communes de France, sans commune imposée par défaut.</p>
+      <div class="municipal-metrics" id="commune-metrics"><p>Choisissez une commune pour charger ses données.</p></div>
+      <div class="municipal-calculs" id="commune-calculs"></div>
+      <div class="municipal-readout" id="commune-analysis"><strong>Comment lire les comptes de cette commune</strong><p>Les indicateurs apparaîtront ici après la recherche.</p></div>
+      <div class="municipal-dataset" id="commune-dataset"></div>
+      <div class="municipal-history-wrap" id="municipal-history-wrap" hidden><h3>Évolution annuelle</h3><p id="municipal-history-intro">Les années ne sont comparées que lorsque les agrégats et les périmètres sont disponibles.</p><table><caption id="municipal-history-caption">Commune sélectionnée · budget principal · données OFGL à contrôler</caption><thead><tr><th scope="col">Année</th><th scope="col">Population</th><th scope="col">Recettes de fonctionnement</th><th scope="col">Dépenses de fonctionnement</th><th scope="col">Épargne brute</th><th scope="col">Épargne nette</th><th scope="col">Dette en fin d’année</th><th scope="col">Dette par habitant</th><th scope="col">Impôts locaux</th><th scope="col">Dotation globale de fonctionnement</th><th scope="col">Dépenses d’investissement</th><th scope="col">Fonds de roulement</th><th scope="col">Taux d’épargne</th><th scope="col">Désendettement théorique</th></tr></thead><tbody id="commune-history-body"><tr><td colspan="14">Aucune commune sélectionnée.</td></tr></tbody></table></div>
       <div class="municipal-source-note" id="municipal-method">
         <strong>La méthode d’analyse</strong>
         <p>Le budget principal est séparé des budgets annexes. Une valeur absente n’est jamais remplacée par zéro. L’encours de dette est un stock à une date donnée ; les recettes et dépenses sont des flux sur l’exercice. Le taux d’épargne brute est calculé comme épargne brute ÷ recettes de fonctionnement × 100, uniquement si les deux données sont disponibles et comparables. La capacité de désendettement est encours de dette ÷ épargne brute, uniquement si l’épargne brute est positive.</p>
