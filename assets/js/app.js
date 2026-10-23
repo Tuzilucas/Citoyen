@@ -234,7 +234,14 @@
     let total = null;
     for (let page = 0; page < lib.OFGL.maxPages; page += 1) {
       const params = lib.buildOfglParams(commune.code, page * lib.OFGL.pageSize);
-      const payload = await fetchJson(lib.OFGL.endpoint + "?" + params.toString(), "ofgl", signal);
+      // Une coupure réseau ou un délai dépassé est réessayé une fois ; une erreur HTTP ne l'est pas.
+      let payload;
+      try {
+        payload = await fetchJson(lib.OFGL.endpoint + "?" + params.toString(), "ofgl", signal);
+      } catch (error) {
+        if (signal.aborted || !error || !["network", "timeout"].includes(error.reason)) throw error;
+        payload = await fetchJson(lib.OFGL.endpoint + "?" + params.toString(), "ofgl", signal);
+      }
       if (!payload || !Array.isArray(payload.results)) throw new ServiceError("ofgl", "format");
       if (typeof payload.total_count === "number") total = payload.total_count;
       rows.push(...payload.results);
