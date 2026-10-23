@@ -138,6 +138,88 @@
     return selected;
   }
 
+  // Comptes individuels des communes publiés par la DGFiP (exercice 2025) : chaque montant est donné
+  // en milliers d'euros, en euros par habitant et avec la moyenne officielle de la strate (communes de
+  // même taille et de même type de groupement). Libellés et codes : maquette officielle jointe au jeu.
+  const DGFIP = {
+    endpoint: "https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets/comptes-individuels-des-communes-fichier-global-2025/records",
+    datasetPage: "https://data.economie.gouv.fr/explore/dataset/comptes-individuels-des-communes-fichier-global-2025/",
+    // Codes « département » de la DGFiP pour l'outre-mer (vérifiés le 23/10/2026 : Pointe-à-Pitre,
+    // Fort-de-France, Cayenne, Saint-Denis de La Réunion, Mamoudzou).
+    overseas: { "971": "101", "972": "103", "973": "102", "974": "104", "976": "106" }
+  };
+
+  // Code INSEE → identifiants DGFiP { dep, icom } ; null si le code n'est pas couvert.
+  function dgfipKey(inseeCode) {
+    const code = String(inseeCode ?? "").toUpperCase();
+    if (!isInseeCode(code)) return null;
+    if (/^97/.test(code)) {
+      const dep = DGFIP.overseas[code.slice(0, 3)];
+      return dep ? { dep, icom: code.slice(2) } : null;
+    }
+    return { dep: "0" + code.slice(0, 2), icom: code.slice(2) };
+  }
+
+  function buildDgfipParams(inseeCode) {
+    const key = dgfipKey(inseeCode);
+    if (!key) throw new Error("Commune non couverte par les comptes individuels de la DGFiP");
+    return new URLSearchParams({ where: 'dep="' + key.dep + '" and icom="' + key.icom + '"', limit: "2" });
+  }
+
+  // [libellé, champ en milliers d'euros] ; « f » + champ = euros par habitant, « m » + champ = moyenne de la strate.
+  const DGFIP_PER_CAPITA = [
+    ["Total des produits de fonctionnement", "prod"],
+    ["dont impôts locaux", "impo1"],
+    ["dont dotation globale de fonctionnement", "dgf"],
+    ["Total des charges de fonctionnement", "charge"],
+    ["dont charges de personnel", "perso"],
+    ["dont achats et charges externes", "achat"],
+    ["dont subventions versées", "subv"],
+    ["Capacité d'autofinancement (CAF)", "caf"],
+    ["Dépenses d'équipement", "equip"],
+    ["Encours total de la dette au 31 décembre", "dette"],
+    ["Annuité de la dette", "annu"]
+  ];
+  // Ratios de structure publiés (« r » + champ, strate : « rm » + champ), en % des produits ou des charges.
+  const DGFIP_STRUCTURE = {
+    charges: [["Charges de personnel", "perso"], ["Achats et charges externes", "achat"], ["Charges financières", "fin"], ["Contingents", "cont"], ["Subventions versées", "subv"]],
+    produits: [["Impôts locaux", "impo1"], ["Autres impôts et taxes", "impo2"], ["Dotation globale de fonctionnement", "dgf"], ["Autres dotations et participations", "autdot"], ["Produits des services et du domaine", "pserdom"]]
+  };
+  // [libellé, produit (k€), €/hab., moyenne strate €/hab., taux voté, taux moyen de la strate]
+  const DGFIP_TAXES = [
+    ["Taxe foncière sur les propriétés bâties (avant application du coefficient correcteur)", "pfb", "fpfb", "mpfb", "tfb", "tmfb"],
+    ["Taxe foncière sur les propriétés bâties (après application du coefficient correcteur)", "pfbcoco", "fpfbcoco", "mpfbcoco", null, null],
+    ["Taxe foncière sur les propriétés non bâties", "pfnb", "fpfnb", "mpfnb", "tfnb", "tmfnb"],
+    ["Taxe additionnelle à la taxe foncière sur les propriétés non bâties", "ptafnb", "fptafnb", "mptafnb", "tafnb", "mtmtafnb"],
+    ["Taxe d'habitation (résidences secondaires et logements vacants)", "pth", "fpth", "mpth", "tth", "tmth"],
+    ["Cotisation foncière des entreprises", "pcfe", "fpcfe", "mpcfe", "ttp", "tmtp"],
+    ["Imposition forfaitaire sur les entreprises de réseau", "iferc", "fiferc", "miferc", null, null],
+    ["Taxe sur les surfaces commerciales", "tascomc", "ftascomc", "mtascomc", null, null],
+    ["Fraction de TVA (montant net)", "tvac", "ftvac", "mtvac", null, null]
+  ];
+
+  function num(row, key) {
+    if (!key || !row || !Object.prototype.hasOwnProperty.call(row, key)) return null;
+    const v = row[key];
+    if (v === null || v === undefined || v === "") return null;
+    const n = Number(v);
+    return Number.isFinite(n) ? n : null;
+  }
+
+  // Lecture d'une fiche DGFiP : valeurs publiées seulement (null si absentes, 0 conservé), aucun calcul.
+  function readDgfip(record) {
+    if (!record || typeof record !== "object") return null;
+    return {
+      year: record.an ? String(record.an) : null,
+      population: num(record, "pop1"),
+      strate: [record.nomsst1, record.nomsst2].filter((x) => typeof x === "string" && x).join(", ") || null,
+      perCapita: DGFIP_PER_CAPITA.map(([label, k]) => ({ label, thousands: num(record, k), commune: num(record, "f" + k), strate: num(record, "m" + k) })),
+      structure: Object.fromEntries(Object.entries(DGFIP_STRUCTURE).map(([group, list]) => [group, list.map(([label, k]) => ({ label, commune: num(record, "r" + k), strate: num(record, "rm" + k) }))])),
+      // Taux : undefined quand la maquette DGFiP ne prévoit pas de taux pour cet impôt (« sans objet »).
+      taxes: DGFIP_TAXES.map(([label, p, f, m, rate, mrate]) => ({ label, thousands: num(record, p), commune: num(record, f), strate: num(record, m), rate: rate ? num(record, rate) : undefined, strateRate: mrate ? num(record, mrate) : undefined }))
+    };
+  }
+
   function formatQuarter(period) {
     const match = /^(\d{4})-T([1-4])$/.exec(String(period ?? ""));
     if (!match) return String(period ?? "");
@@ -167,5 +249,5 @@
     return "unknown";
   }
 
-  return { OFGL, normalizeText, isInseeCode, classifyCommuneQuery, mergeCommunes, buildOfglParams, ofglDatasetLink, pickAmount, pickPerCapita, summarizeOfglRecords, selectPriorityAggregates, PRIORITY_AGGREGATES, formatQuarter, percentChange, directionWord, detectTopic };
+  return { OFGL, DGFIP, dgfipKey, buildDgfipParams, readDgfip, normalizeText, isInseeCode, classifyCommuneQuery, mergeCommunes, buildOfglParams, ofglDatasetLink, pickAmount, pickPerCapita, summarizeOfglRecords, selectPriorityAggregates, PRIORITY_AGGREGATES, formatQuarter, percentChange, directionWord, detectTopic };
 });

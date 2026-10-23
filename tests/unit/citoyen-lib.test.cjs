@@ -154,3 +154,33 @@ test("Aucune insertion HTML de données externes dans app.js", () => {
   const js = fs.readFileSync(path.join(__dirname, "../../assets/js/app.js"), "utf8");
   assert.ok(!/innerHTML|outerHTML|insertAdjacentHTML|document\.write/.test(js));
 });
+
+test("dgfipKey convertit le code INSEE au format DGFiP (métropole, Corse, outre-mer)", () => {
+  assert.deepEqual(lib.dgfipKey("57206"), { dep: "057", icom: "206" });
+  assert.deepEqual(lib.dgfipKey("2a004"), { dep: "02A", icom: "004" });
+  // Codes vérifiés sur la DGFiP : Pointe-à-Pitre, Fort-de-France, Cayenne, Saint-Denis, Mamoudzou.
+  assert.deepEqual(lib.dgfipKey("97120"), { dep: "101", icom: "120" });
+  assert.deepEqual(lib.dgfipKey("97209"), { dep: "103", icom: "209" });
+  assert.deepEqual(lib.dgfipKey("97302"), { dep: "102", icom: "302" });
+  assert.deepEqual(lib.dgfipKey("97411"), { dep: "104", icom: "411" });
+  assert.deepEqual(lib.dgfipKey("97611"), { dep: "106", icom: "611" });
+  assert.equal(lib.dgfipKey("97501"), null);
+  assert.equal(lib.dgfipKey("1234"), null);
+  assert.equal(lib.buildDgfipParams("57206").get("where"), 'dep="057" and icom="206"');
+  assert.throws(() => lib.buildDgfipParams("97501"));
+});
+
+test("readDgfip reprend les valeurs publiées sans calcul ni zéro inventé", () => {
+  const d = lib.readDgfip({ an: "2025", pop1: 14917, nomsst1: "communes de 10 000 à 20 000 hab", nomsst2: "appartenant à un groupement fiscalisé (FPU)", prod: 13263.36, fprod: 889.14, mprod: 1521.88, pfb: 3934.2, tfb: 27.85, tmfb: 41.07, tvac: 0, rmimpo2: 8.27 });
+  assert.equal(d.year, "2025");
+  assert.equal(d.strate, "communes de 10 000 à 20 000 hab, appartenant à un groupement fiscalisé (FPU)");
+  assert.deepEqual(d.perCapita[0], { label: "Total des produits de fonctionnement", thousands: 13263.36, commune: 889.14, strate: 1521.88 });
+  const tfb = d.taxes[0];
+  assert.deepEqual([tfb.thousands, tfb.rate, tfb.strateRate, tfb.commune], [3934.2, 27.85, 41.07, null]);
+  const tva = d.taxes.find((x) => /TVA/.test(x.label));
+  assert.equal(tva.thousands, 0, "un zéro publié reste un zéro");
+  assert.equal(tva.rate, undefined, "pas de taux prévu par la maquette : sans objet");
+  const impo2 = d.structure.produits.find((x) => x.label === "Autres impôts et taxes");
+  assert.deepEqual([impo2.commune, impo2.strate], [null, 8.27]);
+  assert.equal(lib.readDgfip(null), null);
+});

@@ -358,3 +358,13 @@ body{background:var(--paper);color:var(--ink)}
   .site-header nav a{display:flex;align-items:center;min-height:40px;padding:.45rem .25rem;border-bottom:1px solid var(--line);font-size:.88rem}
   .site-header nav .presidentielle-link{padding:.45rem .25rem}
 }
+
+.strata-section .strata-context{margin:0 0 1rem}
+.strata-table-wrap{overflow-x:auto;margin:0 0 1.5rem}
+.strata-table-wrap table{width:100%;border-collapse:collapse;font-size:.95rem}
+.strata-table-wrap caption{text-align:left;font-weight:600;margin-bottom:.5rem}
+.strata-table-wrap th,.strata-table-wrap td{padding:.45rem .6rem;border-bottom:1px solid var(--line, #d9dee7);text-align:left;vertical-align:top}
+.strata-table-wrap th{white-space:normal}
+.strata-table-wrap thead th{font-size:.85rem;font-weight:600}
+.strata-table-wrap tbody th{font-weight:400}
+.strata-table-wrap .numeric-cell{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}

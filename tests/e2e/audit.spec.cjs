@@ -65,7 +65,21 @@ const OFGL = {
   malformed: { status: 200, rawBody: "<html>maintenance</html>" }
 };
 
-async function newPage(browser, viewport, { geo = "fameck", ofgl = "ods_limit_error", geoFail = false, delayMs = 0 } = {}) {
+// Simulation de la fiche DGFiP (comptes individuels 2025). Les champs et les valeurs reprennent la fiche
+// réelle de Fameck consultée le 23/10/2026 ; « rimpo2 » est absent, comme dans la fiche réelle.
+const DGFIP = {
+  fameck: { status: 200, body: { total_count: 1, results: [{
+    an: "2025", dep: "057", icom: "206", inom: "FAMECK", pop1: 14917,
+    nomsst1: "communes de 10 000 à 20 000 hab", nomsst2: "appartenant à un groupement fiscalisé (FPU)",
+    prod: 13263.36, fprod: 889.14, mprod: 1521.88, impo1: 4966.14, fimpo1: 332.92, mimpo1: 680.17,
+    rimpo1: 37.44, rmimpo1: 45.92, rmimpo2: 8.27, pfb: 3934.2, fpfb: 263.74, mpfb: 636.63, tfb: 27.85, tmfb: 41.07,
+    tvac: 0, ftvac: 0, mtvac: 0
+  }] } },
+  empty: { status: 200, body: { total_count: 0, results: [] } },
+  error: { status: 503, body: { error: "service indisponible" } }
+};
+
+async function newPage(browser, viewport, { geo = "fameck", ofgl = "ods_limit_error", dgfip = "fameck", geoFail = false, delayMs = 0 } = {}) {
   const context = await browser.newContext({ viewport, deviceScaleFactor: 1 });
   const page = await context.newPage();
   const log = { console: [], pageErrors: [], failed: [], external: [], ofglUrls: [], geoUrls: [] };
@@ -89,6 +103,10 @@ async function newPage(browser, viewport, { geo = "fameck", ofgl = "ods_limit_er
       const s = OFGL[typeof ofgl === "function" ? ofgl(url) : ofgl];
       if (delayMs) await new Promise((r) => setTimeout(r, delayMs));
       return route.fulfill({ status: s.status, contentType: "application/json", body: s.rawBody || JSON.stringify(s.body) });
+    }
+    if (url.startsWith("https://data.economie.gouv.fr/")) {
+      const s = DGFIP[dgfip];
+      return route.fulfill({ status: s.status, contentType: "application/json", body: JSON.stringify(s.body) });
     }
     return route.abort("blockedbyclient");
   });
@@ -371,6 +389,30 @@ async function overflow(page) {
     record("CLAIM-PERIOD", "Dette + « Année 2024 » : explication stock trimestriel", "1280", /4e trimestre/.test(b) ? "VALIDÉ" : "ÉCHOUÉ", b.slice(0, 160));
     const c = await run("la dette de Fameck est de 7 millions", "");
     record("CLAIM-TOPIC", "« dette de Fameck » orientée vers les finances communales", "1280", /communales/.test(c) ? "VALIDÉ" : "ÉCHOUÉ", c.slice(0, 160));
+    await context.close();
+  }
+
+  // 5 bis. Comparaison avec la strate (fiche DGFiP) : valeurs publiées, « Non disponible », « Sans objet ».
+  for (const scenario of ["fameck", "error", "empty"]) {
+    const { context, page } = await newPage(browser, { width: 375, height: 740 }, { geo: "fameck", ofgl: "fields_euros_par_habitant", dgfip: scenario });
+    await page.goto(BASE, { waitUntil: "networkidle" });
+    await page.fill("#commune-query", "Fameck");
+    await page.click("#commune-form button[type=submit]");
+    await page.waitForTimeout(900);
+    const text = (await page.textContent("#strata-content")).replace(/\s+/g, " ").replace(/\u202f/g, " ");
+    if (scenario === "fameck") {
+      const tables = await page.$$eval("#strata-content table", (t) => t.length);
+      const ok = tables === 4 && text.includes("1 521,88") && text.includes("27,85 %") && text.includes("41,07 %")
+        && text.includes("Sans objet") && text.includes("Non disponible") && /communes de 10 000 à 20 000 hab/.test(text);
+      record("STRATA-TABLES", "Fiche DGFiP : 4 tableaux, moyenne de strate, taux, « Sans objet », « Non disponible »", "375", ok ? "VALIDÉ" : "ÉCHOUÉ", `${tables} tableaux ; ` + text.slice(0, 220));
+      const sw = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+      record("STRATA-MOBILE", "Tableaux de strate sans débordement de la page sur mobile", "375", sw <= 0 ? "VALIDÉ" : "ÉCHOUÉ", "débordement=" + sw + "px");
+      await page.locator("#comparaison-strate").screenshot({ path: path.join(OUT, "strate-375.png") });
+    } else if (scenario === "error") {
+      record("STRATA-ERROR", "Erreur DGFiP distinguée d'une absence de données", "375", /code 503/.test(text) && /pas une absence de données/.test(text) && !/€/.test(text) ? "VALIDÉ" : "ÉCHOUÉ", text.slice(0, 200));
+    } else {
+      record("STRATA-EMPTY", "Aucune fiche DGFiP : message explicite, aucun montant", "375", /Aucune fiche DGFiP/.test(text) && /pas d’un montant nul/.test(text) ? "VALIDÉ" : "ÉCHOUÉ", text.slice(0, 200));
+    }
     await context.close();
   }
 

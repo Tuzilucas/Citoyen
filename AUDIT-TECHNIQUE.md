@@ -99,6 +99,15 @@ Même budget (principal), même commune, chaque exercice 2019-2025 (FAM-01) :
 - La branche `ccr-8e430522-ifzcgl` diffère de la version en ligne par `app.js` (FX-01) et `app.css` (FX-03) seulement.
 - **Erreur en production confirmée** : à chaque chargement, la console affiche `restoreAnchor is not defined` (FX-01). Elle est corrigée sur la branche (aucune erreur JavaScript constatée), pas encore publiée.
 
+### V7. Ajout du 23 octobre 2026 : communes équivalentes et impôts locaux
+
+- Nouvelle section « Comparer la commune avec les communes de même taille » (`#comparaison-strate`), chargée en parallèle de l’OFGL à partir de la fiche officielle DGFiP « Comptes individuels des communes 2025 » (`data.economie.gouv.fr`, CORS ouvert, appel réel réussi depuis le navigateur).
+- Quatre tableaux, sans aucun calcul du site : montants par habitant de la commune et **moyenne officielle de la strate** (même tranche de population, même type de groupement) ; structure des charges et des produits en % (ratios publiés) ; produit de chaque impôt local (taxe foncière bâtie avant et après coefficient correcteur, non bâtie, taxe d’habitation sur les résidences secondaires, CFE, IFER, TASCOM, fraction de TVA) avec le **taux voté et le taux moyen de la strate**.
+- Libellés et codes repris de la maquette officielle jointe au jeu (`Maquette_commune_vf.ods`, feuille 2025). Conversion du code INSEE vérifiée sur la DGFiP, y compris Corse (`02A`) et outre-mer (971→101, 972→103, 973→102, 974→104, 976→106).
+- Valeur absente : « Non disponible » ; zéro publié conservé ; taux non prévu par la maquette : « Sans objet » ; erreur du service distinguée d’une absence de fiche.
+- Lecture des moyennes : citation de la note méthodologique de la DGFiP (« les valeurs moyennes des groupes de référence doivent toujours être relativisées »).
+- Contrôle : fiche de Fameck affichée identique aux valeurs de l’API ; tests STRATA-TABLES, STRATA-MOBILE, STRATA-ERROR, STRATA-EMPTY et 2 tests unitaires ajoutés.
+
 ### V6. Ce qui reste à faire
 
 1. Fusionner la branche puis publier, pour supprimer l’erreur `restoreAnchor` en production (décision de l’éditeur).

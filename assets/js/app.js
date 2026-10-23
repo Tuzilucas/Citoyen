@@ -499,7 +499,92 @@
     set("ribbon-local-rate-context", "Calcul indicatif · " + commune.nom);
   }
 
+  // Comparaison avec la strate et impôts locaux : fiche officielle DGFiP de la commune (aucun calcul).
+  const frNumber = (digits) => new Intl.NumberFormat("fr-FR", { minimumFractionDigits: digits, maximumFractionDigits: digits });
+  function cellText(value, digits, suffix) {
+    if (value === undefined) return "Sans objet";
+    return value === null ? "Non disponible" : frNumber(digits).format(value) + (suffix || "");
+  }
+
+  function strataTable(caption, headers, rows) {
+    const wrap = document.createElement("div");
+    wrap.className = "strata-table-wrap";
+    const table = document.createElement("table");
+    const cap = document.createElement("caption");
+    cap.textContent = caption;
+    table.appendChild(cap);
+    const thead = document.createElement("thead");
+    const htr = document.createElement("tr");
+    headers.forEach((h) => { const th = document.createElement("th"); th.scope = "col"; th.textContent = h; htr.appendChild(th); });
+    thead.appendChild(htr);
+    table.appendChild(thead);
+    const tbody = document.createElement("tbody");
+    rows.forEach((cells) => {
+      const tr = document.createElement("tr");
+      cells.forEach((txt, i) => {
+        const cell = document.createElement(i === 0 ? "th" : "td");
+        if (i === 0) cell.scope = "row"; else cell.className = "numeric-cell";
+        cell.textContent = txt;
+        tr.appendChild(cell);
+      });
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    wrap.appendChild(table);
+    return wrap;
+  }
+
+  function renderStrata(container, commune, d) {
+    const year = d.year || "exercice inconnu";
+    const nodes = [
+      paragraph(commune.nom + " · exercice " + year + " · budget principal · population légale : " + cellText(d.population, 0, " habitants") + ". Strate de comparaison de la DGFiP : " + (d.strate || "non disponible") + ".", "strata-context"),
+      strataTable("Montants par habitant : " + commune.nom + " et moyenne des communes de la même strate (DGFiP, " + year + ")",
+        ["Poste", "Montant de la commune (milliers d’euros)", "Commune (€ par habitant)", "Moyenne de la strate (€ par habitant)"],
+        d.perCapita.map((r) => [r.label, cellText(r.thousands, 2), cellText(r.commune, 2), cellText(r.strate, 2)])),
+      strataTable("Où va l’argent de fonctionnement : part de chaque poste dans les charges (DGFiP, " + year + ")",
+        ["Poste de dépense", "Commune (% des charges)", "Moyenne de la strate (% des charges)"],
+        d.structure.charges.map((r) => [r.label, cellText(r.commune, 2, " %"), cellText(r.strate, 2, " %")])),
+      strataTable("D’où vient l’argent de fonctionnement : part de chaque ressource dans les produits (DGFiP, " + year + ")",
+        ["Ressource", "Commune (% des produits)", "Moyenne de la strate (% des produits)"],
+        d.structure.produits.map((r) => [r.label, cellText(r.commune, 2, " %"), cellText(r.strate, 2, " %")])),
+      strataTable("Impôts perçus par la commune : produit, montant par habitant et taux votés (DGFiP, " + year + ")",
+        ["Impôt", "Produit (milliers d’euros)", "Commune (€ par habitant)", "Moyenne de la strate (€ par habitant)", "Taux voté par la commune", "Taux moyen de la strate"],
+        d.taxes.map((r) => [r.label, cellText(r.thousands, 2), cellText(r.commune, 2), cellText(r.strate, 2), cellText(r.rate, 2, " %"), cellText(r.strateRate, 2, " %")])),
+      paragraph("Ces tableaux reprennent les valeurs publiées par la DGFiP, sans calcul du site. Une valeur absente est indiquée « Non disponible » ; un zéro publié reste un zéro. Les impôts ci-dessus ne concernent que la part revenant à la commune : les impôts directs locaux sont aussi perçus au profit d’autres collectivités et organismes (intercommunalité, syndicats…), qui votent leurs propres taux.", "commune-method-note")
+    ];
+    container.replaceChildren(...nodes);
+  }
+
+  async function loadStrataComparison(commune, signal) {
+    const container = document.getElementById("strata-content");
+    const title = document.getElementById("strata-title");
+    if (!container) return;
+    if (title) title.textContent = "Comparer " + commune.nom + " avec les communes de même taille";
+    if (!lib.dgfipKey(commune.code)) {
+      container.replaceChildren(paragraph("Les comptes individuels de la DGFiP ne couvrent pas cette commune (code INSEE " + commune.code + ").", "commune-method-note"));
+      return;
+    }
+    container.replaceChildren(paragraph("Chargement de la fiche DGFiP de " + commune.nom + "…", "commune-loading"));
+    try {
+      const payload = await fetchJson(lib.DGFIP.endpoint + "?" + lib.buildDgfipParams(commune.code).toString(), "dgfip", signal);
+      if (signal && signal.aborted) return;
+      if (!payload || !Array.isArray(payload.results)) throw new ServiceError("dgfip", "format");
+      if (payload.results.length !== 1) {
+        container.replaceChildren(paragraph(payload.results.length === 0
+          ? "Aucune fiche DGFiP 2025 n’est publiée pour cette commune. Il ne s’agit pas d’un montant nul."
+          : "La DGFiP renvoie plusieurs fiches pour ce code : aucune n’est affichée pour éviter une confusion.", "commune-method-note"));
+        return;
+      }
+      renderStrata(container, commune, lib.readDgfip(payload.results[0]));
+    } catch (error) {
+      if (signal && signal.aborted) return;
+      container.replaceChildren(paragraph(serviceErrorText(error, "Le service de la DGFiP") + " Aucun montant n’est affiché. Ce n’est pas une absence de données.", "commune-method-note"));
+    }
+  }
+
   async function loadCommuneCard(card, commune, signal) {
+    // Fiche DGFiP chargée en parallèle : sa disponibilité ne dépend pas de celle de l'OFGL.
+    loadStrataComparison(commune, signal);
     const loading = paragraph("Chargement des comptes OFGL pour " + commune.nom + "…", "commune-loading");
     card.appendChild(loading);
     const selectedStatus = document.getElementById("municipal-status");
