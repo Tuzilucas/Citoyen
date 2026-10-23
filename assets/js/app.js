@@ -589,6 +589,7 @@
     if (call) call.hidden = true;
   }
 
+  let ficheUrl = null;
   // Identité issue du socle commun (INSEE, DGCL) et fiche standard téléchargeable.
   async function renderDatasetTools(commune, dataset) {
     const box = document.getElementById("commune-dataset");
@@ -607,7 +608,10 @@
     const blob = new Blob([JSON.stringify(dataset, null, 2)], { type: "application/json" });
     const link = document.createElement("a");
     link.className = "button button-secondary";
-    link.href = URL.createObjectURL(blob);
+    // Une seule adresse de fichier à la fois : la précédente est libérée.
+    if (ficheUrl) URL.revokeObjectURL(ficheUrl);
+    ficheUrl = URL.createObjectURL(blob);
+    link.href = ficheUrl;
     link.download = "fiche-" + dataset.entity.insee_code + "-finances.json";
     link.textContent = "Télécharger la fiche de " + (commune.nom || dataset.entity.insee_code) + " (JSON)";
     box.appendChild(link);
