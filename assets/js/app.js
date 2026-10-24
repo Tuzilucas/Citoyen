@@ -742,12 +742,14 @@
       if (signal && signal.aborted) return;
       if (!payload || !Array.isArray(payload.results)) throw new ServiceError("dgfip", "format");
       if (!payload.results.length) {
+        window.dispatchEvent(new CustomEvent("citoyen:tax-rates-loaded", { detail: { commune, rates: null } }));
         container.replaceChildren(paragraph("La DGFiP ne publie pas de taux pour cette commune. Ce n’est pas un taux nul : la donnée n’existe pas.", "commune-method-note"));
         return;
       }
       renderTaux(container, commune, lib.readTaux(payload.results[0]));
     } catch (error) {
       if (signal && signal.aborted) return;
+      window.dispatchEvent(new CustomEvent("citoyen:tax-rates-loaded", { detail: { commune, rates: null } }));
       container.replaceChildren(paragraph(unavailableText(error, "Le service de la DGFiP", "Aucun taux n’est affiché."), "commune-method-note"));
     }
   }
