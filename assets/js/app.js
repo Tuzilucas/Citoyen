@@ -730,6 +730,7 @@
       paragraph("Selon la DGFiP, le taux global additionne les taux de la commune, de l’intercommunalité, des syndicats et des taxes spéciales. Il exclut les chambres de commerce, de métiers et d’agriculture. Quand des communes ou des intercommunalités fusionnent, leurs taux se rapprochent sur plusieurs années. Le taux de votre avis peut alors différer un temps du taux voté.", "commune-method-note")
     ];
     container.replaceChildren(...nodes);
+    window.dispatchEvent(new CustomEvent("citoyen:tax-rates-loaded", { detail: { commune, rates: d } }));
   }
 
   async function loadTaux(commune, signal) {
@@ -1010,6 +1011,7 @@
         const loads = [];
         const open = (card, commune) => {
           writeCommuneToUrl(commune.code, fromUrl);
+          window.dispatchEvent(new CustomEvent("citoyen:commune-selected", { detail: { commune } }));
           return loadCommuneCard(card, commune, controller.signal);
         };
         communes.forEach((commune) => {
