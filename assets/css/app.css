@@ -1836,29 +1836,131 @@ select,
 .personal-tax-section {
   margin: var(--space-6, 2rem) 0;
   padding: clamp(1rem, 3vw, 1.6rem);
-  border: 1px solid var(--color-border, #dce2e8);
-  border-top: 3px solid var(--color-accent, #164b86);
-  background: var(--color-surface, #f7f5ef);
+  border: 1px solid var(--color-line);
+  border-top: 3px solid var(--color-accent);
+  background: var(--color-surface);
 }
 .personal-tax-section h3 { margin: 0; font-family: var(--font-display, Georgia, serif); font-size: clamp(1.35rem, 2.5vw, 1.8rem); }
-.personal-tax-intro { max-width: 78ch; color: var(--color-muted, #5d6b7c); }
-.personal-tax-selected { display: grid; gap: .2rem; margin: 1rem 0; padding: 1rem; background: #fff; border: 1px solid var(--color-border, #dce2e8); }
-.personal-tax-selected span, .personal-tax-selected small { color: var(--color-muted, #5d6b7c); font-size: .82rem; }
+.personal-tax-intro { max-width: 78ch; color: var(--color-muted); }
+.personal-tax-selected { display: grid; gap: .2rem; margin: 1rem 0; padding: 1rem; background: var(--color-surface); border: 1px solid var(--color-line); }
+.personal-tax-selected span, .personal-tax-selected small { color: var(--color-muted); font-size: .82rem; }
 .personal-tax-selected strong { font-family: var(--font-display, Georgia, serif); font-size: 1.2rem; }
 .personal-tax-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin: 1rem 0; }
 .personal-tax-fields label { display: block; margin-bottom: .35rem; font-size: .85rem; font-weight: 700; }
-.personal-tax-fields input, .personal-tax-fields select { width: 100%; min-width: 0; padding: .7rem .75rem; border: 1px solid var(--color-border, #cbd5df); border-radius: 3px; background: #fff; color: var(--color-text, #0b2542); }
-.personal-tax-fields input:focus-visible, .personal-tax-fields select:focus-visible { outline: 3px solid var(--color-accent, #164b86); outline-offset: 2px; }
-.personal-tax-result { margin-top: 1.2rem; padding: 1.1rem; border-left: 3px solid var(--color-accent, #164b86); background: #fff; }
+.personal-tax-fields input, .personal-tax-fields select { width: 100%; min-width: 0; padding: .7rem .75rem; border: 1px solid var(--color-line-strong); border-radius: 3px; background: var(--color-surface); color: var(--color-ink); }
+.personal-tax-fields input:focus-visible, .personal-tax-fields select:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 2px; }
+.personal-tax-result { margin-top: 1.2rem; padding: 1.1rem; border-left: 3px solid var(--color-accent); background: var(--color-surface); }
 .personal-tax-result h4 { margin: 0 0 .6rem; font-family: var(--font-display, Georgia, serif); font-size: 1.15rem; }
 .personal-tax-result p { margin: .5rem 0; }
 .personal-tax-result ul { margin: .6rem 0; padding-left: 1.25rem; }
 .personal-tax-result li { margin: .5rem 0; }
-.personal-tax-result .tax-result-note { color: var(--color-muted, #5d6b7c); font-size: .88rem; }
-.personal-tax-result .tax-result-alert { padding: .8rem; background: #fff5df; color: #6f5014; }
-.personal-tax-result .tax-result-good { padding: .8rem; background: #edf6ef; color: #23583c; }
+.personal-tax-result .tax-result-note { color: var(--color-muted); font-size: .88rem; }
+.personal-tax-result .tax-result-alert { padding: .8rem; background: var(--color-caution-bg); color: var(--color-caution); }
+.personal-tax-result .tax-result-good { padding: .8rem; background: var(--color-confirmed-bg); color: var(--color-confirmed); }
 .personal-tax-method { margin-top: 1.2rem; }
 @media (max-width: 620px) {
   .personal-tax-fields { grid-template-columns: minmax(0, 1fr); }
   .personal-tax-section { padding: 1rem; }
+}
+
+
+/* Calculateur fiscal : données publiques en premier, saisie personnelle réduite. */
+.personal-tax-section {
+  min-width: 0;
+  border-color: var(--color-line);
+  border-top: 4px solid var(--color-accent);
+  background: var(--color-surface);
+}
+.personal-tax-heading { align-items: flex-start; gap: .75rem; }
+.personal-tax-heading .status { max-width: 13rem; white-space: normal; text-align: center; }
+.personal-tax-intro { margin-bottom: 1.25rem; }
+.personal-tax-selected {
+  margin: 1rem 0 1.5rem;
+  padding: 1rem 1.1rem;
+  background: var(--color-surface-2);
+  border-color: var(--color-line);
+}
+.personal-tax-selected strong { overflow-wrap: anywhere; }
+.personal-tax-public, .personal-tax-form {
+  min-width: 0;
+  margin-top: 1.4rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--color-line);
+}
+.personal-tax-subheading h4 { margin: 0; font-size: 1.05rem; line-height: 1.35; }
+.personal-tax-subheading p { margin: .3rem 0 .8rem; color: var(--color-muted); font-size: .88rem; }
+.personal-tax-rate-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .7rem; }
+.personal-tax-rate-card {
+  display: flex; flex-direction: column; gap: .35rem; min-width: 0; padding: .9rem;
+  border: 1px solid var(--color-line); background: var(--color-surface);
+}
+.personal-tax-rate-card span, .personal-tax-rate-card small { color: var(--color-muted); font-size: .8rem; line-height: 1.4; }
+.personal-tax-rate-card strong {
+  font-family: var(--font-display); font-size: clamp(1.2rem, 2vw, 1.7rem);
+  line-height: 1.15; overflow-wrap: anywhere;
+}
+.personal-tax-empty { grid-column: 1 / -1; margin: 0; padding: .9rem; border: 1px dashed var(--color-line-strong); color: var(--color-muted); }
+.personal-tax-rate-source { grid-column: 1 / -1; margin: .25rem 0 0; color: var(--color-muted); font-size: .82rem; }
+.personal-tax-fields { gap: .8rem; }
+.personal-tax-fields > div { min-width: 0; }
+.personal-tax-fields label { line-height: 1.35; }
+.personal-tax-fields input, .personal-tax-fields select {
+  min-height: 2.9rem; border-color: var(--color-line-strong); border-radius: 2px;
+  background: var(--color-surface); color: var(--color-ink); font: inherit; font-size: 1rem;
+}
+.personal-tax-fields-primary { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.personal-tax-field-main input { font-size: 1.05rem; }
+.personal-tax-details { margin: .6rem 0 1rem; border-top: 1px solid var(--color-line); border-bottom: 1px solid var(--color-line); }
+.personal-tax-details summary, .personal-tax-method summary {
+  min-height: 2.9rem; display: flex; align-items: center; cursor: pointer; font-weight: 700;
+}
+.personal-tax-details[open] summary { margin-bottom: .8rem; }
+.personal-tax-details .personal-tax-fields { padding-bottom: .8rem; }
+.personal-tax-submit { width: 100%; min-height: 3.1rem; }
+.personal-tax-result { min-width: 0; overflow-wrap: anywhere; background: var(--color-surface-2); border-left-color: var(--color-accent); }
+.personal-tax-result .tax-result-alert { background: var(--color-caution-bg); color: var(--color-caution); }
+.personal-tax-method { padding-top: .3rem; }
+@media (max-width: 800px) { .personal-tax-rate-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 619px) {
+  :root { --gutter: .85rem; }
+  .site-header { flex-wrap: nowrap; gap: .5rem; padding-inline: .6rem; }
+  .brand { flex: 1 1 auto; gap: .4rem; }
+  .brand-logo { width: 30px; height: 30px; }
+  .brand strong { font-size: clamp(.78rem, 3.4vw, .98rem); }
+  .nav-toggle { min-height: 2.25rem; padding-inline: .45rem; gap: .3rem; font-size: .88rem; }
+  .nav-toggle-icon { font-size: 1rem; }
+  body { font-size: 1rem; }
+  .site-bridge { padding-inline: .85rem; }
+  .site-bridge a { white-space: normal; }
+  .site-header { padding-inline: .85rem; }
+  .brand { min-width: 0; flex: 1 1 auto; }
+  .brand strong { font-size: .98rem; }
+  .brand-logo { width: 34px; height: 34px; }
+  .nav-toggle { min-height: 2.6rem; }
+  .hero { padding: 1.5rem .85rem 1.2rem; }
+  .hero h1 { font-size: clamp(1.8rem, 8vw, 2.5rem); line-height: 1.08; }
+  .hero-copy { font-size: 1rem; }
+  .section { padding-block: 1.5rem; }
+  .section-heading { gap: .65rem; align-items: flex-start; }
+  .section-heading > * { min-width: 0; }
+  .headline-ribbon { grid-template-columns: minmax(0, 1fr); }
+  .headline-metric, .headline-call { padding: .9rem 0; }
+  .commune-form { min-width: 0; }
+  .commune-search-row { gap: .6rem; }
+  .commune-search-row input { min-width: 0; width: 100%; }
+  .commune-search-row .button { width: 100%; }
+  .personal-tax-section { margin-inline: 0; padding: .9rem; }
+  .personal-tax-heading { display: flex; flex-direction: column; align-items: flex-start; }
+  .personal-tax-heading .status { max-width: 100%; }
+  .personal-tax-rate-grid, .personal-tax-fields, .personal-tax-fields-primary { grid-template-columns: minmax(0, 1fr); }
+  .personal-tax-rate-card { padding: .75rem; }
+  .personal-tax-rate-card strong { font-size: 1.4rem; }
+  .personal-tax-selected { padding: .8rem; }
+  .personal-tax-details summary, .personal-tax-method summary { align-items: flex-start; padding-block: .7rem; }
+  .personal-tax-result { padding: .85rem; }
+  .personal-tax-result ul { padding-left: 1rem; }
+  .personal-tax-section input, .personal-tax-section select, .personal-tax-section button { max-width: 100%; }
+  table { display: block; max-width: 100%; overflow-x: auto; }
+  img, svg, video, canvas { max-width: 100%; }
+  a, p, li, td, th { overflow-wrap: anywhere; }
 }

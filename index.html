@@ -146,32 +146,65 @@
       <h3 class="strata-subtitle" id="taux-fonciers">Sur l’avis de taxe foncière : qui reçoit quoi</h3>
       <div id="taux-content" aria-live="polite"><p>Choisissez une commune pour afficher les taux de chaque bénéficiaire.</p></div>
       <section id="taxe-personnelle" class="personal-tax-section" aria-labelledby="personal-tax-title">
-        <div class="section-heading">
-          <div><p class="eyebrow">Votre avis d’imposition</p><h3 id="personal-tax-title">Analyser ma taxe foncière</h3></div>
-          <span class="status status-review" id="personal-tax-commune-status">Choisissez d’abord une commune</span>
+        <div class="section-heading personal-tax-heading">
+          <div><p class="eyebrow">Votre avis d’imposition</p><h3 id="personal-tax-title">Comprendre ma taxe foncière</h3></div>
+          <span class="status status-review" id="personal-tax-commune-status">Choisissez une commune</span>
         </div>
-        <p class="personal-tax-intro">Sélectionnez votre commune dans la recherche en haut de page, puis saisissez les montants indiqués sur votre avis. Le site rapprochera votre avis des taux publics disponibles et expliquera les écarts possibles. Le montant total, seul, ne suffit pas à dire si une taxe est anormalement élevée.</p>
-        <form id="personal-tax-form" class="personal-tax-form">
-          <div class="personal-tax-selected"><span>Commune analysée</span><strong id="personal-tax-commune">Aucune commune sélectionnée</strong><small id="personal-tax-rate-year">Les taux DGFiP apparaîtront après le chargement des données.</small></div>
-          <div class="personal-tax-fields">
-            <div><label for="personal-tax-year">Année de l’avis</label><select id="personal-tax-year" name="year"><option value="2026">2026</option><option value="2025" selected>2025</option><option value="2024">2024</option><option value="2023">2023</option></select></div>
-            <div><label for="personal-tax-total">Montant total à payer (€) *</label><input id="personal-tax-total" name="total" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Ex. : 1700" required></div>
-            <div><label for="personal-tax-base">Base nette imposable (€)</label><input id="personal-tax-base" name="base" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Sur l’avis, si disponible"></div>
-            <div><label for="personal-tax-commune-amount">Cotisation de la commune (€)</label><input id="personal-tax-commune-amount" name="communeAmount" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Détail du calcul"></div>
-            <div><label for="personal-tax-epci-amount">Cotisation intercommunale (€)</label><input id="personal-tax-epci-amount" name="epciAmount" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Si affichée séparément"></div>
-            <div><label for="personal-tax-teom">Ordures ménagères (TEOM, €)</label><input id="personal-tax-teom" name="teom" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Si présente sur l’avis"></div>
-            <div><label for="personal-tax-previous">Montant de l’année précédente (€)</label><input id="personal-tax-previous" name="previous" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Facultatif"></div>
+        <p class="personal-tax-intro">Choisissez votre commune en haut de page : ses taux officiels se chargeront automatiquement. Vous n’aurez ensuite qu’à saisir les montants de votre avis que les données publiques ne permettent pas de connaître.</p>
+        <div class="personal-tax-selected" aria-live="polite">
+          <span>Commune sélectionnée</span>
+          <strong id="personal-tax-commune">Aucune commune sélectionnée</strong>
+          <small id="personal-tax-rate-year">Les taux officiels seront chargés après le choix de la commune.</small>
+        </div>
+        <section class="personal-tax-public" aria-labelledby="personal-tax-public-title">
+          <div class="personal-tax-subheading">
+            <h4 id="personal-tax-public-title">Données publiques pré-remplies</h4>
+            <p>Source : DGFiP · année de publication affichée ci-dessous.</p>
           </div>
-          <button class="button button-primary" type="submit">Analyser mon avis</button>
-          <p class="form-hint">* Seul le montant total est obligatoire. Les champs facultatifs améliorent l’analyse. Les données saisies restent dans votre navigateur : elles ne sont ni enregistrées ni envoyées par cet outil.</p>
+          <div id="personal-tax-public-rates" class="personal-tax-rate-grid" aria-live="polite">
+            <p class="personal-tax-empty">Sélectionnez une commune pour afficher ses taux.</p>
+          </div>
+        </section>
+        <form id="personal-tax-form" class="personal-tax-form">
+          <div class="personal-tax-subheading">
+            <h4>Votre avis de taxe foncière</h4>
+            <p>Ces informations personnelles ne sont pas publiées dans les bases communales.</p>
+          </div>
+          <div class="personal-tax-fields personal-tax-fields-primary">
+            <div class="personal-tax-field-main">
+              <label for="personal-tax-year">Année de l’avis</label>
+              <select id="personal-tax-year" name="year">
+                <option value="2026">2026</option><option value="2025" selected>2025</option><option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option>
+              </select>
+            </div>
+            <div class="personal-tax-field-main">
+              <label for="personal-tax-total">Total à payer (€) *</label>
+              <input id="personal-tax-total" name="total" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Ex. : 1 250">
+            </div>
+            <div class="personal-tax-field-main">
+              <label for="personal-tax-base">Base nette imposable (€)</label>
+              <input id="personal-tax-base" name="base" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Indiquée sur l’avis">
+            </div>
+          </div>
+          <details class="personal-tax-details">
+            <summary>Ajouter le détail de mon avis (facultatif)</summary>
+            <div class="personal-tax-fields">
+              <div><label for="personal-tax-commune-amount">Cotisation communale (€)</label><input id="personal-tax-commune-amount" name="communeAmount" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Montant de la ligne commune"></div>
+              <div><label for="personal-tax-epci-amount">Cotisation intercommunale (€)</label><input id="personal-tax-epci-amount" name="epciAmount" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Si elle est indiquée"></div>
+              <div><label for="personal-tax-teom">Ordures ménagères — TEOM (€)</label><input id="personal-tax-teom" name="teom" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Si elle est indiquée"></div>
+              <div><label for="personal-tax-previous">Total de l’année précédente (€)</label><input id="personal-tax-previous" name="previous" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Pour calculer l’évolution"></div>
+            </div>
+          </details>
+          <button class="button button-primary personal-tax-submit" type="submit">Analyser mon avis</button>
+          <p class="form-hint">* Le total suffit pour commencer, mais la base imposable améliore le contrôle. Les montants saisis restent dans votre navigateur : ils ne sont ni enregistrés ni envoyés.</p>
         </form>
         <div id="personal-tax-result" class="personal-tax-result" aria-live="polite" hidden></div>
-        <div class="municipal-source-note personal-tax-method">
-          <strong>Ce que l’analyse peut — et ne peut pas — établir</strong>
+        <details class="municipal-source-note personal-tax-method">
+          <summary>Comment lire cette analyse ?</summary>
           <p>Le taux communal, le taux intercommunal et la TEOM sont distincts. La valeur locative cadastrale, la base imposable, les exonérations, le coefficient correcteur et les taxes annexes influencent aussi le montant final. Une estimation « base × taux » sert au contrôle, pas à reproduire exactement l’avis.</p>
           <p>Les comptes de la commune et les taux fiscaux sont analysés séparément : une épargne ou une dette favorable ne prouve pas que le niveau d’impôt est juste, et un taux élevé ne prouve pas à lui seul une mauvaise gestion.</p>
           <p><a href="https://www.impots.gouv.fr/particulier/questions/je-souhaite-contester-le-montant-de-ma-taxe-fonciere-comment-faire" target="_blank" rel="noopener noreferrer">Comprendre ou contester sa taxe foncière sur impots.gouv.fr ↗<span class="visually-hidden"> (nouvel onglet)</span></a></p>
-        </div>
+        </details>
       </section>
       <div class="municipal-source-note">
         <strong>Lire une moyenne de strate</strong>
