@@ -1923,6 +1923,12 @@ select,
 @media (max-width: 800px) { .personal-tax-rate-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 619px) {
   :root { --gutter: .85rem; }
+  .site-header { flex-wrap: nowrap; gap: .5rem; padding-inline: .6rem; }
+  .brand { flex: 1 1 auto; gap: .4rem; }
+  .brand-logo { width: 30px; height: 30px; }
+  .brand strong { font-size: clamp(.78rem, 3.4vw, .98rem); }
+  .nav-toggle { min-height: 2.25rem; padding-inline: .45rem; gap: .3rem; font-size: .88rem; }
+  .nav-toggle-icon { font-size: 1rem; }
   body { font-size: 1rem; }
   .site-bridge { padding-inline: .85rem; }
   .site-bridge a { white-space: normal; }
