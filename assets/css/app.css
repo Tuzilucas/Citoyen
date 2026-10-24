@@ -1838,7 +1838,7 @@ select,
   padding: clamp(1rem, 3vw, 1.6rem);
   border: 1px solid var(--color-line);
   border-top: 3px solid var(--color-accent);
-  background: var(--color-surface, #f7f5ef);
+  background: var(--color-surface);
 }
 .personal-tax-section h3 { margin: 0; font-family: var(--font-display, Georgia, serif); font-size: clamp(1.35rem, 2.5vw, 1.8rem); }
 .personal-tax-intro { max-width: 78ch; color: var(--color-muted); }
