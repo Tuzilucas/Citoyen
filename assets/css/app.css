@@ -1964,3 +1964,182 @@ select,
   img, svg, video, canvas { max-width: 100%; }
   a, p, li, td, th { overflow-wrap: anywhere; }
 }
+
+
+/* ---------- Refonte éditoriale : visuels, rythme et ergonomie ---------- */
+.hero-visual {
+  width: 100%;
+  max-width: 44rem;
+  margin: var(--space-5) 0 0;
+}
+.hero-visual img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 760 / 500;
+  object-fit: cover;
+  border: 1px solid var(--color-line);
+  background: var(--color-accent);
+}
+.hero-visual figcaption {
+  margin-top: .55rem;
+  padding-left: .75rem;
+  border-left: 2px solid var(--color-rule-gold);
+  color: var(--color-muted);
+  font-size: var(--text-meta);
+  line-height: 1.45;
+}
+.territory-illustration {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 480 / 220;
+  margin: var(--space-4) 0 .35rem;
+  object-fit: cover;
+  border: 1px solid var(--color-line);
+  background: var(--color-surface-2);
+}
+.territory-card {
+  padding-top: var(--space-4);
+  padding-bottom: var(--space-5);
+}
+.territory-card .territory-status {
+  min-height: 2rem;
+  display: flex;
+  align-items: center;
+}
+.territory-card h3 {
+  line-height: 1.15;
+}
+.territory-card > p:not(.territory-kicker) {
+  line-height: 1.6;
+}
+.territory-card .button {
+  margin-top: auto;
+}
+.hero .commune-form {
+  position: relative;
+  z-index: 1;
+}
+.commune-search-row input {
+  min-width: 0;
+  min-height: 3.25rem;
+}
+.commune-search-row .button {
+  min-height: 3.25rem;
+  white-space: nowrap;
+}
+input:not([type="checkbox"]):not([type="radio"]),
+select,
+textarea {
+  accent-color: var(--color-accent);
+}
+button:disabled,
+.button[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: .65;
+}
+.section > :last-child {
+  margin-bottom: 0;
+}
+.personal-tax-section .personal-tax-subheading {
+  margin-bottom: .5rem;
+}
+.personal-tax-section .personal-tax-fields input,
+.personal-tax-section .personal-tax-fields select {
+  width: 100%;
+}
+@media (min-width: 1024px) {
+  .hero-visual {
+    max-width: 44rem;
+  }
+  .hero-guide {
+    position: relative;
+    padding-top: var(--space-4);
+  }
+  .hero-guide::before {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: 0;
+    width: 4.5rem;
+    border-top: 2px solid var(--color-rule-gold);
+  }
+  .territory-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 900px) {
+  .territory-grid,
+  .cards,
+  .method-grid,
+  .composition-notes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .territory-card:nth-child(2n),
+  .info-card:nth-child(2n),
+  .composition-notes article:nth-child(2n),
+  .method-grid > div:nth-child(2n) {
+    border-right: 0;
+  }
+}
+@media (max-width: 619px) {
+  .hero-visual {
+    margin-top: var(--space-4);
+  }
+  .hero-visual figcaption {
+    font-size: .78rem;
+  }
+  .commune-search-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .commune-search-row input,
+  .commune-search-row .button {
+    width: 100%;
+    min-height: 3rem;
+  }
+  .territory-grid,
+  .cards,
+  .method-grid,
+  .composition-notes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .territory-card,
+  .info-card,
+  .composition-notes article,
+  .method-grid > div,
+  .territory-card + .territory-card,
+  .info-card + .info-card,
+  .composition-notes article + article,
+  .method-grid > div + div {
+    padding: var(--space-4) 0;
+    border-right: 0;
+    border-bottom: var(--rule);
+  }
+  .territory-card:last-child,
+  .info-card:last-child,
+  .composition-notes article:last-child,
+  .method-grid > div:last-child {
+    border-bottom: 0;
+  }
+  .territory-illustration {
+    max-height: 12rem;
+    object-fit: cover;
+  }
+  .hero h1 {
+    max-width: 16ch;
+  }
+  .hero-links {
+    gap: .7rem 1rem;
+  }
+}
+.territory-illustration,
+.hero-visual img {
+  transition: filter var(--duration-fast) var(--ease-standard);
+}
+@media (hover: hover) {
+  .territory-card:hover .territory-illustration {
+    filter: saturate(1.08);
+  }
+}

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 500" role="img" aria-labelledby="title desc">
+<title id="title">Comprendre les finances publiques</title><desc id="desc">Illustration éditoriale d’une ville, de documents publics et d’un graphique de données.</desc>
+<rect width="760" height="500" rx="8" fill="#102f49"/>
+<circle cx="620" cy="105" r="86" fill="#244e79" opacity=".72"/><circle cx="620" cy="105" r="54" fill="none" stroke="#9bb6c9" stroke-width="1.5" opacity=".8"/>
+<path d="M0 360H760" stroke="#6f8ba0" stroke-width="2"/>
+<g fill="#f7f5ee" stroke="#f7f5ee" stroke-width="2">
+<path d="M60 360V252l72-48 72 48v108Z" fill="#244e79"/><path d="M82 260h100M90 282h16v28H90zM125 282h16v28h-16zM160 282h16v28h-16z" fill="none"/>
+<path d="M216 360V190h100v170Z" fill="#f7f5ee"/><path d="M205 190h122l-61-46Z" fill="#d9b86c"/><path d="M236 212h17v28h-17zM278 212h17v28h-17zM236 260h17v28h-17zM278 260h17v28h-17z" fill="#102f49" stroke="none"/><path d="M257 315h18v45h-18z" fill="#a9323b" stroke="none"/>
+<path d="M335 360V274h74v86Z" fill="#244e79"/><path d="M350 292h12v18h-12zM381 292h12v18h-12z" fill="none"/>
+<path d="M430 360V230h95v130Z" fill="#f7f5ee"/><path d="M445 250h65M445 272h65M445 294h65M445 316h65" fill="none" stroke="#102f49" stroke-width="3"/>
+</g>
+<g transform="translate(425 54) rotate(4)">
+<rect x="0" y="0" width="275" height="180" rx="5" fill="#fffefa"/><rect x="18" y="18" width="112" height="8" fill="#102f49"/><rect x="18" y="34" width="172" height="4" fill="#d8d5ca"/>
+<path d="M22 143H250" stroke="#d8d5ca" stroke-width="2"/><path d="M34 126 78 103 120 114 164 72 210 48 246 58" fill="none" stroke="#a9323b" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<g fill="#244e79"><rect x="34" y="94" width="20" height="32"/><rect x="76" y="74" width="20" height="52"/><rect x="118" y="84" width="20" height="42"/><rect x="160" y="55" width="20" height="71"/><rect x="202" y="36" width="20" height="90"/></g>
+<circle cx="246" cy="58" r="7" fill="#d9b86c" stroke="#102f49" stroke-width="2"/>
+</g>
+<g transform="translate(52 395)"><rect width="245" height="64" rx="3" fill="#fffefa"/><rect x="16" y="16" width="34" height="34" rx="17" fill="#d9b86c"/><path d="M25 33l7 7 12-15" fill="none" stroke="#102f49" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="64" y="18" width="148" height="7" fill="#102f49"/><rect x="64" y="32" width="116" height="5" fill="#8b887d"/><rect x="64" y="43" width="90" height="4" fill="#d8d5ca"/></g>
+<g fill="#f7f5ee" font-family="Arial,sans-serif"><text x="554" y="286" font-size="14" letter-spacing="2">DONNÉES</text><text x="554" y="307" font-size="14" letter-spacing="2">PUBLIQUES</text></g>
+<path d="M558 326h130" stroke="#d9b86c" stroke-width="3"/>
+</svg>

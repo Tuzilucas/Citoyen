@@ -16,6 +16,11 @@
   <meta property="og:title" content="Information citoyenne — Finances publiques, sources à l’appui">
   <meta property="og:description" content="Les finances de votre commune et de la France, avec les sources officielles, les données brutes et des calculs expliqués.">
   <meta property="og:url" content="https://tuzilucas.github.io/Citoyen/">
+  <meta property="og:image" content="https://tuzilucas.github.io/Citoyen/assets/img/illustration-hero.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Information citoyenne — Finances publiques, sources à l’appui">
+  <meta name="twitter:description" content="Les finances de votre commune et de la France, avec les sources officielles, les données brutes et des calculs expliqués.">
+  <meta name="twitter:image" content="https://tuzilucas.github.io/Citoyen/assets/img/illustration-hero.svg">
   <!-- Services publics interrogés lors d’une recherche de commune : connexion ouverte à l’avance. -->
   <link rel="preconnect" href="https://geo.api.gouv.fr" crossorigin>
   <link rel="preconnect" href="https://data.ofgl.fr" crossorigin>
@@ -67,6 +72,10 @@
         <li><a href="#verifier">Vérifier un chiffre entendu</a></li>
         <li class="hero-link-debt"><a href="#indicateur-dette">La dette publique de la France</a></li>
       </ul>
+      <figure class="hero-visual">
+        <img src="assets/img/illustration-hero.svg" alt="Illustration de bâtiments publics, d’un document officiel et d’un graphique de données" width="760" height="500" fetchpriority="high">
+        <figcaption>Des chiffres publics, replacés dans leur contexte. Chaque analyse renvoie à ses sources.</figcaption>
+      </figure>
       <aside class="hero-guide" aria-labelledby="hero-guide-title">
         <h2 id="hero-guide-title">Ce que vous trouverez</h2>
         <ol>
@@ -95,6 +104,7 @@
       <div class="territory-grid">
         <article class="territory-card">
           <span class="territory-status">Recherche en direct · 34 875 communes</span>
+          <img class="territory-illustration" src="assets/img/illustration-commune.svg" alt="" width="480" height="220" loading="lazy" decoding="async">
           <p class="territory-kicker">Échelle locale</p>
           <h3>Votre commune</h3>
           <p>Ses comptes publiés par l’OFGL et la DGFiP, expliqués et comparés aux communes de même taille.</p>
@@ -102,6 +112,7 @@
         </article>
         <article class="territory-card">
           <span class="territory-status">Source : INSEE</span>
+          <img class="territory-illustration" src="assets/img/illustration-france.svg" alt="" width="480" height="220" loading="lazy" decoding="async">
           <p class="territory-kicker">Échelle nationale</p>
           <h3>France</h3>
           <p>La dette publique trimestrielle, ce qu’elle mesure, qui la porte, et les publications de l’INSEE.</p>
@@ -109,6 +120,7 @@
         </article>
         <article class="territory-card">
           <span class="territory-status">Sans verdict</span>
+          <img class="territory-illustration" src="assets/img/illustration-verification.svg" alt="" width="480" height="220" loading="lazy" decoding="async">
           <p class="territory-kicker">Vérification</p>
           <h3>Un chiffre entendu</h3>
           <p>Comparez-le à la donnée officielle de même sujet, même période et même périmètre.</p>
