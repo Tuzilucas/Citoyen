@@ -169,6 +169,7 @@
       if (communeName) communeName.textContent = commune ? commune.nom + " (" + commune.code + ")" : "Aucune commune sélectionnée";
       if (communeStatus) communeStatus.textContent = commune ? "Commune sélectionnée" : "Choisissez d’abord une commune";
       if (rateYear) rateYear.textContent = "Chargement des taux DGFiP…";
+      showPublicRates();
       if (!result.hidden) {
         const p = document.createElement("p");
         p.className = "tax-result-note";
@@ -177,14 +178,71 @@
       }
     });
 
+    const publicRates = document.getElementById("personal-tax-public-rates");
+    const yearSelect = document.getElementById("personal-tax-year");
+
+    function showPublicRates() {
+      if (!publicRates) return;
+      publicRates.replaceChildren();
+      if (!commune || !rates) {
+        const p = document.createElement("p");
+        p.className = "personal-tax-empty";
+        p.textContent = !commune
+          ? "Choisissez une commune pour charger ses taux officiels."
+          : "Les taux ne sont pas disponibles pour le moment. Aucune valeur n’est inventée.";
+        publicRates.appendChild(p);
+        return;
+      }
+      const communeRate = Array.isArray(rates.rows) ? rates.rows.find((row) => row.label.includes("Commune (taux voté)")) : null;
+      const epciRate = Array.isArray(rates.rows) ? rates.rows.find((row) => row.label.includes("Intercommunalité à fiscalité propre")) : null;
+      const cards = [
+        ["Taux voté par la commune", communeRate && Number.isFinite(communeRate.tfb) ? percent.format(communeRate.tfb) + " %" : "Non publié", "Taxe foncière bâtie"],
+        ["Taux intercommunal", epciRate && Number.isFinite(epciRate.tfb) ? percent.format(epciRate.tfb) + " %" : "Non publié", rates.epci || "Intercommunalité"],
+        ["Taux global bâti", rates.global && Number.isFinite(rates.global.tfb) ? percent.format(rates.global.tfb) + " %" : "Non publié", "Ensemble des taux publiés"],
+        ["Taux plein TEOM", Number.isFinite(rates.teom) ? percent.format(rates.teom) + " %" : "Non publié", "Ordures ménagères, hors taux de zone"]
+      ];
+      cards.forEach(([label, value, note]) => {
+        const article = document.createElement("article");
+        article.className = "personal-tax-rate-card";
+        const title = document.createElement("span");
+        title.textContent = label;
+        const amount = document.createElement("strong");
+        amount.textContent = value;
+        const detail = document.createElement("small");
+        detail.textContent = note;
+        article.append(title, amount, detail);
+        publicRates.appendChild(article);
+      });
+      const note = document.createElement("p");
+      note.className = "personal-tax-rate-source";
+      note.textContent = "Année des taux : " + (rates.year || "non précisée") + ". Les taux sont pré-remplis depuis la DGFiP ; ils ne permettent pas de connaître votre base cadastrale ni le montant individuel de votre avis.";
+      publicRates.appendChild(note);
+    }
+
     window.addEventListener("citoyen:tax-rates-loaded", (event) => {
       const detail = event.detail || {};
       if (!commune || !detail.commune || detail.commune.code !== commune.code) return;
       rates = detail.rates || null;
       if (rateYear) rateYear.textContent = rates && rates.year
-        ? "Dernière année de taux disponible : " + rates.year + (rates.global && Number.isFinite(rates.global.tfb) ? " · taux global bâti : " + percent.format(rates.global.tfb) + " %" : "")
+        ? "Taux officiels DGFiP pour " + rates.year + (rates.epci ? " · " + rates.epci : "")
         : "Aucun taux officiel disponible.";
-      if (communeStatus) communeStatus.textContent = rates ? "Taux officiels chargés" : "Taux indisponibles";
+      if (communeStatus) communeStatus.textContent = rates ? "Données publiques chargées" : "Taux indisponibles";
+      if (rates && rates.year && yearSelect && Array.from(yearSelect.options).some((option) => option.value === String(rates.year))) {
+        yearSelect.value = String(rates.year);
+      }
+      showPublicRates();
+      if (!result.hidden) {
+        const input = {
+          year: yearSelect ? yearSelect.value : "",
+          total: document.getElementById("personal-tax-total").value,
+          base: document.getElementById("personal-tax-base").value,
+          communeAmount: document.getElementById("personal-tax-commune-amount").value,
+          epciAmount: document.getElementById("personal-tax-epci-amount").value,
+          teom: document.getElementById("personal-tax-teom").value,
+          previous: document.getElementById("personal-tax-previous").value
+        };
+        renderResult(result, calculate(input, rates), commune, rates, input.year);
+      }
     });
 
     form.addEventListener("submit", (event) => {
@@ -200,6 +258,20 @@
       };
       const calculated = calculate(input, rates);
       renderResult(result, calculated, commune, rates, input.year);
+    });
+
+    form.addEventListener("input", () => {
+      if (result.hidden || !document.getElementById("personal-tax-total").value) return;
+      const input = {
+        year: yearSelect ? yearSelect.value : "",
+        total: document.getElementById("personal-tax-total").value,
+        base: document.getElementById("personal-tax-base").value,
+        communeAmount: document.getElementById("personal-tax-commune-amount").value,
+        epciAmount: document.getElementById("personal-tax-epci-amount").value,
+        teom: document.getElementById("personal-tax-teom").value,
+        previous: document.getElementById("personal-tax-previous").value
+      };
+      renderResult(result, calculate(input, rates), commune, rates, input.year);
     });
   }
 
