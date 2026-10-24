@@ -26,7 +26,7 @@ Important : les fichiers HTML, CSS et JavaScript exécutés dans le navigateur s
 
 ## Analyse personnelle de la taxe foncière
 
-Après avoir choisi une commune, l’outil « Analyser ma taxe foncière » permet de saisir le montant de son avis, la base imposable et les cotisations disponibles. Il compare les éléments déclarés aux taux DGFiP quand l’exercice correspond, signale les écarts à vérifier et calcule l’évolution annuelle si le montant précédent est renseigné. Il ne déclare jamais une taxe « normale » ou « excessive » à partir du seul montant : la base cadastrale, les caractéristiques du bien, la TEOM et les mécanismes fiscaux doivent être pris en compte. Les montants saisis restent dans le navigateur et ne sont pas envoyés par cet outil.
+Après avoir choisi une commune, l’outil « Comprendre ma taxe foncière » pré-remplit automatiquement les taux publics DGFiP disponibles et sélectionne l’année correspondante quand elle est proposée. L’utilisateur ne saisit que les données personnelles absentes des bases publiques : total à payer, base imposable et, facultativement, détail des cotisations et montant précédent. Les résultats se mettent à jour pendant la saisie. Il ne déclare jamais une taxe « normale » ou « excessive » à partir du seul montant : la base cadastrale, les caractéristiques du bien, la TEOM et les mécanismes fiscaux doivent être pris en compte. Les montants saisis restent dans le navigateur et ne sont pas envoyés par cet outil.
 
 ## Tests
 
