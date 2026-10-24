@@ -2134,14 +2134,12 @@ button:disabled,
     gap: .7rem 1rem;
   }
 }
-@media (prefers-reduced-motion: no-preference) {
-  .territory-illustration,
-  .hero-visual img {
-    transition: filter var(--duration-fast) var(--ease-standard);
-  }
-  @media (hover: hover) {
-    .territory-card:hover .territory-illustration {
-      filter: saturate(1.08);
-    }
+.territory-illustration,
+.hero-visual img {
+  transition: filter var(--duration-fast) var(--ease-standard);
+}
+@media (hover: hover) {
+  .territory-card:hover .territory-illustration {
+    filter: saturate(1.08);
   }
 }
