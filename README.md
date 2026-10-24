@@ -24,6 +24,10 @@ Les corrections d’interface et de navigation mobile sont intégrées à `main`
 
 Important : les fichiers HTML, CSS et JavaScript exécutés dans le navigateur sont nécessairement consultables par le public. Les secrets, clés privées, outils internes, tests et documentation de développement ne doivent pas être copiés dans ce dépôt public.
 
+## Analyse personnelle de la taxe foncière
+
+Après avoir choisi une commune, l’outil « Analyser ma taxe foncière » permet de saisir le montant de son avis, la base imposable et les cotisations disponibles. Il compare les éléments déclarés aux taux DGFiP quand l’exercice correspond, signale les écarts à vérifier et calcule l’évolution annuelle si le montant précédent est renseigné. Il ne déclare jamais une taxe « normale » ou « excessive » à partir du seul montant : la base cadastrale, les caractéristiques du bien, la TEOM et les mécanismes fiscaux doivent être pris en compte. Les montants saisis restent dans le navigateur et ne sont pas envoyés par cet outil.
+
 ## Tests
 
 Aucune étape de construction : le site reste un ensemble de fichiers statiques.
