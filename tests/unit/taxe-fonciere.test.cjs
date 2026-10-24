@@ -30,3 +30,12 @@ test("calculate does not invent a comparison when tax base or rates are missing"
 test("invalid total is reported instead of treated as zero", () => {
   assert.equal(calculate({ total: "" }, null).error, "Saisissez un montant total valide.");
 });
+
+test("commune tax rates are displayed from the DGFiP payload and the year follows the source", () => {
+  const source = require("fs").readFileSync(require("path").join(__dirname, "../../assets/js/taxe-fonciere.js"), "utf8");
+  assert.match(source, /function showPublicRates\(\)/);
+  assert.match(source, /Taux voté par la commune/);
+  assert.match(source, /Taux global bâti/);
+  assert.match(source, /rates\.teom/);
+  assert.match(source, /yearSelect\.value = String\(rates\.year\)/);
+});
