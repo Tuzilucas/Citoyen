@@ -5,7 +5,10 @@
   "scripts": {
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "node --test tests/unit/*.test.cjs",
-    "test:e2e": "node tests/e2e/audit.spec.cjs"
+    "test:e2e": "node tests/e2e/audit.spec.cjs",
+    "check": "npm run test:unit",
+    "verifier": "npm test",
+    "prepare": "git config core.hooksPath .githooks || true"
   },
   "devDependencies": {
     "playwright": "1.56.1"
