@@ -1,6 +1,6 @@
 # Information citoyenne — site public
 
-Ce dépôt contient la version web publique de l’Observatoire citoyen : interface HTML/CSS/JavaScript et jeux de données affichés. Le dépôt de développement reste séparé et privé.
+Ce dépôt contient l’Observatoire citoyen : interface HTML/CSS/JavaScript, jeux de données affichés, scripts de construction du socle des communes et tests. Depuis le 23 octobre 2026, c’est le dépôt vivant du projet ; le dépôt privé Information-citoyenne (prototype de départ et documentation de méthode) est figé.
 
 ## Direction visuelle
 
