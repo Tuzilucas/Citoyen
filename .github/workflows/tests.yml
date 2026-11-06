@@ -8,7 +8,7 @@ permissions:
   contents: read
 jobs:
   tests:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04 # Playwright 1.56 ne fournit pas Chromium pour Ubuntu 26.04 (ubuntu-latest depuis novembre 2026)
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
