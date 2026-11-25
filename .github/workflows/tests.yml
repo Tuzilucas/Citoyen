@@ -1,7 +1,6 @@
 name: Tests
+# Contrôle léger sur les PR seulement (décision 4A de Lucas, 25/11/2026) : le quota de minutes GitHub Actions est limité.
 on:
-  push:
-    branches: [main, "feat/**", "fix/**"]
   pull_request:
   workflow_dispatch:
 permissions:
