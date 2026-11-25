@@ -34,7 +34,7 @@ Aucune étape de construction : le site reste un ensemble de fichiers statiques.
 
 - `npm run test:unit` : fonctions pures de `assets/js/citoyen-lib.js` et cohérence des JSON (Node 22, aucune dépendance).
 - `npm run test:e2e` : recette Playwright (320 à 1440 px). Le dépôt est servi par un serveur Node intégré ; geo.api.gouv.fr et data.ofgl.fr reçoivent des réponses **simulées** : ces tests vérifient le comportement du code, pas l’exactitude des données officielles.
-- Le workflow `.github/workflows/tests.yml` est déclenchable **manuellement uniquement** (`workflow_dispatch`) : aucun test ne se lance automatiquement à chaque publication. Il n’a pas été lancé pendant cet audit afin de ne pas consommer de minutes GitHub Actions. `npm install` est nécessaire pour Playwright.
+- Le workflow `.github/workflows/tests.yml` se déclenche automatiquement sur les pushes vers `main`, `feat/**` et `fix/**`, sur les pull requests, et manuellement (`workflow_dispatch`). Il exécute les tests unitaires et end-to-end Chromium ; il ne publie pas le site. `npm install` est nécessaire pour Playwright. Le dernier run observé sur `main` est vert (06/11/2026) ; relancer la suite après toute modification récente avant de considérer le dépôt validé.
 
 Audit et plan de correction : `AUDIT-TECHNIQUE.md`.
 
