@@ -13,3 +13,6 @@ Règles communes du portefeuille (décisions de Lucas du 25/11/2026) :
 4. **GitHub Actions léger** : contrôles rapides sur les PR seulement. Pas de nouveau workflow lourd, ni de déclenchement à
    chaque push, sans accord (le quota de minutes est limité).
 5. **Aucun secret** dans le dépôt (clé, mot de passe, keystore, jeton).
+6. **Cartes des dossiers** : chaque dossier a un `CARTE.md` (rôle, contenu, liens). Le lire avant de travailler ;
+   après avoir ajouté, déplacé ou supprimé un fichier, lancer `npm run carte`, décrire ce qui est « À décrire », et
+   commiter les cartes avec le changement. `npm run carte:verifier` refuse une carte périmée.
