@@ -5,7 +5,10 @@
   "scripts": {
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "node --test tests/unit/*.test.cjs",
-    "test:e2e": "node tests/e2e/audit.spec.cjs"
+    "test:e2e": "node tests/e2e/audit.spec.cjs",
+    "carte": "node scripts/carte.mjs",
+    "carte:verifier": "node scripts/carte.mjs --verifier",
+    "check": "npm run carte:verifier"
   },
   "devDependencies": {
     "playwright": "1.56.1"
